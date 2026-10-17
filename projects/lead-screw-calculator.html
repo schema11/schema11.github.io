@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Calculate lead screw efficiency, self-locking, back-driving and load torque from thread geometry, material pairing and lubrication.">
+  <title>Lead Screw &amp; Lead Nut Calculator | Portfolio</title>
+  <link rel="stylesheet" href="../assets/site.css">
+  <style>
+    .ls-intro{max-width:76ch}
+    .ls-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.1rem;align-items:start;margin-top:1.5rem}
+    .ls-column{min-width:0}
+    .ls-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem 1.2rem;margin-bottom:1.1rem}
+    .ls-card h2{margin:0 0 1rem;padding:0;border:0;color:var(--muted);font-size:.83rem;letter-spacing:.07em;text-transform:uppercase}
+    .ls-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+    .ls-field{display:block;margin:0 0 .8rem;color:var(--muted);font-size:.82rem}
+    .ls-field[hidden]{display:none}
+    .ls-field>span{display:block;margin-bottom:.25rem;color:var(--text);font-weight:600}
+    .ls-field input[type=number]{width:100%;padding:.5rem .6rem;background:#010409;color:var(--text);border:1px solid var(--line);border-radius:7px;font:inherit}
+    .ls-field input[type=number]:focus{outline:2px solid var(--accent);outline-offset:1px}
+    .ls-field input:disabled{opacity:.55}
+    .ls-group-label{font-weight:600;font-size:.82rem;margin:.35rem 0 .45rem}
+    .ls-toggles{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 .85rem}
+    .ls-toggle{position:relative}
+    .ls-toggle input{position:absolute;width:1px;height:1px;opacity:0}
+    .ls-toggle span{display:inline-block;padding:.32rem .65rem;border:1px solid var(--line);border-radius:999px;font-size:.77rem;cursor:pointer;background:var(--panel2);color:var(--muted);user-select:none}
+    .ls-toggle input:checked+span{background:#1f6feb33;border-color:#1f6feb88;color:var(--accent)}
+    .ls-toggle input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+    .ls-check{display:flex;align-items:center;gap:.5rem;margin:.25rem 0 .65rem;color:var(--text);font-size:.82rem}
+    .ls-check input{accent-color:var(--accent)}
+    .ls-note{margin:.65rem 0 0;color:var(--muted);font-size:.78rem}
+    .ls-error{color:#f85149}
+    .ls-hero{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.85rem}
+    .ls-hero>div{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:.65rem}
+    .ls-hero small{color:var(--muted);font-size:.68rem;text-transform:uppercase;letter-spacing:.05em}
+    .ls-big{font-size:1.8rem;font-weight:700;line-height:1.15;margin:.15rem 0 0;font-variant-numeric:tabular-nums}
+    .ls-badge{display:block;padding:.65rem .75rem;border-radius:9px;font-weight:600;font-size:.84rem;margin:.8rem 0 .35rem}
+    .ls-good{background:#3fb9501a;color:var(--ok);border:1px solid #3fb95055}
+    .ls-warn{background:#d299221a;color:var(--warn);border:1px solid #d2992255}
+    .ls-bad{background:#f851491a;color:#f85149;border:1px solid #f8514955}
+    .ls-result{display:flex;justify-content:space-between;gap:.8rem;padding:.42rem 0;border-bottom:1px dashed var(--line);font-size:.82rem}
+    .ls-result:last-of-type{border-bottom:0}
+    .ls-result b{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+    .ls-card hr{margin:1rem 0}
+    .ls-diagram-label{font-weight:600;font-size:.82rem;margin:1rem 0 .25rem}
+    .ls-figure svg{width:100%;height:auto;display:block}
+    .ls-caption{font-size:.76rem;color:var(--muted);margin:.15rem 0 .85rem}
+    .ls-work{background:#010409;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:.9rem;overflow-x:auto;font:12px/1.65 var(--mono);margin:0;white-space:pre;tab-size:2}
+    .ls-work .hd{color:var(--accent)}
+    .ls-copy{margin:0 0 .7rem;padding:.4rem .75rem;border:1px solid var(--line);background:var(--panel2);border-radius:7px;color:var(--text);font:inherit;font-size:.8rem;cursor:pointer}
+    .ls-copy:hover{border-color:var(--accent);color:var(--accent)}
+    @media(max-width:800px){.ls-grid{grid-template-columns:1fr}}
+    @media(max-width:480px){.ls-row{grid-template-columns:1fr}.ls-result{align-items:flex-start}.ls-result b{max-width:52%;overflow-wrap:anywhere}}
+  </style>
+</head>
+<body>
+<nav class="nav" aria-label="Main">
+  <div class="nav-in">
+    <a class="brand" href="../index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../tools.html">Tools</a></li>
+      <li><a href="../projects.html" aria-current="page">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <p class="eyebrow"><a href="../projects.html" style="color:inherit;text-decoration:none">Projects</a> → Calculator</p>
+  <h1>Lead screw &amp; lead nut calculator</h1>
+  <p class="lede ls-intro">Estimate power-screw efficiency, self-locking and back-driving from geometry, material pairing and lubrication. The calculation and diagrams update as you change inputs. Friction coefficients are indicative only — confirm against supplier data before using results for design or safety decisions.</p>
+
+  <div class="ls-grid">
+    <div class="ls-column">
+      <section class="ls-card">
+        <h2>Geometry &amp; load</h2>
+        <div class="ls-row">
+          <label class="ls-field"><span>Lead L (mm/rev)</span><input type="number" id="lead" value="5" min="0.01" step="0.1"></label>
+          <label class="ls-field"><span>Thread starts n</span><input type="number" id="starts" value="1" min="1" step="1"></label>
+        </div>
+        <div class="ls-group-label">Diameter entered as</div>
+        <div class="ls-toggles" id="dmode">
+          <label class="ls-toggle"><input type="radio" name="dmode" value="nominal" checked><span>Nominal (major) Ø</span></label>
+          <label class="ls-toggle"><input type="radio" name="dmode" value="mean"><span>Mean (pitch) Ø</span></label>
+        </div>
+        <div class="ls-row">
+          <label class="ls-field"><span>Diameter (mm)</span><input type="number" id="dia" value="12" min="0.1" step="0.5"></label>
+          <label class="ls-field"><span>Axial load F (N)</span><input type="number" id="load" value="500" min="0" step="10"></label>
+        </div>
+        <div class="ls-group-label">Thread form (half-angle α, axial plane)</div>
+        <div class="ls-toggles" id="form">
+          <label class="ls-toggle"><input type="radio" name="form" value="0" checked><span>Square (0°)</span></label>
+          <label class="ls-toggle"><input type="radio" name="form" value="14.5"><span>ACME (14.5°)</span></label>
+          <label class="ls-toggle"><input type="radio" name="form" value="15"><span>Trapezoidal (15°)</span></label>
+          <label class="ls-toggle"><input type="radio" name="form" value="30"><span>UN / metric V (30°)</span></label>
+          <label class="ls-toggle"><input type="radio" name="form" value="custom"><span>Custom</span></label>
+        </div>
+        <label class="ls-field" id="customWrap" hidden><span>Custom half-angle (°)</span><input type="number" id="alphaCustom" value="14.5" min="0" max="45" step="0.5"></label>
+      </section>
+
+      <section class="ls-card">
+        <h2>Friction pair</h2>
+        <div class="ls-group-label">Lead screw material</div>
+        <div class="ls-toggles" id="screwMat"></div>
+        <div class="ls-group-label">Lead nut material</div>
+        <div class="ls-toggles" id="nutMat"></div>
+        <div class="ls-group-label">Lubrication</div>
+        <div class="ls-toggles" id="lube">
+          <label class="ls-toggle"><input type="radio" name="lube" value="dry" checked><span>Dry / unlubricated</span></label>
+          <label class="ls-toggle"><input type="radio" name="lube" value="oil"><span>Oil</span></label>
+          <label class="ls-toggle"><input type="radio" name="lube" value="grease"><span>Grease</span></label>
+        </div>
+        <label class="ls-check"><input type="checkbox" id="manual"><span>Override friction coefficient μ manually</span></label>
+        <label class="ls-field"><span>μ (thread)</span><input type="number" id="muManual" value="0.15" min="0.01" max="0.8" step="0.01" disabled></label>
+        <p class="ls-note" id="matWarn" aria-live="polite"></p>
+      </section>
+
+      <section class="ls-card ls-figure">
+        <h2>Visualisation</h2>
+        <div class="ls-diagram-label">1 — One thread turn unwrapped (lead angle vs friction angle)</div>
+        <div id="triSvg"></div>
+        <p class="ls-caption">Unwrap one revolution at the mean diameter and the thread becomes an inclined plane. The load slides back down on its own only when the incline λ is steeper than the friction angle ρ.</p>
+        <div class="ls-diagram-label">2 — Thread geometry</div>
+        <div id="screwSvg"></div>
+        <p class="ls-caption">Axial section showing how lead, pitch and mean diameter relate.</p>
+        <div class="ls-diagram-label">3 — Efficiency vs lead angle (at this μ′)</div>
+        <div id="curveSvg"></div>
+        <p class="ls-caption">Shaded band = self-locking (λ &lt; ρ), where forward efficiency is below 50%. Efficiency and back-driving are opposite sides of the same coin.</p>
+      </section>
+    </div>
+
+    <div class="ls-column">
+      <section class="ls-card">
+        <h2>Results</h2>
+        <div class="ls-hero">
+          <div><small>Forward efficiency η</small><p class="ls-big" id="rEff">—</p></div>
+          <div><small>Back-drive efficiency η<sub>b</sub></small><p class="ls-big" id="rEffB">—</p></div>
+        </div>
+        <div id="verdict" class="ls-badge ls-warn" aria-live="polite">—</div>
+        <p class="ls-note" id="verdictNote"></p>
+        <hr>
+        <div class="ls-result"><span>Friction coefficient μ (thread)</span><b id="rMu">—</b></div>
+        <div class="ls-result"><span>Effective μ′ = μ / cos α</span><b id="rMuEff">—</b></div>
+        <div class="ls-result"><span>Mean (pitch) diameter d<sub>m</sub></span><b id="rDm">—</b></div>
+        <div class="ls-result"><span>Thread pitch p</span><b id="rP">—</b></div>
+        <div class="ls-result"><span>Lead angle λ</span><b id="rLam">—</b></div>
+        <div class="ls-result"><span>Friction angle ρ = arctan μ′</span><b id="rRho">—</b></div>
+        <div class="ls-result"><span>tan λ vs μ′</span><b id="rCmp">—</b></div>
+        <div class="ls-result"><span>Self-locking margin μ′ / tan λ</span><b id="rRatio">—</b></div>
+        <hr>
+        <div class="ls-result"><span>Back-drive torque at screw (load-driven)</span><b id="rTb">—</b></div>
+        <div class="ls-result"><span>Holding torque required (brake)</span><b id="rTh">—</b></div>
+      </section>
+      <section class="ls-card">
+        <h2>Hand calculation</h2>
+        <button class="ls-copy" id="copyBtn" type="button">Copy working</button>
+        <span id="copyStatus" class="ls-note" role="status"></span>
+        <pre class="ls-work" id="work">—</pre>
+        <p class="ls-note">Every number above is substituted from your inputs so the result can be reproduced step by step. Angles are in degrees; torque uses mean diameter in metres.</p>
+      </section>
+      <div class="panel caution">
+        <h3>Engineering note</h3>
+        <p>Friction varies with surface finish, wear, temperature, speed and lubrication. A calculated self-locking condition is not a safety-rated brake; use an independent holding or fail-safe device for suspended or safety-critical loads.</p>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <a class="btn" href="../projects.html">← All projects</a>
+    <a class="btn sm" href="gripper.html#calculations">Related: robotic gripper calculations</a>
+  </div>
+</main>
+
+<footer class="site"><div>
+  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span><a href="../index.html">Home</a> · <a href="../tools.html">Tools</a> · <a href="../projects.html">Projects</a></span>
+</div></footer>
+
+<script>
+const NUT = {
+  bronze:{label:'Bronze (SAE 660)',dry:.17,oil:.10,grease:.09},
+  brass:{label:'Brass',dry:.18,oil:.11,grease:.10},
+  castiron:{label:'Cast iron',dry:.18,oil:.11,grease:.10},
+  steel:{label:'Steel',dry:.22,oil:.14,grease:.12},
+  nylon:{label:'Nylon 6/6',dry:.20,oil:.15,grease:.13},
+  acetal:{label:'Acetal (POM)',dry:.20,oil:.15,grease:.13},
+  acetalptfe:{label:'PTFE-filled acetal',dry:.10,oil:.08,grease:.08},
+  iglide:{label:'Self-lube polymer',dry:.11,oil:.09,grease:.09},
+  uhmwpe:{label:'UHMW-PE',dry:.16,oil:.12,grease:.11},
+  peek:{label:'PEEK',dry:.22,oil:.16,grease:.14},
+  ptfe:{label:'PTFE (virgin)',dry:.07,oil:.06,grease:.06}
+};
+const SCREW = {
+  carbon:{label:'Carbon / alloy steel',f:1},
+  hardened:{label:'Hardened & ground steel',f:.88},
+  chrome:{label:'Chrome-plated steel',f:.85},
+  ss303:{label:'Stainless 303/304',f:1.08},
+  ss316:{label:'Stainless 316',f:1.12},
+  alu:{label:'Aluminium',f:1.15,warn:'Aluminium screws wear rapidly against metal nuts — use with polymer nuts and light loads only.'},
+  brassS:{label:'Brass / bronze screw',f:1.02}
+};
+const OVERRIDE = {
+  'carbon|steel':{dry:.25,oil:.15,grease:.13,warn:'Steel-on-steel threads gall and wear quickly — lubricate continuously or change the nut material.'},
+  'hardened|steel':{dry:.23,oil:.14,grease:.12,warn:'Steel-on-steel threads require continuous lubrication.'},
+  'ss303|steel':{dry:.32,oil:.18,grease:.15,warn:'Stainless against steel is highly galling-prone. Avoid, or use a bronze/polymer nut.'},
+  'ss316|steel':{dry:.35,oil:.20,grease:.16,warn:'316 against steel galls severely. Use bronze or polymer nut.'},
+  'alu|steel':{dry:.30,oil:.18,grease:.15,warn:'Aluminium on steel: high wear and pick-up. Not recommended for power screws.'},
+  'brassS|brass':{dry:.22,oil:.13,grease:.11,warn:'Brass on brass is prone to seizure — use dissimilar materials.'}
+};
+const POLY=['nylon','acetal','acetalptfe','iglide','uhmwpe','peek','ptfe'];
+const LUBE={dry:'dry',oil:'oil-lubricated',grease:'grease-lubricated'};
+const $=id=>document.getElementById(id);
+const val=name=>document.querySelector(`input[name="${name}"]:checked`).value;
+const DEG=180/Math.PI;
+const f=(x,d=5)=>Number.isFinite(x)?x.toFixed(d):'—';
+
+function buildToggles(id,data,name,checked){
+  $(id).innerHTML=Object.entries(data).map(([key,item])=>
+    `<label class="ls-toggle"><input type="radio" name="${name}" value="${key}"${key===checked?' checked':''}><span>${item.label}</span></label>`).join('');
+}
+function lookupMu(screw,nut,lube){
+  const override=OVERRIDE[`${screw}|${nut}`];
+  if(override)return {mu:override[lube],warn:override.warn};
+  const warn=[];
+  if(SCREW[screw].warn)warn.push(SCREW[screw].warn);
+  if(POLY.includes(nut)&&lube!=='dry')warn.push('Polymer nuts are often run dry; check grease compatibility.');
+  if(POLY.includes(nut))warn.push('Polymer nuts are PV-limited: check the supplier load/speed (PV) chart.');
+  return {mu:NUT[nut][lube]*SCREW[screw].f,warn:warn.join(' ')};
+}
+function triSVG(dm,lead,lamDeg,rhoDeg){
+  const W=440,H=230,ox=46,oy=H-52,circ=Math.PI*dm;
+  const scale=Math.min(330/circ,130/lead,60),bx=circ*scale,hy=lead*scale,lock=rhoDeg>=lamDeg;
+  const radius=Math.min(bx*.55,150);
+  const rx=ox+radius*Math.cos(rhoDeg/DEG),ry=oy-radius*Math.sin(rhoDeg/DEG);
+  const arc=(r,a)=>`M ${ox+r} ${oy} A ${r} ${r} 0 0 0 ${ox+r*Math.cos(a/DEG)} ${oy-r*Math.sin(a/DEG)}`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Unwrapped thread triangle">
+    <defs><marker id="lead-a1" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="none" stroke="#9aa7b4"/></marker></defs>
+    <polygon points="${ox},${oy} ${ox+bx},${oy} ${ox+bx},${oy-hy}" fill="#1f6feb26" stroke="#58a6ff" stroke-width="1.6"/>
+    <line x1="${ox}" y1="${oy}" x2="${rx}" y2="${ry}" stroke="${lock?'#3fb950':'#f85149'}" stroke-width="1.6" stroke-dasharray="6 4"/>
+    <path d="${arc(44,lamDeg)}" fill="none" stroke="#58a6ff" stroke-width="1.2"/><path d="${arc(64,rhoDeg)}" fill="none" stroke="${lock?'#3fb950':'#f85149'}" stroke-width="1.2"/>
+    <text x="${ox+50}" y="${oy-10}" font-size="11" fill="#58a6ff">λ = ${f(lamDeg,2)}°</text>
+    <text x="${ox+70}" y="${oy-34}" font-size="11" fill="${lock?'#3fb950':'#f85149'}">ρ = ${f(rhoDeg,2)}°</text>
+    <line x1="${ox}" y1="${oy+24}" x2="${ox+bx}" y2="${oy+24}" stroke="#9aa7b4" marker-end="url(#lead-a1)" marker-start="url(#lead-a1)"/>
+    <text x="${ox+bx/2}" y="${oy+39}" font-size="11" fill="#9aa7b4" text-anchor="middle">π·dₘ = ${f(circ,2)} mm (one revolution)</text>
+    <line x1="${ox+bx+16}" y1="${oy}" x2="${ox+bx+16}" y2="${oy-hy}" stroke="#9aa7b4" marker-end="url(#lead-a1)" marker-start="url(#lead-a1)"/>
+    <text x="${ox+bx+22}" y="${oy-hy/2}" font-size="11" fill="#9aa7b4">L = ${f(lead,2)} mm</text>
+    <text x="${ox}" y="18" font-size="11" font-weight="600" fill="${lock?'#3fb950':'#f85149'}">${lock?'ρ ≥ λ → friction holds the load (self-locking)':'λ > ρ → the load slides back (back-drives)'}</text>
+  </svg>`;
+}
+function screwSVG(dMaj,dm,p,lead,starts){
+  const W=440,H=210,cy=100,teeth=5,x0=66;
+  const scale=Math.min(290/(teeth*p),64/(dMaj/2),40),w=p*scale;
+  const majR=dMaj/2*scale,minR=Math.max(3,(dMaj/2-p/2)*scale),meanR=dm/2*scale;
+  let top=`M ${x0} ${cy-minR}`,bottom=`M ${x0} ${cy+minR}`;
+  for(let i=0;i<teeth;i++){
+    const x=x0+i*w;
+    top+=` L ${(x+.2*w).toFixed(1)} ${(cy-majR).toFixed(1)} L ${(x+.6*w).toFixed(1)} ${(cy-majR).toFixed(1)} L ${(x+.8*w).toFixed(1)} ${(cy-minR).toFixed(1)} L ${(x+w).toFixed(1)} ${(cy-minR).toFixed(1)}`;
+    bottom+=` L ${(x+.2*w).toFixed(1)} ${(cy+majR).toFixed(1)} L ${(x+.6*w).toFixed(1)} ${(cy+majR).toFixed(1)} L ${(x+.8*w).toFixed(1)} ${(cy+minR).toFixed(1)} L ${(x+w).toFixed(1)} ${(cy+minR).toFixed(1)}`;
+  }
+  const xe=x0+teeth*w,Lpx=Math.min(starts*w,teeth*w-.2*w);
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Thread profile">
+    <defs><marker id="lead-a2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="none" stroke="#9aa7b4"/></marker></defs>
+    <rect x="${x0}" y="${cy-minR}" width="${xe-x0}" height="${2*minR}" fill="#1c2330"/>
+    <path d="${top}" fill="#30363d" stroke="#9aa7b4" stroke-width="1.2"/><path d="${bottom}" fill="#30363d" stroke="#9aa7b4" stroke-width="1.2"/>
+    <line x1="${x0-10}" y1="${cy}" x2="${xe+10}" y2="${cy}" stroke="#6e7b8a" stroke-dasharray="7 3 2 3"/>
+    <line x1="${x0}" y1="${cy-meanR}" x2="${xe}" y2="${cy-meanR}" stroke="#58a6ff" stroke-dasharray="4 3"/><line x1="${x0}" y1="${cy+meanR}" x2="${xe}" y2="${cy+meanR}" stroke="#58a6ff" stroke-dasharray="4 3"/>
+    <line x1="${x0+.2*w}" y1="${cy-majR-14}" x2="${x0+1.2*w}" y2="${cy-majR-14}" stroke="#9aa7b4" marker-end="url(#lead-a2)" marker-start="url(#lead-a2)"/>
+    <text x="${x0+.7*w}" y="${cy-majR-19}" font-size="10.5" fill="#9aa7b4" text-anchor="middle">p = ${f(p,3)} mm</text>
+    <line x1="${x0+.2*w}" y1="${cy-majR-34}" x2="${x0+.2*w+Lpx}" y2="${cy-majR-34}" stroke="#58a6ff" marker-end="url(#lead-a2)" marker-start="url(#lead-a2)"/>
+    <text x="${x0+.2*w+Lpx/2}" y="${cy-majR-39}" font-size="10.5" fill="#58a6ff" text-anchor="middle">L = n·p = ${f(lead,2)} mm</text>
+    <line x1="${xe+22}" y1="${cy-majR}" x2="${xe+22}" y2="${cy+majR}" stroke="#9aa7b4" marker-end="url(#lead-a2)" marker-start="url(#lead-a2)"/>
+    <text x="${xe+27}" y="${cy-majR+12}" font-size="10.5" fill="#9aa7b4">d = ${f(dMaj,2)}</text>
+    <line x1="${x0-20}" y1="${cy-meanR}" x2="${x0-20}" y2="${cy+meanR}" stroke="#58a6ff" marker-end="url(#lead-a2)" marker-start="url(#lead-a2)"/>
+    <text x="${x0-24}" y="${cy-meanR-6}" font-size="10.5" fill="#58a6ff" text-anchor="middle">dₘ = ${f(dm,2)}</text>
+  </svg>`;
+}
+function curveSVG(muE,lamDeg,eff){
+  const W=440,H=240,ml=50,mr=18,mt=18,mb=38,XM=45;
+  const px=l=>ml+l/XM*(W-ml-mr),py=e=>H-mb-e*(H-mt-mb),rho=Math.atan(muE)*DEG;
+  const points=[];
+  for(let i=0;i<=200;i++){
+    const angle=.2+i*(XM-.2)/200,t=Math.tan(angle/DEG),e=t*(1-muE*t)/(t+muE);
+    points.push(`${px(angle).toFixed(1)},${py(Math.max(0,Math.min(1,e))).toFixed(1)}`);
+  }
+  let grid='';
+  for(let e=0;e<=1.0001;e+=.2)grid+=`<line x1="${ml}" y1="${py(e)}" x2="${W-mr}" y2="${py(e)}" stroke="#30363d"/><text x="${ml-8}" y="${py(e)+4}" font-size="10" fill="#6e7b8a" text-anchor="end">${(e*100).toFixed(0)}%</text>`;
+  for(let angle=0;angle<=XM;angle+=10)grid+=`<line x1="${px(angle)}" y1="${mt}" x2="${px(angle)}" y2="${H-mb}" stroke="#30363d"/><text x="${px(angle)}" y="${H-mb+15}" font-size="10" fill="#6e7b8a" text-anchor="middle">${angle}°</text>`;
+  const lc=Math.min(lamDeg,XM),ec=Math.max(0,Math.min(1,eff)),rhoX=Math.min(rho,XM);
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Efficiency versus lead angle">
+    <rect x="${ml}" y="${mt}" width="${Math.max(0,px(rhoX)-ml)}" height="${H-mb-mt}" fill="#f8514915"/>${grid}
+    <polyline points="${points.join(' ')}" fill="none" stroke="#58a6ff" stroke-width="2"/>
+    <line x1="${px(rhoX)}" y1="${mt}" x2="${px(rhoX)}" y2="${H-mb}" stroke="#f85149" stroke-dasharray="5 4"/>
+    <text x="${px(rhoX)+5}" y="${mt+12}" font-size="10" fill="#f85149">λ = ρ = ${f(rho,1)}°</text>
+    <line x1="${px(lc)}" y1="${py(ec)}" x2="${px(lc)}" y2="${H-mb}" stroke="#3fb950" stroke-dasharray="3 3"/>
+    <circle cx="${px(lc)}" cy="${py(ec)}" r="4.5" fill="#3fb950"/>
+    <text x="${px(lc)+7}" y="${py(ec)-7}" font-size="10.5" font-weight="600" fill="#3fb950">your design: ${f(lamDeg,1)}°, ${(ec*100).toFixed(1)}%</text>
+    <text x="${ml}" y="${H-4}" font-size="10" fill="#9aa7b4">lead angle λ → (self-locking zone shaded)</text>
+    <line x1="${ml}" y1="${H-mb}" x2="${W-mr}" y2="${H-mb}" stroke="#30363d"/><line x1="${ml}" y1="${mt}" x2="${ml}" y2="${H-mb}" stroke="#30363d"/>
+  </svg>`;
+}
+function clearResults(message){
+  ['rEff','rEffB','rMu','rMuEff','rDm','rP','rLam','rRho','rCmp','rRatio','rTb','rTh'].forEach(id=>$(id).textContent='—');
+  $('verdict').className='ls-badge ls-warn';
+  $('verdict').textContent=message;
+  $('verdictNote').textContent='';
+  $('work').textContent=message;
+  ['triSvg','screwSvg','curveSvg'].forEach(id=>$(id).replaceChildren());
+}
+function calc(){
+  const form=val('form');
+  $('customWrap').hidden=form!=='custom';
+  const leadInput=$('lead'),startsInput=$('starts'),diaInput=$('dia'),loadInput=$('load'),alphaInput=$('alphaCustom'),muInput=$('muManual');
+  const lead=leadInput.valueAsNumber,starts=startsInput.valueAsNumber,diameter=diaInput.valueAsNumber,load=loadInput.valueAsNumber;
+  const alpha=form==='custom'?alphaInput.valueAsNumber:Number(form),screw=val('screwMat'),nut=val('nutMat'),lube=val('lube'),manual=$('manual').checked;
+  const auto=lookupMu(screw,nut,lube);
+  muInput.disabled=!manual;
+  if(!manual)muInput.value=auto.mu.toFixed(3);
+  const mu=manual?muInput.valueAsNumber:auto.mu;
+  $('matWarn').textContent=manual?'Manual override active — material table ignored.':auto.warn;
+  $('matWarn').classList.toggle('ls-error',manual);
+  const startsValid=Number.isInteger(starts)&&starts>=1;
+  if(!Number.isFinite(lead)||lead<=0||!startsValid||!Number.isFinite(diameter)||diameter<=0||!Number.isFinite(load)||load<0||
+     !Number.isFinite(alpha)||alpha<0||alpha>45||!Number.isFinite(mu)||mu<=0||mu>.8){
+    clearResults('Enter valid positive geometry, a whole-number start count, non-negative load, and μ between 0 and 0.8.');
+    return;
+  }
+  const pitch=lead/starts,nominal=val('dmode')==='nominal',dm=nominal?diameter-pitch/2:diameter,dMaj=nominal?diameter:diameter+pitch/2;
+  if(dm<=0){clearResults('Mean diameter must be positive. Increase the entered diameter or reduce lead.');return;}
+  const formName={'0':'square','14.5':'ACME','15':'trapezoidal','30':'UN / metric V'}[String(alpha)]||'custom';
+  const cosA=Math.cos(alpha/DEG),muE=mu/cosA,tanL=lead/(Math.PI*dm),lamDeg=Math.atan(tanL)*DEG,rhoDeg=Math.atan(muE)*DEG;
+  const num=tanL*(1-muE*tanL),den=tanL+muE,eff=den>0?num/den:0;
+  const nb=tanL-muE,db=tanL*(1+muE*tanL),effB=nb>0?nb/db:0;
+  const torque=load*(dm/2000)*(tanL-muE)/(1+muE*tanL),ratio=muE/tanL;
+  const torqueText=value=>Math.abs(value)<1?`${f(value*1000,1)} N·mm`:`${f(value,3)} N·m`;
+  $('rMu').textContent=f(mu,3);$('rMuEff').textContent=f(muE,5);
+  $('rDm').textContent=`${f(dm,3)} mm`;$('rP').textContent=`${f(pitch,3)} mm`;
+  $('rLam').textContent=`${f(lamDeg,3)}°`;$('rRho').textContent=`${f(rhoDeg,3)}°`;
+  $('rCmp').textContent=`${f(tanL,5)} vs ${f(muE,5)}`;$('rRatio').textContent=f(ratio,3);
+  $('rEff').textContent=`${(Math.max(0,eff)*100).toFixed(1)}%`;$('rEffB').textContent=`${(effB*100).toFixed(1)}%`;
+  $('rTb').textContent=torque>0?torqueText(torque):'none — self-locking';
+  $('rTh').textContent=torque>0?torqueText(torque):'0 (held by thread friction)';
+  const badge=$('verdict'),note=$('verdictNote');
+  if(ratio>=1.3){
+    badge.className='ls-badge ls-good';badge.textContent=`Self-locking — will not back-drive (μ′ is ${f(ratio,2)}× tan λ)`;
+    note.textContent='Comfortable static margin. Still fit a brake or fail-safe device for suspended or safety-critical loads, and re-check with a reduced μ after run-in.';
+  }else if(ratio>=1){
+    badge.className='ls-badge ls-warn';badge.textContent=`Marginally self-locking (μ′ is only ${f(ratio,2)}× tan λ)`;
+    note.textContent='Static friction just holds the load, but vibration, shock, run-in polishing or lubricant ingress can tip this into back-driving. Add a brake or reduce the lead.';
+  }else{
+    badge.className='ls-badge ls-bad';badge.textContent=`Will back-drive — not self-locking (μ′ is ${f(ratio,2)}× tan λ)`;
+    note.textContent='The load will turn the screw when input torque is removed. A brake, worm reducer, counterbalance or finer lead is required to hold position.';
+  }
+  $('triSvg').innerHTML=triSVG(dm,lead,lamDeg,rhoDeg);
+  $('screwSvg').innerHTML=screwSVG(dMaj,dm,pitch,lead,starts);
+  $('curveSvg').innerHTML=curveSVG(muE,lamDeg,Math.max(0,eff));
+
+  const lines=[],rule=title=>`── ${title} ${'─'.repeat(Math.max(0,54-title.length))}`;
+  lines.push(rule('GIVEN'),`  Lead                  L  = ${f(lead,3)} mm/rev`,`  Number of starts      n  = ${starts}`,
+    `  ${nominal?`Nominal (major) Ø     d  = ${f(diameter,3)} mm`:`Mean (pitch) Ø        dm = ${f(diameter,3)} mm`}`,
+    `  Axial load            F  = ${f(load,2)} N`,`  Thread half-angle     α  = ${f(alpha,2)}°  (${formName})`,
+    `  Pair  : ${SCREW[screw].label} screw / ${NUT[nut].label} nut, ${LUBE[lube]}`,
+    `  Friction              μ  = ${f(mu,3)}${manual?'  (manual override)':'  (from table)'}`,'',
+    rule('STEP 1 — Thread pitch'),'  p  = L / n',`     = ${f(lead,3)} / ${starts}`,`     = ${f(pitch,4)} mm`,'',
+    rule('STEP 2 — Mean (pitch) diameter'));
+  if(nominal)lines.push('  dm = d − p/2',`     = ${f(diameter,3)} − ${f(pitch,4)}/2`,`     = ${f(dm,4)} mm`);
+  else lines.push(`  dm = ${f(dm,4)} mm   (entered directly)`,`  d  = dm + p/2 = ${f(dm,4)} + ${f(pitch,4)}/2 = ${f(dMaj,4)} mm  (major Ø, for reference)`);
+  lines.push('',
+    rule('STEP 3 — Lead angle (helix angle at dm)'),'  tan λ = L / (π · dm)',`        = ${f(lead,3)} / (π × ${f(dm,4)})`,
+    `        = ${f(lead,3)} / ${f(Math.PI*dm,4)}`,`        = ${f(tanL,5)}`,`  λ     = arctan(${f(tanL,5)}) = ${f(lamDeg,3)}°`,'',
+    rule('STEP 4 — Effective friction coefficient'),'  μ′ = μ / cos α',`     = ${f(mu,3)} / cos(${f(alpha,2)}°)`,
+    `     = ${f(mu,3)} / ${f(cosA,5)}`,`     = ${f(muE,5)}`,`  friction angle  ρ = arctan(μ′) = arctan(${f(muE,5)}) = ${f(rhoDeg,3)}°`,'',
+    rule('STEP 5 — Self-locking check  (μ′ ≥ tan λ ?)'),`  μ′     = ${f(muE,5)}`,`  tan λ  = ${f(tanL,5)}`,
+    `  margin = μ′ / tan λ = ${f(muE,5)} / ${f(tanL,5)} = ${f(ratio,3)}`,
+    `  → ${ratio>=1?'μ′ ≥ tan λ, so the thread is SELF-LOCKING':'μ′ < tan λ, so the thread WILL BACK-DRIVE'}${ratio>=1&&ratio<1.3?' (margin < 1.3 — treat as marginal)':''}`,'',
+    rule('STEP 6 — Forward (drive) efficiency'),'  η = tan λ · (1 − μ′ · tan λ) / (tan λ + μ′)',
+    `    = ${f(tanL,5)} × (1 − ${f(muE,5)} × ${f(tanL,5)}) / (${f(tanL,5)} + ${f(muE,5)})`,
+    `    = ${f(tanL,5)} × ${f(1-muE*tanL,5)} / ${f(den,5)}`,`    = ${f(num,5)} / ${f(den,5)}`,
+    `    = ${f(eff,5)}   →   η = ${(Math.max(0,eff)*100).toFixed(2)} %`,'',
+    rule('STEP 7 — Back-driving efficiency'),'  ηb = (tan λ − μ′) / [ tan λ · (1 + μ′ · tan λ) ]',
+    `     = (${f(tanL,5)} − ${f(muE,5)}) / (${f(tanL,5)} × ${f(1+muE*tanL,5)})`,
+    `     = ${f(nb,5)} / ${f(db,5)}`);
+  if(nb>0)lines.push(`     = ${f(effB,5)}   →   ηb = ${(effB*100).toFixed(2)} %`);
+  else lines.push(`     = ${f(nb/db,5)}  (negative)`,'  A negative result means no back-driving is possible: ηb = 0 %.');
+  lines.push('',
+    rule('STEP 8 — Torque the load applies to the screw'),'  Tb = F · (dm/2) · (tan λ − μ′) / (1 + μ′ · tan λ)        [dm in metres]',
+    `     = ${f(load,2)} × ${f(dm/2000,6)} × (${f(tanL,5)} − ${f(muE,5)}) / ${f(1+muE*tanL,5)}`,
+    `     = ${f(load,2)} × ${f(dm/2000,6)} × ${f((tanL-muE)/(1+muE*tanL),6)}`,
+    `     = ${f(torque,5)} N·m`,
+    torque>0?`  → positive: the load WILL turn the screw. A brake must hold ${f(torque,4)} N·m (${f(torque*1000,1)} N·mm).`:'  → zero or negative: the load cannot turn the screw; holding torque = 0.',
+    '',rule('NOTES'),'  • Friction coefficients are indicative; verify with supplier data.',
+    '  • Dynamic μ falls with speed, run-in and vibration — a self-locking margin',
+    '    of about 1.3 (η below ~40 %) is normally required before relying on it.',
+    '  • Never use self-locking as the sole safety device for a suspended load.');
+  $('work').textContent=lines.join('\n');
+}
+
+buildToggles('screwMat',SCREW,'screwMat','hardened');
+buildToggles('nutMat',NUT,'nutMat','bronze');
+document.addEventListener('input',calc);
+document.addEventListener('change',calc);
+$('copyBtn').addEventListener('click',async()=>{
+  try{
+    await navigator.clipboard.writeText($('work').textContent);
+    $('copyStatus').textContent='Working copied to clipboard.';
+  }catch(error){
+    $('copyStatus').textContent='Clipboard access is unavailable. Select and copy the working manually.';
+  }
+  setTimeout(()=>$('copyStatus').textContent='',3000);
+});
+$('yr').textContent=new Date().getFullYear();
+calc();
+</script>
+</body>
+</html>
