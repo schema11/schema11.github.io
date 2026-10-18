@@ -6,6 +6,10 @@
   <meta name="description" content="University mechatronics project: a lead-screw robotic gripper designed to hold an egg at 50 N minimum without crushing it — design decisions, force and speed calculations, PLA manufacture, testing and reflection.">
   <title>Robotic Gripper Project | Portfolio</title>
   <link rel="stylesheet" href="../assets/site.css">
+  <style>
+    .evidence.gm-embed iframe{height:900px}
+    @media(max-width:700px){.evidence.gm-embed iframe{height:1250px}}
+  </style>
 </head>
 <body>
 <nav class="nav" aria-label="Main">
@@ -282,7 +286,18 @@
       </figure>
     </div>
 
-    <h3>Mechanism demonstration</h3>
+    <h3>Interactive mechanism demonstration</h3>
+    <p>Explore a kinematic demonstration of the lead-screw bell-crank layout. Move the stroke and geometry sliders to see how the nut travel changes the linkage angle and jaw opening. This is an adjustable mechanism model, not a dimensionally verified copy of the final CAD assembly.</p>
+    <figure class="evidence gm-embed">
+      <header>
+        <span class="tag">⚙ Live mechanism — interactive SVG</span>
+        <a class="btn sm" href="../tools/gripper-mechanism.html" target="_blank" rel="noopener">Open full tool ↗</a>
+      </header>
+      <iframe src="../tools/gripper-mechanism.html?embed=1" title="Interactive lead-screw gripper mechanism with motion and geometry sliders" loading="lazy"></iframe>
+      <figcaption>Adjust the motion and geometry controls to inspect the mechanism’s kinematic behaviour.</figcaption>
+    </figure>
+
+    <h3>Motion study</h3>
     <p>A motion study run before anything was printed, to confirm the fingers reached the full 95 mm opening within the 36.5 mm of available nut travel without the links fouling the frame.</p>
     <figure class="videowrap">
       <video controls preload="metadata" poster="../assets/media/gripper/motion-poster.jpg">
