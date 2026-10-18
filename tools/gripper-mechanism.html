@@ -19,6 +19,9 @@
     .gm-slider b{font-weight:600}
     .gm-slider output{font-style:normal;color:var(--accent);font-variant-numeric:tabular-nums;font-size:.78rem;white-space:nowrap}
     .gm-slider input[type=range]{width:100%;margin:.15rem 0 0;accent-color:var(--accent)}
+    .gm-number{display:block;margin:0 0 .7rem;font-size:.8rem}
+    .gm-number b{display:block;margin-bottom:.3rem;font-weight:600}
+    .gm-number input{box-sizing:border-box;width:100%;padding:.48rem .55rem;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--text);font:inherit}
     .gm-buttons{display:flex;gap:.45rem;flex-wrap:wrap;margin:0 0 .75rem}
     .gm-button{padding:.42rem .7rem;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:8px;font:inherit;font-size:.78rem;cursor:pointer}
     .gm-button:hover{border-color:var(--accent);color:var(--accent)}
@@ -45,7 +48,6 @@
     .gm-work{background:#010409;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:.9rem;overflow-x:auto;margin:0;font:11px/1.6 var(--mono);white-space:pre}
     .gm-embedded .gm-wrap{padding:.75rem}
     .gm-embedded .gm-sub,.gm-embedded .gm-page-heading,.gm-embedded .gm-results,.gm-embedded .gm-howto,.gm-embedded .gm-worked{display:none}
-    .gm-embedded .gm-embed-note{display:none}
     .gm-embedded .gm-grid{grid-template-columns:minmax(220px,260px) minmax(0,1fr);gap:.75rem}
     .gm-embedded .gm-card{padding:.75rem;margin-bottom:.65rem}
     .gm-embedded .gm-slider{margin-bottom:.42rem;font-size:.74rem}
@@ -74,7 +76,7 @@
 <main class="gm-wrap">
   <p class="eyebrow gm-page-heading"><a href="../tools.html" style="color:inherit;text-decoration:none">Tools</a> → Mechanism</p>
   <h1 class="gm-title gm-page-heading">Lead-screw bell-crank gripper</h1>
-  <p class="gm-sub">The lead-screw base connector is the vertical zero-point for which measurements were taken. Positive heights run away from the motor, towards and beyond the jaw rails. Move the nut from 50 mm at fully open to 0 mm at fully closed (as was used for our project), or adjust the geometry below.</p>
+  <p class="gm-sub">The lead-screw base connector is the vertical zero-point. Positive heights run away from the motor. Move the nut from 50 mm at fully open to 0 mm at fully closed, then explore the theoretical force available at each tip if an object is contacted at the selected opening.</p>
 
   <div class="gm-grid">
     <div class="gm-column gm-controls">
@@ -96,7 +98,12 @@
       </section>
 
       <section class="gm-card">
-        <h2>Drive &amp; screw</h2>
+        <h2>Drive, screw &amp; force assumptions</h2>
+        <label class="gm-number" for="torque"><b>Motor torque at screw (N·m)</b>
+          <input type="number" id="torque" min="0" max="1000" step="0.01" value="0.50"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Assumed overall efficiency η</b><output id="v-eta">70 %</output></span>
+          <input type="range" id="eta" min="1" max="100" step="1" value="70"></label>
+        <p class="gm-note">Torque is assumed to be available at the screw. Efficiency is a user-supplied combined allowance for screw and linkage losses, not a measured value.</p>
         <label class="gm-slider"><span class="gm-top"><b>Screw lead L</b><output id="v-lead">8.0 mm/rev</output></span>
           <input type="range" id="lead" min="1" max="16" step="0.5" value="8"></label>
         <label class="gm-slider"><span class="gm-top"><b>Nut at full open</b><output id="v-y0">50 mm</output></span>
@@ -106,7 +113,7 @@
       </section>
 
       <section class="gm-card">
-        <h2>Linkage geometry</h2>
+        <h2>Linkage &amp; jaw geometry</h2>
         <label class="gm-slider"><span class="gm-top"><b>Pivot offset a</b><output id="v-a">93 mm</output></span>
           <input type="range" id="a" min="40" max="130" step="0.5" value="93"></label>
         <label class="gm-slider"><span class="gm-top"><b>Pivot height from screw base</b><output id="v-pb">27 mm</output></span>
@@ -121,6 +128,8 @@
           <input type="range" id="yj" min="80" max="180" step="0.5" value="131"></label>
         <label class="gm-slider"><span class="gm-top"><b>Jaw face offset w<sub>f</sub></b><output id="v-fw">8 mm</output></span>
           <input type="range" id="fw" min="0" max="30" step="0.5" value="8"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Grip length: rail → contact point</b><output id="v-griplen">17 mm</output></span>
+          <input type="range" id="griplen" min="5" max="100" step="1" value="17"></label>
         <label class="gm-slider"><span class="gm-top"><b>Workpiece diameter</b><output id="v-d">28 mm</output></span>
           <input type="range" id="d" min="6" max="100" step="1" value="28"></label>
       </section>
@@ -135,6 +144,7 @@
           <span><i style="background:#3fb950"></i>jaw carriages</span>
           <span><i style="background:#e6edf3;border:1px solid #6e7b8a"></i>slots</span>
           <span><i style="background:#f85149"></i>bearings / pins</span>
+          <span><i style="background:#d29922"></i>tip contact height</span>
         </div>
       </section>
 
@@ -151,35 +161,40 @@
           <div class="gm-result"><span>Slider along arm 2, t</span><b id="r-t">—</b></div>
           <div class="gm-result"><span>Jaw carriage x<sub>J</sub></span><b id="r-jx">—</b></div>
           <div class="gm-result"><span>Clear opening</span><b id="r-op">—</b></div>
-          <div class="gm-result"><span>Transmission d(opening)/dy<sub>N</sub></span><b id="r-ratio">—</b></div>
+          <div class="gm-result"><span>d(opening)/dy<sub>N</sub></span><b id="r-ratio">—</b></div>
           <div class="gm-result"><span>Opening change per screw rev</span><b id="r-rate">—</b></div>
           <div class="gm-result"><span>Grip on workpiece at</span><b id="r-grip">—</b></div>
+          <div class="gm-result"><span>Force ratio: each tip / axial nut force</span><b id="r-fratio">—</b></div>
+          <div class="gm-result"><span>Estimated axial nut force</span><b id="r-nutforce">—</b></div>
+          <div class="gm-result"><span>Available force at each tip</span><b id="r-tipforce">—</b></div>
+          <div class="gm-result"><span>Total inward force, both tips</span><b id="r-totalforce">—</b></div>
+          <div class="gm-result"><span>Moment at each carriage, if loaded</span><b id="r-moment">—</b></div>
         </section>
 
         <section class="gm-card gm-howto">
-          <h2>How the motion propagates</h2>
+          <h2>What the force figures mean</h2>
           <ol class="gm-how">
-            <li><b>Actuator → screw.</b> <span>The actuator rotates the axially located lead screw.</span></li>
-            <li><b>Screw → nut.</b> <span>The nut translates by one screw lead per revolution.</span></li>
-            <li><b>Nut → arm 1.</b> <span>The nut pin follows the arm-1 slot as the bell-crank turns.</span></li>
-            <li><b>Arm 1 → arm 2.</b> <span>The arms form one rigid bell-crank with included angle β.</span></li>
-            <li><b>Arm 2 → jaw.</b> <span>The second slot drives a slider bearing attached to the rail-mounted jaw carriage.</span></li>
-            <li><b>Mirrored pair.</b> <span>Both jaws move symmetrically about the screw axis.</span></li>
+            <li><b>Torque → nut force.</b> <span>Motor torque at the screw is converted to axial force using screw lead and the assumed overall efficiency.</span></li>
+            <li><b>Nut → two jaws.</b> <span>The instantaneous opening-to-nut-travel ratio sets the force available at each of two symmetric tips by virtual work.</span></li>
+            <li><b>Grip length → moment.</b> <span>Force at an offset contact point creates a bending moment at each carriage. In this rigid model, the offset does not itself reduce horizontal force.</span></li>
+            <li><b>Actual grip.</b> <span>Force is transmitted to an object only after contact. Before contact, the displayed figure is available force at that opening, not applied force.</span></li>
           </ol>
-          <p class="gm-note">The jaw fingers and workpiece are on the far side of the linear rail from the motor. Verify slot reach and clearances against the SolidWorks assembly.</p>
+          <p class="gm-note">The displayed force is not a holding-force or motor-rating guarantee. It excludes motor torque–speed behaviour, structural deflection, local contact mechanics and measured friction losses.</p>
         </section>
       </div>
 
       <section class="gm-card gm-worked">
-        <h2>Kinematics for this frame (substituted)</h2>
+        <h2>Kinematics &amp; force for this frame (substituted)</h2>
         <pre class="gm-work" id="work">—</pre>
-        <p class="gm-note">All vertical coordinates below use the lead-screw base connector as y = 0.</p>
+        <p class="gm-note">All vertical coordinates use the lead-screw base connector as y = 0. Force estimates are suppressed where the modelled geometry is invalid.</p>
       </section>
     </div>
   </div>
 
- 
-  <div class="btn-row gm-page-heading"><a class="btn" href="../tools.html">← All tools</a><a class="btn sm" href="../projects/gripper.html#design">Related: gripper project</a></div>
+  <div class="btn-row gm-page-heading">
+    <a class="btn" href="../tools.html">← All tools</a>
+    <a class="btn sm" href="../projects/gripper.html#design">Related: gripper project</a>
+  </div>
 </main>
 
 <script>
@@ -190,15 +205,16 @@ const f = (value, decimals = 2) =>
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 /*
- * Coordinate datum:
- *   screw axis: x = 0
- *   lead-screw base connector: y = 0
- *   positive y: away from the motor, towards the jaw rails
+ * Datum:
+ *   x = 0: screw axis
+ *   y = 0: lead-screw base connector
+ *   positive y: away from the motor
  *
- * Calculate the right-hand linkage, then mirror it for the left.
- * Right-hand pivot P = (a, yp); nut pin N = (0, yn).
+ * Calculate the right-hand linkage, then mirror its drawing.
  */
 const DEFAULTS = {
+  torque: 0.50,
+  eta: 70,
   lead: 8,
   y0: 50,
   y1: 0,
@@ -208,12 +224,15 @@ const DEFAULTS = {
   beta: 68,
   l2: 140,
   yj: 131,
-  fw: 8,  // illustrative: not supplied in the measurements
-  d: 28   // illustrative: not supplied in the measurements
+  fw: 8,
+  griplen: 17,
+  d: 28
 };
 
 function readP() {
   return {
+    torque: +$('torque').value,
+    eta: +$('eta').value / 100,
     lead: +$('lead').value,
     y0: +$('y0').value,
     y1: +$('y1').value,
@@ -224,6 +243,7 @@ function readP() {
     L2: +$('l2').value,
     yj: +$('yj').value,
     fw: +$('fw').value,
+    griplen: +$('griplen').value,
     dwp: +$('d').value
   };
 }
@@ -231,108 +251,175 @@ function readP() {
 function solve(yn, P) {
   const xP = P.a;
   const yP = P.yp;
+  const th = Math.atan2(yn-yP, -P.a);
+  const r1 = Math.hypot(P.a, yn-yP);
 
-  // Arm 1 points from the pivot towards the nut pin.
-  const th = Math.atan2(yn - yP, -P.a);
-  const r1 = Math.hypot(P.a, yn - yP);
-
-  /*
-   * Arm 2 points upwards and inwards, towards the jaw rail.
-   * beta is the included angle between arm 1 and arm 2.
-   * A smaller beta therefore draws the two arms closer together.
-   */
-  const ph = th - P.beta / DEG;
+  // Included angle between arm 1 and arm 2.
+  const ph = th-P.beta/DEG;
   const sp = Math.sin(ph);
   const cp = Math.cos(ph);
 
-  const t = Math.abs(sp) > 1e-5 ? (P.yj - yP) / sp : NaN;
-  const jx = Number.isFinite(t) ? xP + t * cp : NaN;
-
-  // Right-hand jaw face is inward of its rail-mounted carriage.
-  const face = jx - P.fw;
-  const opening = 2 * face;
+  const t = Math.abs(sp)>1e-5 ? (P.yj-yP)/sp : NaN;
+  const jx = Number.isFinite(t) ? xP+t*cp : NaN;
+  const face = jx-P.fw;
+  const opening = 2*face;
 
   return {
     xP, yP, th, ph, sp, cp, r1, t, jx, face, opening,
-    a1e: [xP + P.L1 * Math.cos(th), yP + P.L1 * Math.sin(th)],
-    a2e: [xP + P.L2 * cp, yP + P.L2 * sp]
+    a1e: [xP+P.L1*Math.cos(th), yP+P.L1*Math.sin(th)],
+    a2e: [xP+P.L2*cp, yP+P.L2*sp]
+  };
+}
+
+/*
+ * Exact instantaneous derivative for the chosen kinematic branch:
+ *
+ * theta = atan2(yn-yp, -a)
+ * dtheta/dyn = -a / (a²+(yn-yp)²)
+ * phi = theta-beta
+ * xJ = a+(yj-yp)cot(phi)
+ * dxJ/dyn = -(yj-yp)csc²(phi) * dtheta/dyn
+ * opening = 2(xJ-fw)
+ */
+function openingDerivative(g, P) {
+  if (!Number.isFinite(g.sp) || Math.abs(g.sp)<1e-5)
+    return NaN;
+  const dThetaDy = -P.a/(P.a*P.a+(g.yP-P.yp+0)*(g.yP-P.yp+0)
+    + (g.r1*g.r1-P.a*P.a));
+  // Algebraically, the denominator above is r1².
+  return -2*(P.yj-P.yp)*dThetaDy/(g.sp*g.sp);
+}
+
+/*
+ * More directly written version of the same derivative, used below.
+ * The sign depends on the selected linkage branch.
+ */
+function transmission(g, P) {
+  if (!Number.isFinite(g.sp) || Math.abs(g.sp)<1e-5)
+    return NaN;
+  return 2*(P.yj-P.yp)*P.a /
+    (g.r1*g.r1*g.sp*g.sp);
+}
+
+function forceAtPose(g, P) {
+  const q = transmission(g,P); // mm opening / mm nut travel
+  const valid =
+    Number.isFinite(P.torque) && P.torque>=0 &&
+    P.lead>0 && P.eta>0 && P.eta<=1 &&
+    P.y0>P.y1 &&
+    Number.isFinite(g.r1) && g.r1<=P.L1 &&
+    Number.isFinite(g.t) && g.t>=0 && g.t<=P.L2 &&
+    Number.isFinite(g.face) && g.face>=0 &&
+    Number.isFinite(q) && Math.abs(q)>1e-5 &&
+    Math.abs(g.sp)>=.12;
+
+  if (!valid) {
+    return {
+      valid:false, q,
+      ratio:NaN, nutForce:NaN, tipForce:NaN,
+      totalForce:NaN, moment:NaN
+    };
+  }
+
+  // T [N m], lead [mm/rev] → nutForce [N].
+  const nutForce =
+    2*Math.PI*P.torque*P.eta/(P.lead/1000);
+
+  /*
+   * For symmetric jaws:
+   *   F_nut |dy| = 2 F_tip |dx|
+   *   |d(opening)| = 2 |dx|
+   * Therefore F_tip/F_nut = 1/|d(opening)/dy|.
+   */
+  const ratio = 1/Math.abs(q);
+  const tipForce = nutForce*ratio;
+
+  // Contact force is horizontal; grip length is perpendicular offset.
+  const moment = tipForce*(P.griplen/1000);
+
+  return {
+    valid:true, q, ratio, nutForce, tipForce,
+    totalForce:2*tipForce, moment
   };
 }
 
 /* SVG coordinates are fitted dynamically to the selected geometry. */
 let S = 2.5, OX = 350, OY = 500;
-const X = x => OX + S*x;
-const Y = y => OY - S*y;
+const X = x => OX+S*x;
+const Y = y => OY-S*y;
 
-function cap(m, x1, y1, x2, y2, width, colour, opacity = 1) {
+function cap(m,x1,y1,x2,y2,width,colour,opacity=1) {
   return `<line x1="${f(X(m*x1),1)}" y1="${f(Y(y1),1)}"
     x2="${f(X(m*x2),1)}" y2="${f(Y(y2),1)}"
     stroke="${colour}" stroke-width="${f(width*S,1)}"
     stroke-linecap="round" opacity="${opacity}"/>`;
 }
 
-function rct(m, x, y, w, h, fill, stroke, opacity = 1) {
-  const left = m === 1 ? x : -(x+w);
+function rct(m,x,y,w,h,fill,stroke,opacity=1) {
+  const left = m===1 ? x : -(x+w);
   return `<rect x="${f(X(left),1)}" y="${f(Y(y+h),1)}"
     width="${f(w*S,1)}" height="${f(h*S,1)}" rx="2"
     fill="${fill}" stroke="${stroke}" stroke-width="1"
     opacity="${opacity}"/>`;
 }
 
-function pin(m, x, y, r, colour = '#f85149') {
+function pin(m,x,y,r,colour='#f85149') {
   return `<circle cx="${f(X(m*x),1)}" cy="${f(Y(y),1)}"
     r="${f(r*S,1)}" fill="#161b22"
     stroke="${colour}" stroke-width="2"/>`;
 }
 
-function txt(px, py, text, colour = '#9aa7b4',
-             anchor = 'middle', size = 10.5, weight = 400) {
+function txt(px,py,text,colour='#9aa7b4',
+             anchor='middle',size=10.5,weight=400) {
   return `<text x="${f(px,1)}" y="${f(py,1)}" font-size="${size}"
     fill="${colour}" text-anchor="${anchor}"
     font-weight="${weight}">${text}</text>`;
 }
 
-function dim(x1, y1, x2, y2, colour) {
+function dim(x1,y1,x2,y2,colour) {
   return `<line x1="${f(X(x1),1)}" y1="${f(Y(y1),1)}"
     x2="${f(X(x2),1)}" y2="${f(Y(y2),1)}"
     stroke="${colour}" stroke-width="1" stroke-dasharray="4 3"
     marker-start="url(#gm-arrow)" marker-end="url(#gm-arrow)"/>`;
 }
 
-function angArc(cx, cy, radius, a1, a2, colour) {
+function angArc(cx,cy,radius,a1,a2,colour) {
   const x1 = X(cx+radius*Math.cos(a1));
   const y1 = Y(cy+radius*Math.sin(a1));
   const x2 = X(cx+radius*Math.cos(a2));
   const y2 = Y(cy+radius*Math.sin(a2));
-  const sweep = a2 < a1 ? 1 : 0;
+  const sweep = a2<a1 ? 1 : 0;
   return `<path d="M ${f(x1,1)} ${f(y1,1)}
     A ${f(radius*S,1)} ${f(radius*S,1)} 0 0 ${sweep}
     ${f(x2,1)} ${f(y2,1)}"
     fill="none" stroke="${colour}" stroke-width="1.3"/>`;
 }
 
-function drawSide(m, g, P, ghost) {
+function drawSide(m,g,P,ghost) {
   const armColour = ghost ? '#8798b5' : '#58a6ff';
   const slotColour = ghost ? '#30363d' : '#e6edf3';
   const opacity = ghost ? .38 : 1;
-  const pivot = [g.xP, g.yP];
-  const between = (p, q, k) =>
-    [p[0]+(q[0]-p[0])*k, p[1]+(q[1]-p[1])*k];
+  const pivot = [g.xP,g.yP];
+  const between = (p,q,k) =>
+    [p[0]+(q[0]-p[0])*k,p[1]+(q[1]-p[1])*k];
   let svg = '';
 
-  svg += cap(m, pivot[0], pivot[1], ...g.a1e, 6.5, armColour, opacity);
-  let u = between(pivot, g.a1e, .08);
-  let v = between(pivot, g.a1e, .98);
-  svg += cap(m, ...u, ...v, 2.7, slotColour, opacity);
+  svg += cap(m,pivot[0],pivot[1],...g.a1e,6.5,armColour,opacity);
+  let u = between(pivot,g.a1e,.08);
+  let v = between(pivot,g.a1e,.98);
+  svg += cap(m,...u,...v,2.7,slotColour,opacity);
 
-  svg += cap(m, pivot[0], pivot[1], ...g.a2e, 6.5, armColour, opacity);
-  u = between(pivot, g.a2e, .08);
-  v = between(pivot, g.a2e, .98);
-  svg += cap(m, ...u, ...v, 2.7, slotColour, opacity);
+  svg += cap(m,pivot[0],pivot[1],...g.a2e,6.5,armColour,opacity);
+  u = between(pivot,g.a2e,.08);
+  v = between(pivot,g.a2e,.98);
+  svg += cap(m,...u,...v,2.7,slotColour,opacity);
+
+  const fingerHeight = Math.max(25,P.griplen+5);
 
   if (ghost) {
     if (Number.isFinite(g.face)) {
-      svg += `<line x1="${f(X(m*g.face),1)}" y1="${f(Y(P.yj+31),1)}"
+      svg += `<line x1="${f(X(m*g.face),1)}"
+        y1="${f(Y(P.yj+fingerHeight+2),1)}"
         x2="${f(X(m*g.face),1)}" y2="${f(Y(P.yj+3),1)}"
         stroke="#3fb950" stroke-width="1.4"
         stroke-dasharray="4 3" opacity=".5"/>`;
@@ -340,30 +427,37 @@ function drawSide(m, g, P, ghost) {
     return svg;
   }
 
-  if (Number.isFinite(g.jx) && Math.abs(g.jx) < 350) {
-    svg += rct(m, g.jx-10, P.yj-6, 20, 12, '#1c3a2a', '#3fb950');
+  if (Number.isFinite(g.jx) && Math.abs(g.jx)<350) {
+    svg += rct(m,g.jx-10,P.yj-6,20,12,'#1c3a2a','#3fb950');
+    svg += rct(m,g.face-2,P.yj+3,4,fingerHeight,
+      '#1c3a2a','#3fb950');
+    svg += pin(m,g.jx,P.yj,2.5);
 
-    // Jaw fingers extend beyond the rail, away from the motor.
-    svg += rct(m, g.face-2, P.yj+3, 4, 25, '#1c3a2a', '#3fb950');
-    svg += pin(m, g.jx, P.yj, 2.5);
+    // Amber marker: the contact height used for the moment calculation.
+    svg += `<circle cx="${f(X(m*g.face),1)}"
+      cy="${f(Y(P.yj+P.griplen),1)}"
+      r="3" fill="#d29922"/>`;
   }
 
-  svg += cap(m, g.xP, g.yP, g.xP+18, g.yP, 4.5, '#6e7b8a');
-  svg += pin(m, g.xP, g.yP, 3.6, '#58a6ff');
+  svg += cap(m,g.xP,g.yP,g.xP+18,g.yP,4.5,'#6e7b8a');
+  svg += pin(m,g.xP,g.yP,3.6,'#58a6ff');
   svg += `<circle cx="${f(X(m*g.xP),1)}" cy="${f(Y(g.yP),1)}"
     r="2.2" fill="#e6edf3"/>`;
   return svg;
 }
 
-function setView(P, poses) {
-  const xValues = [-P.a-35, P.a+35, -P.a-P.L1, P.a+P.L1];
-  const yValues = [-22, 0, P.yp, P.y0, P.y1, P.yj+43];
+function setView(P,poses) {
+  const xValues = [-P.a-35,P.a+35,-P.a-P.L1,P.a+P.L1];
+  const yValues = [
+    -22,0,P.yp,P.y0,P.y1,
+    P.yj+Math.max(25,P.griplen+5)+16
+  ];
 
   for (const g of poses) {
-    for (const x of [g.jx, g.face, g.a1e[0], g.a2e[0]]) {
-      if (Number.isFinite(x)) xValues.push(x, -x);
+    for (const x of [g.jx,g.face,g.a1e[0],g.a2e[0]]) {
+      if (Number.isFinite(x)) xValues.push(x,-x);
     }
-    yValues.push(g.a1e[1], g.a2e[1]);
+    yValues.push(g.a1e[1],g.a2e[1]);
   }
 
   const minX = Math.min(...xValues)-12;
@@ -380,7 +474,7 @@ function setView(P, poses) {
   OY = (height+S*(minY+maxY))/2;
 }
 
-function render(yn, P, options, g0, g1) {
+function render(yn,P,options,g0,g1) {
   const g = solve(yn,P);
   setView(P,[g0,g1,g]);
 
@@ -400,8 +494,8 @@ function render(yn, P, options, g0, g1) {
     )
   );
 
-  svg += rct(1, frameX, -6, 5, P.yj+33, '#1c2330', '#6e7b8a');
-  svg += rct(-1, frameX, -6, 5, P.yj+33, '#1c2330', '#6e7b8a');
+  svg += rct(1,frameX,-6,5,P.yj+33,'#1c2330','#6e7b8a');
+  svg += rct(-1,frameX,-6,5,P.yj+33,'#1c2330','#6e7b8a');
 
   svg += `<rect x="${f(X(-railHalf),1)}" y="${f(Y(P.yj+5),1)}"
     width="${f(2*railHalf*S,1)}" height="${f(8*S,1)}" rx="2"
@@ -410,7 +504,6 @@ function render(yn, P, options, g0, g1) {
     x2="${f(X(railHalf),1)}" y2="${f(Y(P.yj),1)}"
     stroke="#6e7b8a" stroke-dasharray="7 3 2 3"/>`;
 
-  // The lead-screw base connector is the height datum.
   svg += `<rect x="${f(X(-17),1)}" y="${f(Y(0),1)}"
     width="${f(34*S,1)}" height="${f(5*S,1)}" rx="2"
     fill="#30363d" stroke="#9aa7b4"/>`;
@@ -435,7 +528,6 @@ function render(yn, P, options, g0, g1) {
       stroke="#9aa7b4" stroke-width="1.2"/>`;
   }
 
-  // The actuator is below the screw-base connector.
   svg += rct(1,-13,-20,26,14,'#1c2330','#6e7b8a');
   svg += txt(X(0),Y(-21)+14,'actuator','#9aa7b4','middle',10);
 
@@ -463,8 +555,7 @@ function render(yn, P, options, g0, g1) {
   svg += txt(X(11)+6,Y(yn)+4,'lead nut','#d29922','start',10);
 
   if (options.wp) {
-    // Workpiece is above the rail, on the side opposite the motor.
-    const workY = P.yj+17;
+    const workY = P.yj+P.griplen;
     const touching =
       Number.isFinite(g.opening) &&
       g.opening<=P.dwp+.01 &&
@@ -489,13 +580,11 @@ function render(yn, P, options, g0, g1) {
       'rail height '+f(P.yj,0)+' mm from screw base',
       '#9aa7b4','start',9.5
     );
-
     svg += dim(P.a,P.yp,0,yn,'#f85149');
     svg += txt(
       (X(P.a)+X(0))/2,(Y(P.yp)+Y(yn))/2-8,
       'r₁ = '+f(g.r1),'#f85149','middle',10,600
     );
-
     svg += angArc(P.a,P.yp,17,g.th,g.ph,'#58a6ff');
     svg += txt(
       X(P.a)-21,Y(P.yp)-18,
@@ -503,13 +592,11 @@ function render(yn, P, options, g0, g1) {
     );
 
     if (Number.isFinite(g.face)) {
-      svg += dim(
-        -g.face,P.yj+37,
-        g.face,P.yj+37,
-        '#3fb950'
-      );
+      const dimensionY =
+        P.yj+Math.max(25,P.griplen+5)+10;
+      svg += dim(-g.face,dimensionY,g.face,dimensionY,'#3fb950');
       svg += txt(
-        X(0),Y(P.yj+37)-9,
+        X(0),Y(dimensionY)-9,
         'clear opening = '+f(g.opening)+' mm',
         '#3fb950','middle',11,600
       );
@@ -518,6 +605,11 @@ function render(yn, P, options, g0, g1) {
     svg += txt(
       X(P.a)+8,Y(P.yp)-10,
       'fixed bearing','#e6edf3','start',9.5
+    );
+    svg += txt(
+      X(railHalf),Y(P.yj+P.griplen)-6,
+      'grip length '+f(P.griplen,0)+' mm',
+      '#d29922','end',9.5
     );
   }
 
@@ -535,11 +627,9 @@ function gripFraction(P) {
     const yn = P.y0+q*(P.y1-P.y0);
     const opening = solve(yn,P).opening;
     const current = opening-P.dwp;
-
     if (Number.isFinite(current) &&
         previous>0 &&
         current<=0) return q;
-
     previous = current;
   }
   return NaN;
@@ -556,11 +646,13 @@ function update() {
     dims:$('dims').checked,
     wp:$('wp').checked
   };
+
   const {svg,g} = render(yn,P,options,g0,g1);
   $('stage').innerHTML = svg;
 
   $('v-stroke').textContent = f(fraction*100,0)+' %';
   $('v-spd').textContent = f(+$('spd').value,1)+'×';
+  $('v-eta').textContent = f(P.eta*100,0)+' %';
   $('v-lead').textContent = f(P.lead,1)+' mm/rev';
   $('v-y0').textContent = f(P.y0,1)+' mm';
   $('v-y1').textContent = f(P.y1,1)+' mm';
@@ -571,11 +663,11 @@ function update() {
   $('v-l2').textContent = f(P.L2,1)+' mm';
   $('v-yj').textContent = f(P.yj,1)+' mm';
   $('v-fw').textContent = f(P.fw,1)+' mm';
+  $('v-griplen').textContent = f(P.griplen,0)+' mm';
   $('v-d').textContent = f(P.dwp,0)+' mm';
 
-  const h = .05;
-  const ratio =
-    (solve(yn+h,P).opening-solve(yn-h,P).opening)/(2*h);
+  const force = forceAtPose(g,P);
+  const q = force.q;
   const gf = gripFraction(P);
   const rev = (yn-P.y0)/P.lead;
 
@@ -589,66 +681,68 @@ function update() {
   $('r-t').textContent = f(g.t)+' mm';
   $('r-jx').textContent = f(g.jx)+' mm';
   $('r-op').textContent = f(g.opening)+' mm';
-  $('r-ratio').textContent = f(ratio,3)+' mm/mm';
-  $('r-rate').textContent = f(ratio*P.lead,2)+' mm/rev';
+  $('r-ratio').textContent = f(q,3)+' mm/mm';
+  $('r-rate').textContent = f(q*P.lead,2)+' mm/rev';
   $('r-grip').textContent =
     Number.isFinite(gf)
       ? f(gf*100,0)+' % stroke'
       : 'not reached';
 
+  $('r-fratio').textContent =
+    force.valid ? f(force.ratio,3)+' : 1' : 'unavailable';
+  $('r-nutforce').textContent =
+    force.valid ? f(force.nutForce,1)+' N' : 'unavailable';
+  $('r-tipforce').textContent =
+    force.valid ? f(force.tipForce,1)+' N per tip' : 'unavailable';
+  $('r-totalforce').textContent =
+    force.valid ? f(force.totalForce,1)+' N' : 'unavailable';
+  $('r-moment').textContent =
+    force.valid ? f(force.moment,3)+' N·m per carriage' : 'unavailable';
+
   const messages = [];
   let level = 'good';
-
   const flag = (message,severity) => {
     messages.push(message);
     if (severity==='bad') level = 'bad';
     else if (level!=='bad') level = 'warn';
   };
 
-  if (P.y0<=P.y1) {
-    flag(
-      'full-open nut height must exceed full-closed nut height',
-      'bad'
-    );
-  }
+  if (!Number.isFinite(P.torque) || P.torque<0)
+    flag('enter a non-negative motor torque','bad');
 
-  if (g.r1>P.L1) {
+  if (P.y0<=P.y1)
+    flag('full-open nut height must exceed full-closed nut height','bad');
+
+  if (g.r1>P.L1)
     flag(
       'nut pin is '+f(g.r1-P.L1,1)+
-      ' mm beyond the stated arm-1 length',
-      'bad'
+      ' mm beyond the stated arm-1 length','bad'
     );
-  } else if (g.r1>P.L1-3) {
+  else if (g.r1>P.L1-3)
     flag('nut pin is close to the end of arm 1','warn');
-  }
 
-  if (!Number.isFinite(g.t) || g.t<0) {
-    flag(
-      'arm 2 does not reach the jaw rail in its forward direction',
-      'bad'
-    );
-  } else if (g.t>P.L2) {
+  if (!Number.isFinite(g.t) || g.t<0)
+    flag('arm 2 does not reach the jaw rail forwards','bad');
+  else if (g.t>P.L2)
     flag(
       'slider is '+f(g.t-P.L2,1)+
-      ' mm beyond the stated arm-2 length',
-      'bad'
+      ' mm beyond the stated arm-2 length','bad'
     );
-  } else if (g.t>P.L2-3) {
+  else if (g.t>P.L2-3)
     flag('slider is close to the end of arm 2','warn');
-  }
 
-  if (Math.abs(g.sp)<.12) {
+  if (Math.abs(g.sp)<.12)
     flag('arm 2 is nearly parallel to the rail','bad');
-  }
 
-  if (Number.isFinite(g.face) && g.face<0) {
+  if (Number.isFinite(g.face) && g.face<0)
     flag('modelled jaw faces cross the centreline','bad');
-  } else if (Number.isFinite(g.face) && g.face<2) {
+  else if (Number.isFinite(g.face) && g.face<2)
     flag('jaw faces are close to touching','warn');
-  }
+
+  if (!Number.isFinite(q) || Math.abs(q)<=1e-5)
+    flag('force ratio is undefined near this configuration','bad');
 
   const status = $('status');
-
   if (messages.length) {
     status.className = 'gm-badge gm-'+level;
     status.textContent = messages.join(' · ');
@@ -656,54 +750,76 @@ function update() {
     status.className = 'gm-badge gm-good';
     status.textContent =
       'Within modelled reach — opening '+f(g.opening)+
-      ' mm; endpoint range '+
-      f(Math.min(g0.opening,g1.opening))+'–'+
-      f(Math.max(g0.opening,g1.opening))+' mm';
+      ' mm; force is available at contact, not applied in free motion';
   }
 
   const lines = [
-    '-- DATUM: LEAD-SCREW BASE CONNECTOR -------------------------',
+    '-- DATUM AND GEOMETRY ---------------------------------------',
     '  screw base       O  = (0, 0) mm',
     '  fixed bearing    P  = ('+f(g.xP)+', '+f(g.yP)+') mm',
     '  lead nut pin     N  = (0, '+f(yn)+') mm',
-    '  jaw rail         yJ = '+f(P.yj)+' mm from screw base',
-    '  arm lengths      L1 = '+f(P.L1)+' mm; L2 = '+f(P.L2)+' mm',
+    '  jaw rail         yJ = '+f(P.yj)+' mm',
     '  included angle   B  = '+f(P.beta)+' deg',
     '',
-    '-- 1: ARM 1 / NUT PIN ---------------------------------------',
-    '  theta = atan2(yN - yP, -a)',
-    '        = atan2('+f(yn)+' - '+f(P.yp)+', -'+f(P.a)+')',
+    '-- 1: LINKAGE -----------------------------------------------',
+    '  theta = atan2(yN-yP, -a)',
+    '        = atan2('+f(yn-P.yp)+', -'+f(P.a)+')',
     '        = '+f(g.th*DEG,3)+' deg',
-    '  r1    = sqrt(a^2 + (yN - yP)^2)',
-    '        = sqrt('+f(P.a)+'^2 + '+f(yn-P.yp)+'^2)',
-    '        = '+f(g.r1,3)+' mm',
-    '  slot travel from open = '+f(g.r1-g0.r1,3)+' mm',
-    '',
-    '-- 2: RIGID BELL-CRANK / ARM 2 ------------------------------',
-    '  phi   = theta - B',
-    '        = '+f(g.th*DEG,3)+' - '+f(P.beta),
+    '  r1    = sqrt(a²+(yN-yP)²)',
+    '        = '+f(g.r1,3)+' mm; arm 1 length = '+f(P.L1)+' mm',
+    '  phi   = theta-B',
+    '        = '+f(g.th*DEG,3)+'-'+f(P.beta),
     '        = '+f(g.ph*DEG,3)+' deg',
-    '  t     = (yJ - yP) / sin(phi)',
-    '        = ('+f(P.yj)+' - '+f(P.yp)+') / '+f(g.sp,5),
-    '        = '+f(g.t,3)+' mm (stated L2 = '+f(P.L2)+' mm)',
-    '',
-    '-- 3: JAW POSITION ------------------------------------------',
-    '  xJ      = a + t*cos(phi)',
-    '          = '+f(P.a)+' + '+f(g.t,3)+' x '+f(g.cp,5),
-    '          = '+f(g.jx,3)+' mm',
-    '  opening = 2 x (xJ - wf)',
-    '          = 2 x ('+f(g.jx,3)+' - '+f(P.fw)+')',
+    '  t     = (yJ-yP)/sin(phi)',
+    '        = '+f(P.yj-P.yp)+'/'+f(g.sp,5),
+    '        = '+f(g.t,3)+' mm; arm 2 length = '+f(P.L2)+' mm',
+    '  xJ    = a+t*cos(phi) = '+f(g.jx,3)+' mm',
+    '  opening = 2(xJ-wf)',
+    '          = 2('+f(g.jx,3)+'-'+f(P.fw)+')',
     '          = '+f(g.opening,3)+' mm',
     '',
-    '-- 4: SCREW MOTION / TRANSMISSION ---------------------------',
-    '  n = (yN - yN,open) / lead',
-    '    = ('+f(yn)+' - '+f(P.y0)+') / '+f(P.lead),
-    '    = '+f(rev,3)+' rev',
-    '  d(opening)/dyN = '+f(ratio,4)+' mm/mm',
-    '  d(opening)/dn  = '+f(ratio*P.lead,3)+' mm/rev',
+    '-- 2: INSTANTANEOUS FORCE TRANSFER --------------------------',
+    '  dtheta/dyN = -a/r1²',
+    '              = -'+f(P.a)+'/'+f(g.r1*g.r1,3),
+    '              = '+f(-P.a/(g.r1*g.r1),6)+' rad/mm',
+    '  q = d(opening)/dyN',
+    '    = 2(yJ-yP)a/[r1² sin²(phi)]',
+    '    = 2('+f(P.yj-P.yp)+')('+f(P.a)+')/',
+    '      ['+f(g.r1*g.r1,3)+' x '+f(g.sp*g.sp,6)+']',
+    '    = '+f(q,5)+' mm/mm',
+    '  force ratio, each tip / nut axial force',
+    '    = 1/|q| = '+(force.valid ? f(force.ratio,5) : 'unavailable')+' : 1',
+    '  (F_nut |dyN| = 2 F_tip |dxJ|;',
+    '   |d(opening)| = 2|dxJ|.)',
     '',
-    '  Negative revolutions mean rotation in the closing direction.',
-    '  Slot, interference and force checks need CAD verification.'
+    '-- 3: MOTOR TORQUE TO TIP FORCE -----------------------------',
+    '  motor torque at screw T = '+f(P.torque,3)+' N·m',
+    '  assumed overall efficiency eta = '+f(P.eta,3),
+    '  lead L = '+f(P.lead,3)+' mm/rev',
+    '  F_nut = 2 pi T eta / (L/1000)',
+    '        = 2 pi x '+f(P.torque,3)+' x '+f(P.eta,3)+
+      ' / '+f(P.lead/1000,5),
+    '        = '+(force.valid ? f(force.nutForce,3)+' N' : 'unavailable'),
+    '  F_tip = F_nut/|q|',
+    '        = '+(force.valid ?
+      f(force.nutForce,3)+'/'+f(Math.abs(q),5)+
+      ' = '+f(force.tipForce,3)+' N per jaw'
+      : 'unavailable: resolve geometry/input warnings'),
+    '  sum of inward jaw forces = '+
+      (force.valid ? f(force.totalForce,3)+' N' : 'unavailable'),
+    '',
+    '-- 4: GRIP LENGTH AND MOMENT --------------------------------',
+    '  rail-to-contact offset e = '+f(P.griplen,2)+' mm',
+    '  M_carriage = F_tip x (e/1000)',
+    '             = '+(force.valid ?
+      f(force.tipForce,3)+' x '+f(P.griplen/1000,4)+
+      ' = '+f(force.moment,4)+' N·m per carriage'
+      : 'unavailable'),
+    '  In this rigid-body model, changing e changes the',
+    '  carriage moment, not the ideal horizontal tip force.',
+    '',
+    '  Force is only applied after object contact. Treat these',
+    '  values as estimates, not motor or gripper ratings.'
   ];
 
   $('work').textContent = lines.join('\n');
@@ -717,7 +833,6 @@ let last = 0;
 function loop(timestamp) {
   if (!playing) return;
   if (!last) last = timestamp;
-
   const dt = Math.min(50,timestamp-last)/1000;
   last = timestamp;
 
@@ -753,7 +868,6 @@ $('reset').addEventListener('click',() => {
   Object.entries(DEFAULTS).forEach(([key,value]) => {
     $(key).value = value;
   });
-
   $('stroke').value = 0;
   $('spd').value = 1;
   $('ghost').checked = true;
@@ -784,7 +898,6 @@ $('dl').addEventListener('click',() => {
   link.href = url;
   link.download = 'gripper-mechanism.svg';
   link.click();
-
   setTimeout(() => URL.revokeObjectURL(url),1000);
 });
 
