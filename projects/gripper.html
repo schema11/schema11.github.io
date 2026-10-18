@@ -36,12 +36,12 @@
     <table class="spec-tbl">
       <tbody>
         <tr><td>Required grip force (brief)</td><td>≥ 50 N</td></tr>
-        <tr><td>Axial screw force available</td><td>175.9 N total · 88.0 N per finger</td></tr>
-        <tr><td>Delivered finger force</td><td>58.1 N closed → 78.5 N fully open</td></tr>
-        <tr><td>Maximum jaw opening</td><td>95 mm (47.5 mm per finger from centreline)</td></tr>
+        <tr><td>Axial screw force available</td><td>184.7 N total </td></tr>
+        <tr><td>Delivered finger force (after transmission) </td><td> 121.9 N closed → 164.8 N fully open</td></tr>
+        <tr><td>Maximum jaw opening</td><td> 95 mm (47.5 mm per finger from centreline)</td></tr>
         <tr><td>Lead-nut stroke</td><td>36.5 mm</td></tr>
         <tr><td>Full close time</td><td>4.89 s at 7.47 mm/s</td></tr>
-        <tr><td>Transmission</td><td>8 mm lead single-start screw, η ≈ 0.28</td></tr>
+        <tr><td>Transmission</td><td>8 mm lead quad-start screw, η ≈ 0.59</td></tr>
         <tr><td>Material</td><td>PLA, FDM printed</td></tr>
       </tbody>
     </table>
@@ -58,10 +58,10 @@
   <!-- ============ ① BRIEF & DESIGN DECISIONS ============ -->
   <section class="tabpanel" role="tabpanel" id="panel-brief" aria-labelledby="tab-brief" tabindex="0">
     <h2>The brief</h2>
-    <p>We were handed the actuator and sensing hardware and asked to design everything around it: a gripper capable of applying a minimum of <strong>50 N</strong>, able to grip an egg firmly enough not to drop it but gently enough not to crush it. The work ran from concept sketches and force analysis through CAD, printing, wiring and soldering, sensor calibration, LabVIEW logic and testing.</p>
-    <p>What makes the brief interesting is that it sets a floor but not a ceiling. 50 N is the easy half — a screw drive clears it without trying. The hard half is the upper bound, which is set by the egg and is not a number we control, so the design had to be able to <em>stop</em> at a commanded force rather than simply reach one.</p>
+    <p>We were handed the actuator and sensing hardware and asked to design everything around it: a gripper capable of applying a minimum of <strong>50 N</strong>, able to grip an egg firmly enough not to drop it but gently enough not to crush it. There were bonuses for designs that weren't demonstrated prior, and The work ran from concept sketches and force analysis through CAD, printing components, wiring and soldering of electronics, sensor calibration through Labview and Excel, LabVIEW logic and testing.</p>
+    <p> Supplying 50 N proved rather simple in our particular design, a screw drive can supply in far excess of the required force due to an innate reduction provided by the 8mm lead on the screw. The difficult part was the force transmission and stopping control. The design had to be able to <em>stop</em> at a sensed force from the load cell, despite significant noise. To account for this, a smoothing filter was applied, which reduced responsiveness but allowed determinable values from the sensor.</p>
 
-    <h3>Decision 1 — linear actuation, not rotational</h3>
+    <h3>Decision 1: linear actuation, not rotational</h3>
     <p>The first fork was how the fingers should move. We assessed three families against the egg rather than against a generic object:</p>
     <table class="spec-tbl">
       <thead><tr><th>Option</th><th>Motion at the jaw</th><th>Assessment</th></tr></thead>
@@ -69,21 +69,20 @@
         <tr>
           <td>Rotational (jaws pivot directly, scissor action)</td>
           <td>Jaw tip sweeps an arc; the contact normal rotates as it closes</td>
-          <td>Fewest parts and the simplest to print, but the jaw face rolls across the shell as it closes. The contact force gains a tangential component that tends to squeeze the egg out of the jaws, and the effective moment arm — so the grip force — changes with opening.</td>
+          <td>Fewest parts and the simplest to print, but the jaw face rolls across the shell as it closes. The contact force gains a non-gravitational tangentially applied force that was predicted to have the propencity to squeeze the egg out of the jaws or push it along, increasing the moment arm.</td>
         </tr>
         <tr>
           <td>Curvilinear (four-bar / parallel linkage)</td>
           <td>Jaw stays roughly parallel, travelling along a shallow curve</td>
-          <td>Keeps the contact face flat, which is what the egg wants, but needs six or more printed pin joints. Each joint carries 0.2–0.3 mm of print clearance, so backlash and compliance stack up and the load-cell reading no longer corresponds cleanly to what the jaw is doing.</td>
+          <td>Keeps the contact face flat, which is ideal for egg gripping, but would require six or more printed pin joints. Each joint carries ~0.2 mm of print clearance, so backlash and compliance stack up and the mechanism carries little nuance (widely adopted).</td>
         </tr>
         <tr>
-          <td><strong>Linear — lead screw and nut driving symmetric links (chosen)</strong></td>
+          <td><strong>Linear lead screw and nut driving symmetric links (chosen)</strong></td>
           <td>Both fingers translate in and out symmetrically about the centreline</td>
-          <td>The screw multiplies 0.8 N·m into 176 N of axial force with no gearbox, it is effectively non-back-driveable at 28% efficiency so the grip holds when the motor is unpowered, and the symmetry keeps the force model simple enough to verify by hand. The penalties are speed (4.89 s for a full close) and efficiency — most of the motor's work is lost to thread friction.</td>
+          <td>The screw multiplies 0.8 N·m into 184 N of axial force without a gearbox (natural reduction). The penalties are speed (4.89 s for a full close), which is slower than some of the other force models.</td>
         </tr>
       </tbody>
     </table>
-    <p>Self-locking was the deciding factor. With a back-driveable transmission, the grip force depends on the motor continuing to hold a stall torque; with the screw, the force we set is the force that stays there, which turns "don't crush the egg" into a problem we solve once at the control layer rather than continuously.</p>
 
     <h3>Decision 2 — transmission</h3>
     <table class="spec-tbl">
