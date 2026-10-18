@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interactive SVG demonstration of a lead-screw bell-crank gripper mechanism with adjustable geometry and stroke.">
+  <meta name="description" content="Interactive SVG demonstration of a lead-screw bell-crank gripper mechanism.">
   <title>Gripper Mechanism Demonstration | Portfolio</title>
   <link rel="stylesheet" href="../assets/site.css">
   <style>
@@ -14,7 +14,7 @@
     .gm-column{min-width:0}
     .gm-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem 1.2rem;margin-bottom:1rem}
     .gm-card h2{font-size:.84rem;margin:0 0 .75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:0;border:0}
-    .gm-slider{margin:0 0 .65rem;font-size:.8rem}
+    .gm-slider{display:block;margin:0 0 .65rem;font-size:.8rem}
     .gm-slider .gm-top{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
     .gm-slider b{font-weight:600}
     .gm-slider output{font-style:normal;color:var(--accent);font-variant-numeric:tabular-nums;font-size:.78rem;white-space:nowrap}
@@ -74,7 +74,7 @@
 <main class="gm-wrap">
   <p class="eyebrow gm-page-heading"><a href="../tools.html" style="color:inherit;text-decoration:none">Tools</a> → Mechanism</p>
   <h1 class="gm-title gm-page-heading">Lead-screw bell-crank gripper</h1>
-  <p class="gm-sub">Actuator → lead screw → lead nut → slotted arm on a fixed bearing → second arm at a fixed angle → slider bearing → jaw carriage on a linear rail. Press play or drag the stroke slider, then adjust the geometry to explore the mechanism.</p>
+  <p class="gm-sub">The lead-screw base connector is the vertical datum (0 mm). Positive heights run away from the motor, towards and beyond the jaw rails. Move the nut from 50 mm at fully open to 10 mm at fully closed, or adjust the geometry below.</p>
 
   <div class="gm-grid">
     <div class="gm-column gm-controls">
@@ -92,37 +92,37 @@
         <label class="gm-check"><input type="checkbox" id="ghost" checked> Open/closed envelope</label>
         <label class="gm-check"><input type="checkbox" id="dims" checked> Dimensions &amp; angles</label>
         <label class="gm-check"><input type="checkbox" id="wp" checked> Workpiece</label>
-        <button class="gm-button gm-reset" id="reset" type="button">Reset geometry</button>
+        <button class="gm-button gm-reset" id="reset" type="button">Restore gripper defaults</button>
       </section>
 
       <section class="gm-card">
         <h2>Drive &amp; screw</h2>
-        <label class="gm-slider"><span class="gm-top"><b>Screw lead L</b><output id="v-lead">4.0 mm/rev</output></span>
-          <input type="range" id="lead" min="1" max="12" step="0.5" value="4"></label>
-        <label class="gm-slider"><span class="gm-top"><b>Nut at full open</b><output id="v-y0">58 mm</output></span>
-          <input type="range" id="y0" min="46" max="80" step="0.5" value="58"></label>
-        <label class="gm-slider"><span class="gm-top"><b>Nut at full closed</b><output id="v-y1">82 mm</output></span>
-          <input type="range" id="y1" min="50" max="100" step="0.5" value="82"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Screw lead L</b><output id="v-lead">8.0 mm/rev</output></span>
+          <input type="range" id="lead" min="1" max="16" step="0.5" value="8"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Nut at full open</b><output id="v-y0">50 mm</output></span>
+          <input type="range" id="y0" min="5" max="90" step="0.5" value="50"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Nut at full closed</b><output id="v-y1">10 mm</output></span>
+          <input type="range" id="y1" min="0" max="85" step="0.5" value="10"></label>
       </section>
 
       <section class="gm-card">
         <h2>Linkage geometry</h2>
-        <label class="gm-slider"><span class="gm-top"><b>Pivot offset a</b><output id="v-a">25 mm</output></span>
-          <input type="range" id="a" min="12" max="42" step="0.5" value="25"></label>
-        <label class="gm-slider"><span class="gm-top"><b>Pivot height y<sub>P</sub></b><output id="v-pb">60 mm</output></span>
-          <input type="range" id="pb" min="48" max="90" step="0.5" value="60"></label>
-        <label class="gm-slider"><span class="gm-top"><b>Arm 1 (slotted) L₁</b><output id="v-l1">42 mm</output></span>
-          <input type="range" id="l1" min="24" max="64" step="0.5" value="42"></label>
-        <label class="gm-slider"><span class="gm-top"><b>Fixed arm angle β</b><output id="v-beta">116°</output></span>
-          <input type="range" id="beta" min="70" max="165" step="1" value="116"></label>
-        <label class="gm-slider"><span class="gm-top"><b>Arm 2 (slotted) L₂</b><output id="v-l2">55 mm</output></span>
-          <input type="range" id="l2" min="24" max="78" step="0.5" value="55"></label>
-        <label class="gm-slider"><span class="gm-top"><b>Jaw rail height y<sub>J</sub></b><output id="v-yj">35 mm</output></span>
-          <input type="range" id="yj" min="18" max="52" step="0.5" value="35"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Pivot offset a</b><output id="v-a">93 mm</output></span>
+          <input type="range" id="a" min="40" max="130" step="0.5" value="93"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Pivot height from screw base</b><output id="v-pb">27 mm</output></span>
+          <input type="range" id="pb" min="0" max="90" step="0.5" value="27"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Arm 1 (slotted) L₁</b><output id="v-l1">94 mm</output></span>
+          <input type="range" id="l1" min="70" max="150" step="0.5" value="94"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Fixed included angle β</b><output id="v-beta">68°</output></span>
+          <input type="range" id="beta" min="30" max="130" step="1" value="68"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Arm 2 (slotted) L₂</b><output id="v-l2">124 mm</output></span>
+          <input type="range" id="l2" min="70" max="180" step="0.5" value="124"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Jaw rail height from screw base</b><output id="v-yj">131 mm</output></span>
+          <input type="range" id="yj" min="80" max="180" step="0.5" value="131"></label>
         <label class="gm-slider"><span class="gm-top"><b>Jaw face offset w<sub>f</sub></b><output id="v-fw">8 mm</output></span>
-          <input type="range" id="fw" min="3" max="18" step="0.5" value="8"></label>
+          <input type="range" id="fw" min="0" max="30" step="0.5" value="8"></label>
         <label class="gm-slider"><span class="gm-top"><b>Workpiece diameter</b><output id="v-d">28 mm</output></span>
-          <input type="range" id="d" min="6" max="70" step="1" value="28"></label>
+          <input type="range" id="d" min="6" max="100" step="1" value="28"></label>
       </section>
     </div>
 
@@ -130,7 +130,7 @@
       <section class="gm-card gm-stage">
         <div id="stage"></div>
         <div class="gm-key">
-          <span><i style="background:#58a6ff"></i>driven bell-crank arms</span>
+          <span><i style="background:#58a6ff"></i>bell-crank arms</span>
           <span><i style="background:#6e7b8a"></i>frame, rail &amp; screw</span>
           <span><i style="background:#3fb950"></i>jaw carriages</span>
           <span><i style="background:#e6edf3;border:1px solid #6e7b8a"></i>slots</span>
@@ -142,8 +142,8 @@
         <section class="gm-card">
           <h2>Live output</h2>
           <div id="status" class="gm-badge gm-good" aria-live="polite">—</div>
-          <div class="gm-result"><span>Nut height y<sub>N</sub></span><b id="r-yn">—</b></div>
-          <div class="gm-result"><span>Screw rotation from datum</span><b id="r-rev">—</b></div>
+          <div class="gm-result"><span>Nut height from screw base</span><b id="r-yn">—</b></div>
+          <div class="gm-result"><span>Screw rotation from open</span><b id="r-rev">—</b></div>
           <div class="gm-result"><span>Pivot → nut distance r₁</span><b id="r-r1">—</b></div>
           <div class="gm-result"><span>Arm-1 slot travel Δr₁</span><b id="r-dr1">—</b></div>
           <div class="gm-result"><span>Arm-1 angle θ</span><b id="r-th">—</b></div>
@@ -155,284 +155,655 @@
           <div class="gm-result"><span>Opening change per screw rev</span><b id="r-rate">—</b></div>
           <div class="gm-result"><span>Grip on workpiece at</span><b id="r-grip">—</b></div>
         </section>
+
         <section class="gm-card gm-howto">
           <h2>How the motion propagates</h2>
           <ol class="gm-how">
-            <li><b>Actuator → screw.</b> <span>Rotation only; thrust bearings locate the screw axially.</span></li>
-            <li><b>Screw → nut.</b> <span>One lead of axial travel per revolution.</span></li>
-            <li><b>Nut → arm 1.</b> <span>The nut pin rides in a slot aligned with arm 1, so the pivot-to-nut distance r₁ changes freely as the arm swings.</span></li>
-            <li><b>Arm 1 → arm 2.</b> <span>Both arms are one rigid body about the fixed bearing, so φ = θ − β at every instant.</span></li>
-            <li><b>Arm 2 → jaw.</b> <span>A second slider bearing in arm 2's slot carries the jaw along the linear rail.</span></li>
-            <li><b>Mirrored pair.</b> <span>Identical arms on both sides give symmetric, self-centring jaws.</span></li>
+            <li><b>Actuator → screw.</b> <span>The actuator rotates the axially located lead screw.</span></li>
+            <li><b>Screw → nut.</b> <span>The nut translates by one screw lead per revolution.</span></li>
+            <li><b>Nut → arm 1.</b> <span>The nut pin follows the arm-1 slot as the bell-crank turns.</span></li>
+            <li><b>Arm 1 → arm 2.</b> <span>The arms form one rigid bell-crank with included angle β.</span></li>
+            <li><b>Arm 2 → jaw.</b> <span>The second slot drives a slider bearing attached to the rail-mounted jaw carriage.</span></li>
+            <li><b>Mirrored pair.</b> <span>Both jaws move symmetrically about the screw axis.</span></li>
           </ol>
-          <p class="gm-note">The pins move along their slots as well as with them, converting translation → rotation → translation. The transmission ratio changes across the stroke, so grip force changes with jaw speed.</p>
+          <p class="gm-note">The jaw fingers and workpiece are on the far side of the linear rail from the motor. Verify slot reach and clearances against the SolidWorks assembly.</p>
         </section>
       </div>
 
       <section class="gm-card gm-worked">
         <h2>Kinematics for this frame (substituted)</h2>
         <pre class="gm-work" id="work">—</pre>
-        <p class="gm-note">Every value is substituted from the current slider positions, so any frame of the animation can be checked by hand.</p>
+        <p class="gm-note">All vertical coordinates below use the lead-screw base connector as y = 0.</p>
       </section>
     </div>
   </div>
-  <p class="panel caution gm-embed-note"><strong>Model note:</strong> This is a kinematic demonstration, not a strength or safety analysis. Slider values are illustrative; verify dimensions and clearances against the CAD model before using them for design.</p>
+
+  <p class="panel caution gm-embed-note"><strong>Model note:</strong> Your supplied dimensions are approximate. The initial 94 mm arm-1 length is shorter than the calculated pivot-to-nut distance; the warning identifies this without changing your values. This demonstration is not a strength or safety analysis.</p>
   <div class="btn-row gm-page-heading"><a class="btn" href="../tools.html">← All tools</a><a class="btn sm" href="../projects/gripper.html#design">Related: gripper project</a></div>
 </main>
 
 <script>
-const DEG=180/Math.PI;
-const $=id=>document.getElementById(id);
-const S=3,OX=290,OY=472;
-const X=x=>OX+S*x,Y=y=>OY-S*y;
-const f=(value,d=2)=>Number.isFinite(value)?value.toFixed(d):'—';
-const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
-const DEFAULTS={lead:4,y0:58,y1:82,a:25,pb:60,l1:42,beta:116,l2:55,yj:35,fw:8,d:28};
+const DEG = 180 / Math.PI;
+const $ = id => document.getElementById(id);
+const f = (value, decimals = 2) =>
+  Number.isFinite(value) ? value.toFixed(decimals) : '—';
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
-function readP(){
-  const y0=+$('y0').value;
-  const y1=Math.max(+$('y1').value,y0+2);
-  return {lead:+$('lead').value,y0,y1,a:+$('a').value,pb:+$('pb').value,
-    L1:+$('l1').value,beta:+$('beta').value,L2:+$('l2').value,
-    yj:+$('yj').value,fw:+$('fw').value,dwp:+$('d').value};
+/*
+ * Coordinate datum:
+ *   screw axis: x = 0
+ *   lead-screw base connector: y = 0
+ *   positive y: away from the motor, towards the jaw rails
+ *
+ * Calculate the right-hand linkage, then mirror it for the left.
+ * Right-hand pivot P = (a, yp); nut pin N = (0, yn).
+ */
+const DEFAULTS = {
+  lead: 8,
+  y0: 50,
+  y1: 10,
+  a: 93,
+  pb: 27,
+  l1: 94,
+  beta: 68,
+  l2: 124,
+  yj: 131,
+  fw: 8,  // illustrative: not supplied in the measurements
+  d: 28   // illustrative: not supplied in the measurements
+};
+
+function readP() {
+  return {
+    lead: +$('lead').value,
+    y0: +$('y0').value,
+    y1: +$('y1').value,
+    a: +$('a').value,
+    yp: +$('pb').value,
+    L1: +$('l1').value,
+    beta: +$('beta').value,
+    L2: +$('l2').value,
+    yj: +$('yj').value,
+    fw: +$('fw').value,
+    dwp: +$('d').value
+  };
 }
-function solve(yn,P){
-  const xP=-P.a,yP=P.pb;
-  const th=Math.atan2(yn-yP,-xP),r1=Math.hypot(xP,yn-yP),ph=th-P.beta/DEG;
-  const sp=Math.sin(ph),cp=Math.cos(ph),ok=Math.abs(sp)>1e-4;
-  const t=ok?(P.yj-yP)/sp:NaN,jx=ok?xP+t*cp:NaN,face=jx+P.fw;
-  return {xP,yP,th,ph,sp,cp,r1,t,jx,face,opening:-2*face,
-    a1e:[xP+P.L1*Math.cos(th),yP+P.L1*Math.sin(th)],
-    a2e:[xP+P.L2*cp,yP+P.L2*sp]};
+
+function solve(yn, P) {
+  const xP = P.a;
+  const yP = P.yp;
+
+  // Arm 1 points from the pivot towards the nut pin.
+  const th = Math.atan2(yn - yP, -P.a);
+  const r1 = Math.hypot(P.a, yn - yP);
+
+  /*
+   * Arm 2 points upwards and inwards, towards the jaw rail.
+   * beta is the included angle between arm 1 and arm 2.
+   * A smaller beta therefore draws the two arms closer together.
+   */
+  const ph = th - P.beta / DEG;
+  const sp = Math.sin(ph);
+  const cp = Math.cos(ph);
+
+  const t = Math.abs(sp) > 1e-5 ? (P.yj - yP) / sp : NaN;
+  const jx = Number.isFinite(t) ? xP + t * cp : NaN;
+
+  // Right-hand jaw face is inward of its rail-mounted carriage.
+  const face = jx - P.fw;
+  const opening = 2 * face;
+
+  return {
+    xP, yP, th, ph, sp, cp, r1, t, jx, face, opening,
+    a1e: [xP + P.L1 * Math.cos(th), yP + P.L1 * Math.sin(th)],
+    a2e: [xP + P.L2 * cp, yP + P.L2 * sp]
+  };
 }
-function cap(m,x1,y1,x2,y2,w,col,op=1){
-  return `<line x1="${X(m*x1).toFixed(1)}" y1="${Y(y1).toFixed(1)}" x2="${X(m*x2).toFixed(1)}" y2="${Y(y2).toFixed(1)}" stroke="${col}" stroke-width="${(w*S).toFixed(1)}" stroke-linecap="round" opacity="${op}"/>`;
+
+/* SVG coordinates are fitted dynamically to the selected geometry. */
+let S = 2.5, OX = 350, OY = 500;
+const X = x => OX + S*x;
+const Y = y => OY - S*y;
+
+function cap(m, x1, y1, x2, y2, width, colour, opacity = 1) {
+  return `<line x1="${f(X(m*x1),1)}" y1="${f(Y(y1),1)}"
+    x2="${f(X(m*x2),1)}" y2="${f(Y(y2),1)}"
+    stroke="${colour}" stroke-width="${f(width*S,1)}"
+    stroke-linecap="round" opacity="${opacity}"/>`;
 }
-function rct(m,x,y,w,h,fill,stroke,op=1){
-  const left=m===1?x:-(x+w);
-  return `<rect x="${X(left).toFixed(1)}" y="${Y(y+h).toFixed(1)}" width="${(w*S).toFixed(1)}" height="${(h*S).toFixed(1)}" rx="2" fill="${fill}" stroke="${stroke}" stroke-width="1" opacity="${op}"/>`;
+
+function rct(m, x, y, w, h, fill, stroke, opacity = 1) {
+  const left = m === 1 ? x : -(x+w);
+  return `<rect x="${f(X(left),1)}" y="${f(Y(y+h),1)}"
+    width="${f(w*S,1)}" height="${f(h*S,1)}" rx="2"
+    fill="${fill}" stroke="${stroke}" stroke-width="1"
+    opacity="${opacity}"/>`;
 }
-function pin(m,x,y,r,col='#f85149'){
-  return `<circle cx="${X(m*x).toFixed(1)}" cy="${Y(y).toFixed(1)}" r="${(r*S).toFixed(1)}" fill="#161b22" stroke="${col}" stroke-width="2"/>`;
+
+function pin(m, x, y, r, colour = '#f85149') {
+  return `<circle cx="${f(X(m*x),1)}" cy="${f(Y(y),1)}"
+    r="${f(r*S,1)}" fill="#161b22"
+    stroke="${colour}" stroke-width="2"/>`;
 }
-function txt(px,py,text,col='#9aa7b4',anchor='middle',size=10.5,weight=400){
-  return `<text x="${px.toFixed(1)}" y="${py.toFixed(1)}" font-size="${size}" fill="${col}" text-anchor="${anchor}" font-weight="${weight}">${text}</text>`;
+
+function txt(px, py, text, colour = '#9aa7b4',
+             anchor = 'middle', size = 10.5, weight = 400) {
+  return `<text x="${f(px,1)}" y="${f(py,1)}" font-size="${size}"
+    fill="${colour}" text-anchor="${anchor}"
+    font-weight="${weight}">${text}</text>`;
 }
-function dim(x1,y1,x2,y2,col){
-  return `<line x1="${X(x1).toFixed(1)}" y1="${Y(y1).toFixed(1)}" x2="${X(x2).toFixed(1)}" y2="${Y(y2).toFixed(1)}" stroke="${col}" stroke-width="1" stroke-dasharray="4 3" marker-start="url(#gm-arrow)" marker-end="url(#gm-arrow)"/>`;
+
+function dim(x1, y1, x2, y2, colour) {
+  return `<line x1="${f(X(x1),1)}" y1="${f(Y(y1),1)}"
+    x2="${f(X(x2),1)}" y2="${f(Y(y2),1)}"
+    stroke="${colour}" stroke-width="1" stroke-dasharray="4 3"
+    marker-start="url(#gm-arrow)" marker-end="url(#gm-arrow)"/>`;
 }
-function angArc(cx,cy,r,a1,a2,col){
-  const p1x=X(cx+r*Math.cos(a1)),p1y=Y(cy+r*Math.sin(a1));
-  const p2x=X(cx+r*Math.cos(a2)),p2y=Y(cy+r*Math.sin(a2));
-  const large=Math.abs(a1-a2)>Math.PI?1:0,sweep=a2<a1?1:0;
-  return `<path d="M ${p1x.toFixed(1)} ${p1y.toFixed(1)} A ${(r*S).toFixed(1)} ${(r*S).toFixed(1)} 0 ${large} ${sweep} ${p2x.toFixed(1)} ${p2y.toFixed(1)}" fill="none" stroke="${col}" stroke-width="1.3"/>`;
+
+function angArc(cx, cy, radius, a1, a2, colour) {
+  const x1 = X(cx+radius*Math.cos(a1));
+  const y1 = Y(cy+radius*Math.sin(a1));
+  const x2 = X(cx+radius*Math.cos(a2));
+  const y2 = Y(cy+radius*Math.sin(a2));
+  const sweep = a2 < a1 ? 1 : 0;
+  return `<path d="M ${f(x1,1)} ${f(y1,1)}
+    A ${f(radius*S,1)} ${f(radius*S,1)} 0 0 ${sweep}
+    ${f(x2,1)} ${f(y2,1)}"
+    fill="none" stroke="${colour}" stroke-width="1.3"/>`;
 }
-function drawSide(m,g,P,ghost){
-  const armCol=ghost?'#8798b5':'#58a6ff',slotCol=ghost?'#30363d':'#e6edf3',op=ghost?.38:1;
-  let svg='';
-  const ix=(p,q,k)=>[p[0]+(q[0]-p[0])*k,p[1]+(q[1]-p[1])*k];
-  const pivot=[g.xP,g.yP];
-  svg+=cap(m,pivot[0],pivot[1],g.a1e[0],g.a1e[1],7.5,armCol,op);
-  let u=ix(pivot,g.a1e,.26),v=ix(pivot,g.a1e,.95);
-  svg+=cap(m,u[0],u[1],v[0],v[1],3.4,slotCol,op);
-  svg+=cap(m,pivot[0],pivot[1],g.a2e[0],g.a2e[1],7.5,armCol,op);
-  u=ix(pivot,g.a2e,.20);v=ix(pivot,g.a2e,.95);
-  svg+=cap(m,u[0],u[1],v[0],v[1],3.4,slotCol,op);
-  if(ghost){
-    if(Number.isFinite(g.face))svg+=`<line x1="${X(m*g.face).toFixed(1)}" y1="${Y(2).toFixed(1)}" x2="${X(m*g.face).toFixed(1)}" y2="${Y(P.yj-6).toFixed(1)}" stroke="#3fb950" stroke-width="1.4" stroke-dasharray="4 3" opacity=".5"/>`;
+
+function drawSide(m, g, P, ghost) {
+  const armColour = ghost ? '#8798b5' : '#58a6ff';
+  const slotColour = ghost ? '#30363d' : '#e6edf3';
+  const opacity = ghost ? .38 : 1;
+  const pivot = [g.xP, g.yP];
+  const between = (p, q, k) =>
+    [p[0]+(q[0]-p[0])*k, p[1]+(q[1]-p[1])*k];
+  let svg = '';
+
+  svg += cap(m, pivot[0], pivot[1], ...g.a1e, 6.5, armColour, opacity);
+  let u = between(pivot, g.a1e, .08);
+  let v = between(pivot, g.a1e, .98);
+  svg += cap(m, ...u, ...v, 2.7, slotColour, opacity);
+
+  svg += cap(m, pivot[0], pivot[1], ...g.a2e, 6.5, armColour, opacity);
+  u = between(pivot, g.a2e, .08);
+  v = between(pivot, g.a2e, .98);
+  svg += cap(m, ...u, ...v, 2.7, slotColour, opacity);
+
+  if (ghost) {
+    if (Number.isFinite(g.face)) {
+      svg += `<line x1="${f(X(m*g.face),1)}" y1="${f(Y(P.yj+31),1)}"
+        x2="${f(X(m*g.face),1)}" y2="${f(Y(P.yj+3),1)}"
+        stroke="#3fb950" stroke-width="1.4"
+        stroke-dasharray="4 3" opacity=".5"/>`;
+    }
     return svg;
   }
-  if(Number.isFinite(g.jx)&&Math.abs(g.jx)<150){
-    const fh=Math.max(6,P.yj-10);
-    svg+=rct(m,g.jx-10,P.yj-6,20,14,'#1c3a2a','#3fb950');
-    svg+=rct(m,g.jx+P.fw-6,4,6,fh,'#1c3a2a','#3fb950');
-    svg+=pin(m,g.jx,P.yj,2.5);
+
+  if (Number.isFinite(g.jx) && Math.abs(g.jx) < 350) {
+    svg += rct(m, g.jx-10, P.yj-6, 20, 12, '#1c3a2a', '#3fb950');
+
+    // Jaw fingers extend beyond the rail, away from the motor.
+    svg += rct(m, g.face-2, P.yj+3, 4, 25, '#1c3a2a', '#3fb950');
+    svg += pin(m, g.jx, P.yj, 2.5);
   }
-  svg+=cap(m,-54,g.yP,g.xP,g.yP,4.5,'#6e7b8a');
-  svg+=pin(m,g.xP,g.yP,3.6,'#58a6ff');
-  svg+=`<circle cx="${X(m*g.xP).toFixed(1)}" cy="${Y(g.yP).toFixed(1)}" r="2.2" fill="#e6edf3"/>`;
+
+  svg += cap(m, g.xP, g.yP, g.xP+18, g.yP, 4.5, '#6e7b8a');
+  svg += pin(m, g.xP, g.yP, 3.6, '#58a6ff');
+  svg += `<circle cx="${f(X(m*g.xP),1)}" cy="${f(Y(g.yP),1)}"
+    r="2.2" fill="#e6edf3"/>`;
   return svg;
 }
-function render(yn,P,options){
-  const g=solve(yn,P);
-  let svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 570" role="img" aria-label="Lead-screw bell-crank gripper mechanism"><defs><marker id="gm-arrow" markerWidth="8" markerHeight="8" refX="6.5" refY="3" orient="auto"><path d="M0,0 L6.5,3 L0,6" fill="none" stroke="#9aa7b4"/></marker></defs>';
-  svg+=rct(1,54,30,6,82,'#1c2330','#6e7b8a')+rct(-1,54,30,6,82,'#1c2330','#6e7b8a');
-  svg+=`<rect x="${X(-62)}" y="${Y(118)}" width="${124*S}" height="${6*S}" rx="2" fill="#1c2330" stroke="#6e7b8a"/>`;
-  svg+=`<rect x="${X(-62)}" y="${Y(P.yj+3.5)}" width="${124*S}" height="${7*S}" rx="2" fill="#1c2330" stroke="#6e7b8a"/>`;
-  svg+=`<line x1="${X(-62)}" y1="${Y(P.yj)}" x2="${X(62)}" y2="${Y(P.yj)}" stroke="#6e7b8a" stroke-dasharray="7 3 2 3"/>`;
-  svg+=txt(X(-62),Y(P.yj+3.5)-6,'linear rail','#9aa7b4','start',9.5);
-  svg+=`<rect x="${X(-2.6)}" y="${Y(112)}" width="${5.2*S}" height="${72*S}" fill="#30363d" stroke="#9aa7b4"/>`;
-  const off=((yn-P.y0)%P.lead+P.lead)%P.lead;
-  for(let yy=40-P.lead;yy<112;yy+=P.lead){
-    const ya=yy+off,yb=ya+P.lead*.5;
-    if(yb<=40||ya>=112)continue;
-    svg+=`<line x1="${X(-2.6)}" y1="${Y(clamp(ya,40,112))}" x2="${X(2.6)}" y2="${Y(clamp(yb,40,112))}" stroke="#9aa7b4" stroke-width="1.2"/>`;
-  }
-  svg+=`<rect x="${X(-1.8)}" y="${Y(120)}" width="${3.6*S}" height="${8*S}" fill="#6e7b8a"/>`;
-  const psi=(yn-P.y0)/P.lead*360;
-  svg+=`<rect x="${X(-14)}" y="${Y(146)}" width="${28*S}" height="${26*S}" rx="4" fill="#1c2330" stroke="#6e7b8a"/>`;
-  svg+=`<circle cx="${X(0)}" cy="${Y(133)}" r="${7.5*S}" fill="#161b22" stroke="#6e7b8a"/>`;
-  svg+=`<line x1="${X(0)}" y1="${Y(133)}" x2="${(X(0)+7.5*S*Math.cos(-psi/DEG)).toFixed(1)}" y2="${(Y(133)+7.5*S*Math.sin(-psi/DEG)).toFixed(1)}" stroke="#f85149" stroke-width="2.4"/>`;
-  svg+=txt(X(0),Y(146)-8,'actuator (rotation only)','#9aa7b4','middle',10);
-  if(options.ghost){
-    [P.y0,P.y1].forEach(ye=>{const ge=solve(ye,P);svg+=drawSide(1,ge,P,true)+drawSide(-1,ge,P,true);});
-  }
-  svg+=drawSide(1,g,P,false)+drawSide(-1,g,P,false);
-  svg+=rct(1,-11,yn-5,22,10,'#3a2d1b','#d29922');
-  svg+=pin(1,0,yn,2.8,'#d29922');
-  svg+=txt(X(11)+7,Y(yn)+4,'lead nut','#d29922','start',10);
-  const workY=(P.yj-2)/2,grip=g.opening<=P.dwp+.01;
-  if(options.wp){
-    svg+=`<circle cx="${X(0)}" cy="${Y(workY)}" r="${(P.dwp/2*S).toFixed(1)}" fill="${grip?'#1c3a2a':'#1c2330'}" stroke="${grip?'#3fb950':'#6e7b8a'}" stroke-width="1.6" stroke-dasharray="${grip?'0':'5 4'}" opacity=".95"/>`;
-    svg+=txt(X(0),Y(workY)+4,'Ø'+f(P.dwp,0),grip?'#3fb950':'#9aa7b4','middle',10,600);
-  }
-  if(options.dims){
-    svg+=dim(g.xP,g.yP,0,yn,'#f85149');
-    svg+=txt((X(g.xP)+X(0))/2-10,(Y(g.yP)+Y(yn))/2-6,'r₁ = '+f(g.r1),'#f85149','end',10,600);
-    svg+=angArc(g.xP,g.yP,15,g.th,g.ph,'#58a6ff');
-    svg+=txt(X(g.xP)-26,Y(g.yP)+20,'β = '+f(P.beta,0)+'°','#58a6ff','middle',10,600);
-    if(Number.isFinite(g.face)){
-      svg+=`<line x1="${X(g.face)}" y1="${Y(4)}" x2="${X(g.face)}" y2="${Y(-6)}" stroke="#3fb950" stroke-width="1"/>`;
-      svg+=`<line x1="${X(-g.face)}" y1="${Y(4)}" x2="${X(-g.face)}" y2="${Y(-6)}" stroke="#3fb950" stroke-width="1"/>`;
-      svg+=dim(g.face,-3,-g.face,-3,'#3fb950');
-      svg+=txt(X(0),Y(-3)+16,'clear opening = '+f(g.opening)+' mm','#3fb950','middle',11,600);
+
+function setView(P, poses) {
+  const xValues = [-P.a-35, P.a+35, -P.a-P.L1, P.a+P.L1];
+  const yValues = [-22, 0, P.yp, P.y0, P.y1, P.yj+43];
+
+  for (const g of poses) {
+    for (const x of [g.jx, g.face, g.a1e[0], g.a2e[0]]) {
+      if (Number.isFinite(x)) xValues.push(x, -x);
     }
-    svg+=txt(X(g.xP)-14,Y(g.yP)-7,'fixed bearing','#e6edf3','end',9.5);
-    svg+=txt(X(g.a2e[0])-6,Y(g.a2e[1])+14,'arm 2 (slotted)','#58a6ff','end',9.5);
-    svg+=txt(X(g.a1e[0])+6,Y(g.a1e[1])-6,'arm 1 (slotted)','#58a6ff','start',9.5);
+    yValues.push(g.a1e[1], g.a2e[1]);
   }
-  svg+='</svg>';
-  return {svg,g};
+
+  const minX = Math.min(...xValues)-12;
+  const maxX = Math.max(...xValues)+12;
+  const minY = Math.min(...yValues)-14;
+  const maxY = Math.max(...yValues)+14;
+  const width = 700, height = 570, margin = 27;
+
+  S = Math.min(
+    (width-2*margin)/(maxX-minX),
+    (height-2*margin)/(maxY-minY)
+  );
+  OX = (width-S*(minX+maxX))/2;
+  OY = (height+S*(minY+maxY))/2;
 }
-function gripFraction(P){
-  for(let k=0;k<=240;k++){
-    const yn=P.y0+k/240*(P.y1-P.y0);
-    if(solve(yn,P).opening<=P.dwp)return k/240;
+
+function render(yn, P, options, g0, g1) {
+  const g = solve(yn,P);
+  setView(P,[g0,g1,g]);
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 700 570" role="img"
+    aria-label="Lead-screw bell-crank gripper measured from the screw base">
+    <defs><marker id="gm-arrow" markerWidth="8" markerHeight="8"
+    refX="6.5" refY="3" orient="auto">
+    <path d="M0,0 L6.5,3 L0,6" fill="none" stroke="#9aa7b4"/>
+    </marker></defs>`;
+
+  const frameX = P.a+20;
+  const railHalf = Math.max(
+    P.a+25,
+    ...[g0,g1,g].map(p =>
+      Number.isFinite(p.jx) ? Math.abs(p.jx)+20 : 0
+    )
+  );
+
+  svg += rct(1, frameX, -6, 5, P.yj+33, '#1c2330', '#6e7b8a');
+  svg += rct(-1, frameX, -6, 5, P.yj+33, '#1c2330', '#6e7b8a');
+
+  svg += `<rect x="${f(X(-railHalf),1)}" y="${f(Y(P.yj+5),1)}"
+    width="${f(2*railHalf*S,1)}" height="${f(8*S,1)}" rx="2"
+    fill="#1c2330" stroke="#6e7b8a"/>`;
+  svg += `<line x1="${f(X(-railHalf),1)}" y1="${f(Y(P.yj),1)}"
+    x2="${f(X(railHalf),1)}" y2="${f(Y(P.yj),1)}"
+    stroke="#6e7b8a" stroke-dasharray="7 3 2 3"/>`;
+
+  // The lead-screw base connector is the height datum.
+  svg += `<rect x="${f(X(-17),1)}" y="${f(Y(0),1)}"
+    width="${f(34*S,1)}" height="${f(5*S,1)}" rx="2"
+    fill="#30363d" stroke="#9aa7b4"/>`;
+  svg += txt(X(0),Y(0)+21,
+    'screw base: y = 0','#e6edf3','middle',10,600);
+
+  const screwTop = Math.max(P.y0,P.y1,P.yp+8)+12;
+  svg += `<rect x="${f(X(-2.6),1)}" y="${f(Y(screwTop),1)}"
+    width="${f(5.2*S,1)}" height="${f(screwTop*S,1)}"
+    fill="#30363d" stroke="#9aa7b4"/>`;
+
+  const threadPitch = Math.max(3,P.lead);
+  const off = ((yn-P.y0)%threadPitch+threadPitch)%threadPitch;
+  for (let yy=-threadPitch; yy<screwTop; yy+=threadPitch) {
+    const ya = yy+off;
+    const yb = ya+threadPitch*.5;
+    if (yb<=0 || ya>=screwTop) continue;
+    svg += `<line x1="${f(X(-2.6),1)}"
+      y1="${f(Y(clamp(ya,0,screwTop)),1)}"
+      x2="${f(X(2.6),1)}"
+      y2="${f(Y(clamp(yb,0,screwTop)),1)}"
+      stroke="#9aa7b4" stroke-width="1.2"/>`;
+  }
+
+  // The actuator is below the screw-base connector.
+  svg += rct(1,-13,-20,26,14,'#1c2330','#6e7b8a');
+  svg += txt(X(0),Y(-21)+14,'actuator','#9aa7b4','middle',10);
+
+  const revolutions = (yn-P.y0)/P.lead;
+  const psi = revolutions*2*Math.PI;
+  svg += `<circle cx="${f(X(0),1)}" cy="${f(Y(-4),1)}"
+    r="${f(5*S,1)}" fill="#161b22" stroke="#6e7b8a"/>`;
+  svg += `<line x1="${f(X(0),1)}" y1="${f(Y(-4),1)}"
+    x2="${f(X(0)+5*S*Math.cos(psi),1)}"
+    y2="${f(Y(-4)+5*S*Math.sin(psi),1)}"
+    stroke="#f85149" stroke-width="2.4"/>`;
+
+  if (options.ghost) {
+    for (const endpoint of [g0,g1]) {
+      svg += drawSide(1,endpoint,P,true);
+      svg += drawSide(-1,endpoint,P,true);
+    }
+  }
+
+  svg += drawSide(1,g,P,false);
+  svg += drawSide(-1,g,P,false);
+
+  svg += rct(1,-10,yn-4.5,20,9,'#3a2d1b','#d29922');
+  svg += pin(1,0,yn,2.8,'#d29922');
+  svg += txt(X(11)+6,Y(yn)+4,'lead nut','#d29922','start',10);
+
+  if (options.wp) {
+    // Workpiece is above the rail, on the side opposite the motor.
+    const workY = P.yj+17;
+    const touching =
+      Number.isFinite(g.opening) &&
+      g.opening<=P.dwp+.01 &&
+      g.opening>=0;
+
+    svg += `<circle cx="${f(X(0),1)}" cy="${f(Y(workY),1)}"
+      r="${f(P.dwp*S/2,1)}"
+      fill="${touching?'#1c3a2a':'#1c2330'}"
+      stroke="${touching?'#3fb950':'#6e7b8a'}"
+      stroke-width="1.6"
+      stroke-dasharray="${touching?'none':'5 4'}"
+      opacity=".95"/>`;
+    svg += txt(
+      X(0),Y(workY)+4,'Ø'+f(P.dwp,0),
+      touching?'#3fb950':'#9aa7b4','middle',10,600
+    );
+  }
+
+  if (options.dims) {
+    svg += txt(
+      X(-railHalf),Y(P.yj+14)-5,
+      'rail height '+f(P.yj,0)+' mm from screw base',
+      '#9aa7b4','start',9.5
+    );
+
+    svg += dim(P.a,P.yp,0,yn,'#f85149');
+    svg += txt(
+      (X(P.a)+X(0))/2,(Y(P.yp)+Y(yn))/2-8,
+      'r₁ = '+f(g.r1),'#f85149','middle',10,600
+    );
+
+    svg += angArc(P.a,P.yp,17,g.th,g.ph,'#58a6ff');
+    svg += txt(
+      X(P.a)-21,Y(P.yp)-18,
+      'β = '+f(P.beta,0)+'°','#58a6ff','middle',10,600
+    );
+
+    if (Number.isFinite(g.face)) {
+      svg += dim(
+        -g.face,P.yj+37,
+        g.face,P.yj+37,
+        '#3fb950'
+      );
+      svg += txt(
+        X(0),Y(P.yj+37)-9,
+        'clear opening = '+f(g.opening)+' mm',
+        '#3fb950','middle',11,600
+      );
+    }
+
+    svg += txt(
+      X(P.a)+8,Y(P.yp)-10,
+      'fixed bearing','#e6edf3','start',9.5
+    );
+  }
+
+  return {svg:svg+'</svg>',g};
+}
+
+function gripFraction(P) {
+  const start = solve(P.y0,P).opening;
+  if (!Number.isFinite(start)) return NaN;
+  if (start<=P.dwp && start>=0) return 0;
+
+  let previous = start-P.dwp;
+  for (let k=1; k<=500; k++) {
+    const q = k/500;
+    const yn = P.y0+q*(P.y1-P.y0);
+    const opening = solve(yn,P).opening;
+    const current = opening-P.dwp;
+
+    if (Number.isFinite(current) &&
+        previous>0 &&
+        current<=0) return q;
+
+    previous = current;
   }
   return NaN;
 }
-function update(){
-  const P=readP(),frac=+$('stroke').value/100,yn=P.y0+frac*(P.y1-P.y0);
-  const options={ghost:$('ghost').checked,dims:$('dims').checked,wp:$('wp').checked};
-  const out=render(yn,P,options),g=out.g;
-  $('stage').innerHTML=out.svg;
-  $('v-stroke').textContent=(frac*100).toFixed(0)+' %';
-  $('v-spd').textContent=(+$('spd').value).toFixed(1)+'×';
-  $('v-lead').textContent=(+P.lead).toFixed(1)+' mm/rev';
-  $('v-y0').textContent=P.y0+' mm';$('v-y1').textContent=P.y1+' mm';
-  $('v-a').textContent=P.a+' mm';$('v-pb').textContent=P.pb+' mm';
-  $('v-l1').textContent=P.L1+' mm';$('v-beta').textContent=P.beta+'°';
-  $('v-l2').textContent=P.L2+' mm';$('v-yj').textContent=P.yj+' mm';
-  $('v-fw').textContent=P.fw+' mm';$('v-d').textContent=P.dwp+' mm';
-  const g0=solve(P.y0,P),g1=solve(P.y1,P),h=.05;
-  const ratio=(solve(yn+h,P).opening-solve(yn-h,P).opening)/(2*h),gf=gripFraction(P);
-  $('r-yn').textContent=f(yn)+' mm';
-  $('r-rev').textContent=f((yn-P.y0)/P.lead,2)+' rev ('+f(((yn-P.y0)/P.lead*360)%360,0)+'°)';
-  $('r-r1').textContent=f(g.r1)+' mm';$('r-dr1').textContent=f(g.r1-g0.r1)+' mm';
-  $('r-th').textContent=f(g.th*DEG)+'°';$('r-ph').textContent=f(g.ph*DEG)+'°';
-  $('r-t').textContent=f(g.t)+' mm';$('r-jx').textContent=f(g.jx)+' mm';
-  $('r-op').textContent=f(g.opening)+' mm';$('r-ratio').textContent=f(ratio,3)+' mm/mm';
-  $('r-rate').textContent=f(ratio*P.lead,2)+' mm/rev';
-  $('r-grip').textContent=Number.isFinite(gf)?(gf*100).toFixed(0)+' % stroke':'not reached';
-  const messages=[];let level='good';
-  const flag=(message,severity)=>{messages.push(message);if(severity==='bad'||level==='bad')level=severity==='bad'?'bad':level;else level=severity;};
-  if(!Number.isFinite(g.t)||g.t<5)flag('arm 2 cannot reach the jaw rail','bad');
-  else if(g.t>P.L2-3)flag('slider runs past the end of the arm-2 slot — lengthen L₂','bad');
-  if(g.r1>P.L1-3)flag('nut pin runs past the end of the arm-1 slot — lengthen L₁','bad');
-  else if(g.r1<P.L1*.25)flag('nut pin close to the pivot — high slot loads','warn');
-  if(Math.abs(g.sp)<.18)flag('arm 2 nearly parallel to the rail — jaw velocity singularity','bad');
-  if(g.face>-1)flag('jaws reach the centreline — reduce the closing stroke','warn');
-  if(Math.abs(g.jx)>50)flag('jaw carriage running off the rail','warn');
-  const status=$('status');
-  if(messages.length===0){
-    status.className='gm-badge gm-good';
-    status.textContent='Valid — opening '+f(g.opening)+' mm now, range '+f(Math.min(g0.opening,g1.opening))+'–'+f(Math.max(g0.opening,g1.opening))+' mm, jaw travel '+f(Math.abs(g1.opening-g0.opening)/2)+' mm per side';
-  }else{
-    status.className='gm-badge gm-'+level;
-    status.textContent=messages.join(' · ');
+
+function update() {
+  const P = readP();
+  const fraction = +$('stroke').value/100;
+  const yn = P.y0+fraction*(P.y1-P.y0);
+  const g0 = solve(P.y0,P);
+  const g1 = solve(P.y1,P);
+  const options = {
+    ghost:$('ghost').checked,
+    dims:$('dims').checked,
+    wp:$('wp').checked
+  };
+  const {svg,g} = render(yn,P,options,g0,g1);
+  $('stage').innerHTML = svg;
+
+  $('v-stroke').textContent = f(fraction*100,0)+' %';
+  $('v-spd').textContent = f(+$('spd').value,1)+'×';
+  $('v-lead').textContent = f(P.lead,1)+' mm/rev';
+  $('v-y0').textContent = f(P.y0,1)+' mm';
+  $('v-y1').textContent = f(P.y1,1)+' mm';
+  $('v-a').textContent = f(P.a,1)+' mm';
+  $('v-pb').textContent = f(P.yp,1)+' mm';
+  $('v-l1').textContent = f(P.L1,1)+' mm';
+  $('v-beta').textContent = f(P.beta,0)+'°';
+  $('v-l2').textContent = f(P.L2,1)+' mm';
+  $('v-yj').textContent = f(P.yj,1)+' mm';
+  $('v-fw').textContent = f(P.fw,1)+' mm';
+  $('v-d').textContent = f(P.dwp,0)+' mm';
+
+  const h = .05;
+  const ratio =
+    (solve(yn+h,P).opening-solve(yn-h,P).opening)/(2*h);
+  const gf = gripFraction(P);
+  const rev = (yn-P.y0)/P.lead;
+
+  $('r-yn').textContent = f(yn)+' mm';
+  $('r-rev').textContent =
+    f(rev)+' rev ('+f(rev*360,0)+'°)';
+  $('r-r1').textContent = f(g.r1)+' mm';
+  $('r-dr1').textContent = f(g.r1-g0.r1)+' mm';
+  $('r-th').textContent = f(g.th*DEG)+'°';
+  $('r-ph').textContent = f(g.ph*DEG)+'°';
+  $('r-t').textContent = f(g.t)+' mm';
+  $('r-jx').textContent = f(g.jx)+' mm';
+  $('r-op').textContent = f(g.opening)+' mm';
+  $('r-ratio').textContent = f(ratio,3)+' mm/mm';
+  $('r-rate').textContent = f(ratio*P.lead,2)+' mm/rev';
+  $('r-grip').textContent =
+    Number.isFinite(gf)
+      ? f(gf*100,0)+' % stroke'
+      : 'not reached';
+
+  const messages = [];
+  let level = 'good';
+
+  const flag = (message,severity) => {
+    messages.push(message);
+    if (severity==='bad') level = 'bad';
+    else if (level!=='bad') level = 'warn';
+  };
+
+  if (P.y0<=P.y1) {
+    flag(
+      'full-open nut height must exceed full-closed nut height',
+      'bad'
+    );
   }
-  const lines=[],heading=title=>'-- '+title+' '+ '-'.repeat(Math.max(0,54-title.length));
-  lines.push(heading('GIVEN (this frame)'),
+
+  if (g.r1>P.L1) {
+    flag(
+      'nut pin is '+f(g.r1-P.L1,1)+
+      ' mm beyond the stated arm-1 length',
+      'bad'
+    );
+  } else if (g.r1>P.L1-3) {
+    flag('nut pin is close to the end of arm 1','warn');
+  }
+
+  if (!Number.isFinite(g.t) || g.t<0) {
+    flag(
+      'arm 2 does not reach the jaw rail in its forward direction',
+      'bad'
+    );
+  } else if (g.t>P.L2) {
+    flag(
+      'slider is '+f(g.t-P.L2,1)+
+      ' mm beyond the stated arm-2 length',
+      'bad'
+    );
+  } else if (g.t>P.L2-3) {
+    flag('slider is close to the end of arm 2','warn');
+  }
+
+  if (Math.abs(g.sp)<.12) {
+    flag('arm 2 is nearly parallel to the rail','bad');
+  }
+
+  if (Number.isFinite(g.face) && g.face<0) {
+    flag('modelled jaw faces cross the centreline','bad');
+  } else if (Number.isFinite(g.face) && g.face<2) {
+    flag('jaw faces are close to touching','warn');
+  }
+
+  const status = $('status');
+
+  if (messages.length) {
+    status.className = 'gm-badge gm-'+level;
+    status.textContent = messages.join(' · ');
+  } else {
+    status.className = 'gm-badge gm-good';
+    status.textContent =
+      'Within modelled reach — opening '+f(g.opening)+
+      ' mm; endpoint range '+
+      f(Math.min(g0.opening,g1.opening))+'–'+
+      f(Math.max(g0.opening,g1.opening))+' mm';
+  }
+
+  const lines = [
+    '-- DATUM: LEAD-SCREW BASE CONNECTOR -------------------------',
+    '  screw base       O  = (0, 0) mm',
     '  fixed bearing    P  = ('+f(g.xP)+', '+f(g.yP)+') mm',
-    '  lead nut pin     N  = (0.00, '+f(yn)+') mm',
-    '  fixed arm angle  B  = '+f(P.beta,1)+' deg',
-    '  arm lengths      L1 = '+f(P.L1,1)+' mm,   L2 = '+f(P.L2,1)+' mm',
-    '  jaw rail height  yJ = '+f(P.yj)+' mm','  jaw face offset  wf = '+f(P.fw)+' mm',
-    '  screw lead       L  = '+f(P.lead,2)+' mm/rev','',
-    heading('1 - arm-1 angle (slot must pass through the nut pin)'),
-    '  theta = atan2(yN - yP , 0 - xP)',
-    '        = atan2('+f(yn)+' - '+f(g.yP)+' , '+f(-g.xP)+')',
-    '        = atan2('+f(yn-g.yP)+' , '+f(-g.xP)+') = '+f(g.th*DEG,3)+' deg','',
-    heading('2 - slide take-up in the arm-1 slot'),
-    '  r1 = sqrt( xP^2 + (yN - yP)^2 )',
-    '     = sqrt( '+f(g.xP)+'^2 + '+f(yn-g.yP)+'^2 ) = '+f(g.r1,3)+' mm',
-    '     changes by '+f(g.r1-g0.r1,3)+' mm from the fully-open pose',
-    '     -> this is exactly why arm 1 needs the sliding rail','',
-    heading('3 - arm-2 angle (rigid bell-crank)'),
-    '  phi = theta - B = '+f(g.th*DEG,3)+' - '+f(P.beta,1)+' = '+f(g.ph*DEG,3)+' deg','',
-    heading('4 - slider position along arm 2'),
-    '  t = (yJ - yP) / sin(phi)',
-    '    = ('+f(P.yj)+' - '+f(g.yP)+') / sin('+f(g.ph*DEG,3)+')',
-    '    = '+f(P.yj-g.yP)+' / '+f(g.sp,5)+' = '+f(g.t,3)+' mm   (must stay <= L2 = '+f(P.L2,1)+')','',
-    heading('5 - jaw carriage position on the linear rail'),
-    '  xJ = xP + t*cos(phi)',
-    '     = '+f(g.xP)+' + '+f(g.t,3)+' x '+f(g.cp,5)+' = '+f(g.jx,3)+' mm','',
-    heading('6 - clear opening between the jaw faces'),
-    '  opening = -2 x (xJ + wf) = -2 x ('+f(g.jx,3)+' + '+f(P.fw)+') = '+f(g.opening,3)+' mm','',
-    heading('7 - screw revolutions from the fully-open datum'),
-    '  n = (yN - yN,open) / L = ('+f(yn)+' - '+f(P.y0)+') / '+f(P.lead,2)+' = '+f((yn-P.y0)/P.lead,3)+' rev','',
-    heading('8 - instantaneous transmission (central difference, h = 0.05 mm)'),
-    '  d(opening)/dyN = '+f(ratio,4)+' mm per mm of nut travel',
-    '                 = '+f(ratio*P.lead,3)+' mm of opening per screw revolution',
-    '  Ignoring friction, jaw force ~ nut force / |'+f(Math.abs(ratio)/2,3)+'| per jaw,',
-    '  so grip force rises as this ratio falls across the stroke.');
-  $('work').textContent=lines.join('\n');
+    '  lead nut pin     N  = (0, '+f(yn)+') mm',
+    '  jaw rail         yJ = '+f(P.yj)+' mm from screw base',
+    '  arm lengths      L1 = '+f(P.L1)+' mm; L2 = '+f(P.L2)+' mm',
+    '  included angle   B  = '+f(P.beta)+' deg',
+    '',
+    '-- 1: ARM 1 / NUT PIN ---------------------------------------',
+    '  theta = atan2(yN - yP, -a)',
+    '        = atan2('+f(yn)+' - '+f(P.yp)+', -'+f(P.a)+')',
+    '        = '+f(g.th*DEG,3)+' deg',
+    '  r1    = sqrt(a^2 + (yN - yP)^2)',
+    '        = sqrt('+f(P.a)+'^2 + '+f(yn-P.yp)+'^2)',
+    '        = '+f(g.r1,3)+' mm',
+    '  slot travel from open = '+f(g.r1-g0.r1,3)+' mm',
+    '',
+    '-- 2: RIGID BELL-CRANK / ARM 2 ------------------------------',
+    '  phi   = theta - B',
+    '        = '+f(g.th*DEG,3)+' - '+f(P.beta),
+    '        = '+f(g.ph*DEG,3)+' deg',
+    '  t     = (yJ - yP) / sin(phi)',
+    '        = ('+f(P.yj)+' - '+f(P.yp)+') / '+f(g.sp,5),
+    '        = '+f(g.t,3)+' mm (stated L2 = '+f(P.L2)+' mm)',
+    '',
+    '-- 3: JAW POSITION ------------------------------------------',
+    '  xJ      = a + t*cos(phi)',
+    '          = '+f(P.a)+' + '+f(g.t,3)+' x '+f(g.cp,5),
+    '          = '+f(g.jx,3)+' mm',
+    '  opening = 2 x (xJ - wf)',
+    '          = 2 x ('+f(g.jx,3)+' - '+f(P.fw)+')',
+    '          = '+f(g.opening,3)+' mm',
+    '',
+    '-- 4: SCREW MOTION / TRANSMISSION ---------------------------',
+    '  n = (yN - yN,open) / lead',
+    '    = ('+f(yn)+' - '+f(P.y0)+') / '+f(P.lead),
+    '    = '+f(rev,3)+' rev',
+    '  d(opening)/dyN = '+f(ratio,4)+' mm/mm',
+    '  d(opening)/dn  = '+f(ratio*P.lead,3)+' mm/rev',
+    '',
+    '  Negative revolutions mean rotation in the closing direction.',
+    '  Slot, interference and force checks need CAD verification.'
+  ];
+
+  $('work').textContent = lines.join('\n');
 }
 
-let playing=false,direction=1,phase=0,last=0;
-function loop(timestamp){
-  if(!playing)return;
-  if(!last)last=timestamp;
-  const dt=Math.min(50,timestamp-last)/1000;
-  last=timestamp;
-  phase+=direction*dt*(+$('spd').value)*.45;
-  if(phase>1){phase=1;direction=-1;}
-  if(phase<0){phase=0;direction=1;}
-  $('stroke').value=(phase*100).toFixed(2);
+let playing = false;
+let direction = 1;
+let phase = 0;
+let last = 0;
+
+function loop(timestamp) {
+  if (!playing) return;
+  if (!last) last = timestamp;
+
+  const dt = Math.min(50,timestamp-last)/1000;
+  last = timestamp;
+
+  phase += direction*dt*(+$('spd').value)*.45;
+  if (phase>1) {
+    phase = 1;
+    direction = -1;
+  }
+  if (phase<0) {
+    phase = 0;
+    direction = 1;
+  }
+
+  $('stroke').value = (phase*100).toFixed(2);
   update();
-  if(playing)requestAnimationFrame(loop);
+  if (playing) requestAnimationFrame(loop);
 }
-$('play').addEventListener('click',function(){
-  playing=!playing;phase=+$('stroke').value/100;
-  last=0;
+
+$('play').addEventListener('click',function () {
+  playing = !playing;
+  phase = +$('stroke').value/100;
+  last = 0;
   this.classList.toggle('on',playing);
-  this.textContent=playing?'❚❚ Pause':'▶ Play';
-  if(playing)requestAnimationFrame(loop);
+  this.textContent = playing ? '❚❚ Pause' : '▶ Play';
+  if (playing) requestAnimationFrame(loop);
 });
-$('rev').addEventListener('click',()=>{direction*=-1;});
-$('reset').addEventListener('click',()=>{
-  Object.entries(DEFAULTS).forEach(([key,value])=>{if($(key))$(key).value=value;});
-  $('stroke').value=0;$('spd').value=1;playing=false;
-  $('play').classList.remove('on');$('play').textContent='▶ Play';direction=1;last=0;
-  $('ghost').checked=true;$('dims').checked=true;$('wp').checked=true;
+
+$('rev').addEventListener('click',() => {
+  direction *= -1;
+});
+
+$('reset').addEventListener('click',() => {
+  Object.entries(DEFAULTS).forEach(([key,value]) => {
+    $(key).value = value;
+  });
+
+  $('stroke').value = 0;
+  $('spd').value = 1;
+  $('ghost').checked = true;
+  $('dims').checked = true;
+  $('wp').checked = true;
+
+  playing = false;
+  direction = 1;
+  phase = 0;
+  last = 0;
+
+  $('play').classList.remove('on');
+  $('play').textContent = '▶ Play';
   update();
 });
-$('dl').addEventListener('click',()=>{
-  const svg=$('stage').querySelector('svg');
-  if(!svg)return;
-  const blob=new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n'+svg.outerHTML],{type:'image/svg+xml'});
-  const url=URL.createObjectURL(blob),link=document.createElement('a');
-  link.href=url;link.download='gripper-mechanism.svg';link.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+
+$('dl').addEventListener('click',() => {
+  const svg = $('stage').querySelector('svg');
+  if (!svg) return;
+
+  const blob = new Blob(
+    ['<?xml version="1.0" encoding="UTF-8"?>\n'+svg.outerHTML],
+    {type:'image/svg+xml'}
+  );
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = 'gripper-mechanism.svg';
+  link.click();
+
+  setTimeout(() => URL.revokeObjectURL(url),1000);
 });
-document.addEventListener('input',event=>{
-  if(event.target.id==='stroke'){
-    playing=false;last=0;$('play').classList.remove('on');$('play').textContent='▶ Play';
+
+document.addEventListener('input',event => {
+  if (event.target.id==='stroke') {
+    playing = false;
+    last = 0;
+    $('play').classList.remove('on');
+    $('play').textContent = '▶ Play';
   }
   update();
 });
+
 document.addEventListener('change',update);
-if(new URLSearchParams(location.search).has('embed'))document.body.classList.add('gm-embedded');
+
+if (new URLSearchParams(location.search).has('embed')) {
+  document.body.classList.add('gm-embedded');
+}
+
 update();
 </script>
 </body>
