@@ -74,7 +74,7 @@
 <main class="gm-wrap">
   <p class="eyebrow gm-page-heading"><a href="../tools.html" style="color:inherit;text-decoration:none">Tools</a> → Mechanism</p>
   <h1 class="gm-title gm-page-heading">Lead-screw bell-crank gripper</h1>
-  <p class="gm-sub">The lead-screw base connector is the vertical datum (0 mm). Positive heights run away from the motor, towards and beyond the jaw rails. Move the nut from 50 mm at fully open to 10 mm at fully closed, or adjust the geometry below.</p>
+  <p class="gm-sub">The lead-screw base connector is the vertical datum (0 mm). Positive heights run away from the motor, towards and beyond the jaw rails. Move the nut from 50 mm at fully open to 0 mm at fully closed, or adjust the geometry below.</p>
 
   <div class="gm-grid">
     <div class="gm-column gm-controls">
@@ -101,8 +101,8 @@
           <input type="range" id="lead" min="1" max="16" step="0.5" value="8"></label>
         <label class="gm-slider"><span class="gm-top"><b>Nut at full open</b><output id="v-y0">50 mm</output></span>
           <input type="range" id="y0" min="5" max="90" step="0.5" value="50"></label>
-        <label class="gm-slider"><span class="gm-top"><b>Nut at full closed</b><output id="v-y1">10 mm</output></span>
-          <input type="range" id="y1" min="0" max="85" step="0.5" value="10"></label>
+        <label class="gm-slider"><span class="gm-top"><b>Nut at full closed</b><output id="v-y1">0 mm</output></span>
+          <input type="range" id="y1" min="0" max="85" step="0.5" value="0"></label>
       </section>
 
       <section class="gm-card">
@@ -201,7 +201,7 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const DEFAULTS = {
   lead: 8,
   y0: 50,
-  y1: 10,
+  y1: 0,
   a: 93,
   pb: 27,
   l1: 94,
