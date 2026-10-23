@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aquatic Day Sheet Builder</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style id="appcss">
+:root{--col:58px;--dm:#6b4fbb;--lg:#1f6fb2;--tr:#b8860b;--si:#2e7d4f;--un:#c0392b;}
+*{box-sizing:border-box}
+body{margin:0;font:13px/1.35 Arial,Helvetica,sans-serif;color:#1a1a1a;background:#f4f5f7}
+header{background:#102a43;color:#fff;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+header h1{font-size:16px;margin:0 12px 0 0}
+header label{font-size:12px}
+button,select,input[type=number]{font:12px Arial;padding:5px 9px;border-radius:4px;border:1px solid #9aa5b1;background:#fff;cursor:pointer}
+button.primary{background:#1f6fb2;color:#fff;border-color:#1f6fb2}
+#tabs{display:flex;gap:4px;padding:8px 14px 0;background:#f4f5f7;flex-wrap:wrap}
+.tab{padding:7px 12px;border:1px solid #cbd2d9;border-bottom:none;border-radius:6px 6px 0 0;background:#e4e7eb;font-weight:bold;cursor:pointer}
+.tab.active{background:#fff;color:#102a43}
+.tab .sub{display:block;font-weight:normal;font-size:11px;color:#52606d}
+.tab .flag{color:#c0392b}
+.sheet{background:#fff;margin:0 14px 18px;border:1px solid #cbd2d9;padding:12px;overflow:auto}
+.sheet h2{margin:0 0 2px;font-size:17px}
+.sheet .meta{color:#52606d;font-size:12px;margin-bottom:10px}
+.track-wrap{display:flex;align-items:stretch;border-top:1px solid #d9dde1}
+.gutter{flex:0 0 96px;padding:4px 6px;font-size:11px;font-weight:bold;color:#52606d;border-right:2px solid #cbd2d9;background:#fafbfc}
+.track{position:relative}
+.ticks{display:flex;background:#eef1f4;border-bottom:1px solid #cbd2d9;position:sticky;top:0;z-index:3}
+.tick{flex:0 0 var(--col);width:var(--col);border-left:1px solid #d9dde1;font-size:10px;text-align:center;padding:3px 0;white-space:nowrap}
+.tick.hour{background:#e2e8ee;font-weight:bold}
+.grid{position:absolute;inset:0;display:flex;pointer-events:none}
+.grid span{flex:0 0 var(--col);border-left:1px solid #edf0f2}
+.grid span.hour{border-left:1px solid #d3d9de}
+.row{position:relative;height:26px;border-bottom:1px solid #f0f2f4}
+.bar{position:absolute;top:2px;bottom:2px;border-radius:4px;color:#fff;font-size:11px;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:21px;box-shadow:inset 0 -1px rgba(0,0,0,.15)}
+.bar.DM{background:var(--dm)}.bar.LG{background:var(--lg)}.bar.TR{background:var(--tr)}
+.bar.SI{background:var(--si)}.bar.UN{background:repeating-linear-gradient(45deg,var(--un),var(--un) 6px,#e07a6d 6px,#e07a6d 12px)}
+.cells{display:flex}
+.cell{flex:0 0 var(--col);width:var(--col);border-left:1px solid #e3e7ea;min-height:22px;font-size:10px;text-align:center;padding:2px 1px}
+.cell[contenteditable]:focus{outline:2px solid #1f6fb2;background:#fffbe6}
+.countrow .cell{font-weight:bold;background:#f7f9fa}
+.grpttl{margin:12px 0 2px;font-size:12px;font-weight:bold;color:#102a43;text-transform:uppercase;letter-spacing:.04em}
+.notes{margin-top:12px;display:flex;gap:14px;flex-wrap:wrap}
+.notes textarea{width:340px;height:70px;font:12px Arial;padding:6px;border:1px solid #cbd2d9;border-radius:4px}
+.legend{font-size:11px;color:#52606d;margin-top:10px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin:0 4px 0 12px;vertical-align:-1px}
+.hidden{display:none}
+.warn{background:#fff4e5;border:1px solid #f0b429;padding:8px 10px;margin:10px 14px;font-size:12px}
+#aliases{margin:0 14px 12px;background:#fff;border:1px solid #cbd2d9;padding:10px}
+#aliases textarea{width:100%;height:90px;font:12px monospace}
+@media print{
+  @page{size:A3 landscape;margin:8mm}
+  header,#tabs,#aliases,.legend button{display:none}
+  .sheet{border:none;margin:0;page-break-after:always}
+  .hidden{display:block!important}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Aquatic Day Sheet Builder</h1>
+  <label>Roster file: <input type="file" id="file" accept=".xlsx,.xls,.xlsm,.csv"></label>
+  <label>Week: <select id="week"></select></label>
+  <label>Col width <input type="number" id="colw" value="58" min="28" max="120" style="width:60px"></label>
+  <label><input type="checkbox" id="pack"> Compact rows</label>
+  <label><input type="checkbox" id="autofit" checked> Auto-fit hours</label>
+  <button id="aliasBtn">Name aliases</button>
+  <button id="printBtn">Print / PDF (all days)</button>
+  <button class="primary" id="dlBtn">Download day sheets (.html)</button>
+</header>
+
+<div id="aliases" class="hidden">
+  <strong>Display-name aliases</strong> — one per line, <code>Surname, Firstname = Display</code> (saved in this browser).
+  <textarea id="aliasText"></textarea>
+  <button class="primary" id="aliasSave">Save &amp; redraw</button>
+</div>
+
+<div id="msg" class="warn">Upload the <em>Roster – Working Day Sheet</em> export (.xlsx or .csv). Every sheet/tab in the file is read, so a fortnight export works fine.</div>
+<div id="tabs"></div>
+<main id="out"></main>
+
+<script>
+/* ============================ configuration ============================ */
+const HOURS = {                      // default operating windows per weekday
+  1:{s:'05:30',e:'21:30'}, 2:{s:'05:30',e:'21:30'}, 3:{s:'05:30',e:'21:30'},
+  4:{s:'05:00',e:'21:30'}, 5:{s:'05:30',e:'21:30'},
+  6:{s:'06:30',e:'19:30'},           // Saturday
+  0:{s:'07:30',e:'19:30'}            // Sunday
+};
+const DEFAULT_ALIASES = {            // seed examples – edit in the UI
+  'Davis, Matildah':'Tildy', 'Giblin, Christine':'Crissy', 'Whyte, Mitchell':'Mitch W',
+  'Toner, Mitch':'Mitch T', 'Adams, John':'John A', 'Dunn, John':'John D', 'Mascaro, John':'John M'
+};
+const SLOT = 30;                     // minutes per column
+const DOWN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DOWS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = {jan:0,january:0,feb:1,february:1,mar:2,march:2,apr:3,april:3,may:4,jun:5,june:5,
+  jul:6,july:6,aug:7,august:7,sep:8,sept:8,september:8,oct:9,october:9,nov:10,november:10,dec:11,december:11};
+
+/* ============================== utilities ============================== */
+const pad=n=>String(n).padStart(2,'0');
+const hhmm=m=>pad(Math.floor(m/60))+':'+pad(m%60);
+const hmm =m=>pad(Math.floor(m/60))+pad(m%60);
+const esc=s=>String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const t2m=s=>{const m=String(s).match(/^(\d{1,2}):(\d{2})/);return m?(+m[1])*60+(+m[2]):null;};
+function isTime(v){ if(typeof v==='number') return v>0&&v<1; return /^\d{1,2}:\d{2}(:\d{2})?$/.test(String(v).trim()); }
+function cellMin(v){ if(typeof v==='number') return Math.round(v*1440); return t2m(v); }
+function mondayOf(d){const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));x.setHours(0,0,0,0);return x;}
+function roleCode(r){ r=r.toLowerCase();
+  if(/duty\s*m|dm\b/.test(r))return'DM'; if(/train/.test(r))return'TR';
+  if(/swim\s*instr|instructor/.test(r))return'SI'; if(/lifeguard|\blg\b/.test(r))return'LG'; return'OT'; }
+
+/* ============================== state ================================= */
+let DAYS = {};                                   // iso -> {date,dow,shifts:[]}
+let weeks = [], curWeek = 0, curDow = 1;
+let aliases = loadAliases(), notes = loadNotes();
+function loadAliases(){ try{ const s=localStorage.getItem('ds-aliases'); return s?JSON.parse(s):{...DEFAULT_ALIASES}; }catch(e){ return {...DEFAULT_ALIASES}; } }
+function loadNotes(){ try{ return JSON.parse(localStorage.getItem('ds-notes')||'{}'); }catch(e){ return {}; } }
+const saveNotes=()=>localStorage.setItem('ds-notes',JSON.stringify(notes));
+
+/* ============================== parsing =============================== */
+function parseWorkbook(wb){
+  const days={};
+  wb.SheetNames.forEach(n=>{
+    const rows=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:false,defval:''});
+    let cur=null;
+    rows.forEach(raw=>{
+      const cells=(raw||[]).map(c=>c==null?'':String(c).trim());
+      const nz=cells.filter(c=>c!=='');
+      if(!nz.length) return;
+      if(nz.some(c=>/^start$/i.test(c)) && nz.some(c=>/^end$/i.test(c))) return;  // column header
+      // --- date header, e.g. "Mon, Oct 12, 2026" or "12/10/2026"
+      for(const c of nz){
+        let m=c.match(/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*,?\s+([A-Za-z]{3,9})\.?\s+(\d{1,2}),?\s*(\d{4})$/i)
+             ||c.match(/^(\d{1,2})\s+([A-Za-z]{3,9})\.?\s+(\d{4})$/);
+        if(m){
+          const mon = MONTHS[(m[1]||'').toLowerCase()] ?? MONTHS[(m[2]||'').toLowerCase()];
+          const dd  = isNaN(+m[1]) ? +m[2] : +m[1];
+          if(mon!=null){ const d=new Date(+m[3],mon,dd); cur=iso(d);
+            days[cur]=days[cur]||{date:d,dow:d.getDay(),shifts:[]}; }
+          return;
+        }
+      }
+      if(!cur) return;
+      // --- shift line: start, end, role, [employee], [replacement]
+      let i=-1,j=-1;
+      for(let k=0;k<cells.length;k++){ if(cells[k]==='')continue;
+        if(i<0){ if(isTime(cells[k])) i=k; else if(/^\d{1,2}:\d{2}\s*[-–]\s*\d{1,2}:\d{2}/.test(cells[k])){ // combined cell
+            const p=cells[k].split(/[-–]/); cells.splice(k,1,p[0].trim(),p[1].trim()); i=k; } else break; }
+        else { if(isTime(cells[k])) j=k; break; }
+      }
+      if(i<0||j<0) return;
+      const rest=cells.slice(j+1).filter(c=>c!=='');
+      const role=rest[0]||'Unspecified';
+      const emp =(rest[1]||'').replace(/\s+/g,' ');
+      const repl=(rest[2]||'').replace(/\s+/g,' ');
+      const s=cellMin(cells[i]), e=cellMin(cells[j]);
+      if(s==null||e==null||e<=s) return;
+      days[cur].shifts.push({start:s,end:e,role,emp,repl,code:roleCode(role)});
+    });
+  });
+  return days;
+}
+
+/* ====================== naming / layout helpers ======================= */
+function displayName(day,sh){
+  const who = sh.repl || sh.emp;
+  if(!who) return 'UNFILLED – '+sh.role;
+  if(aliases[who]) return aliases[who] + (sh.repl?' *':'');
+  const [last='',first=''] = who.split(',').map(t=>t.trim());
+  const firstName = first || last;
+  const clash = day.shifts.some(o=>{
+    const w=o.repl||o.emp; if(!w||w===who) return false;
+    const f=(w.split(',')[1]||w.split(',')[0]||'').trim();
+    return f.toLowerCase()===firstName.toLowerCase();
+  });
+  return firstName + (clash && last ? ' '+last[0] : '') + (sh.repl?' *':'');
+}
+function windowFor(day,autofit){
+  const base=HOURS[day.dow]||{s:'06:00',e:'21:00'};
+  let s=t2m(base.s), e=t2m(base.e);
+  if(autofit && day.shifts.length){
+    s=Math.min(s,...day.shifts.map(x=>x.start));
+    e=Math.max(e,...day.shifts.map(x=>x.end));
+  }
+  s=Math.floor(s/SLOT)*SLOT; e=Math.ceil(e/SLOT)*SLOT;
+  return {s,e,n:(e-s)/SLOT};
+}
+function packRows(list,compact){
+  const sorted=list.slice().sort((a,b)=>a.start-b.start||a.end-b.end);
+  if(!compact) return sorted.map(s=>[s]);
+  const rows=[];
+  sorted.forEach(s=>{ const r=rows.find(r=>r[r.length-1].end<=s.start); r?r.push(s):rows.push([s]); });
+  return rows;
+}
+
+/* =============================== render =============================== */
+function renderSheet(day,opts){
+  const w=windowFor(day,opts.autofit), total=w.e-w.s, key=iso(day.date);
+  const note=notes[key]||(notes[key]={slots:{},text:'',banner:''});
+  const ticks=[...Array(w.n)].map((_,k)=>{
+    const m=w.s+k*SLOT;
+    return `<div class="tick${m%60===0?' hour':''}">${hhmm(m)}<br>${hhmm(m+SLOT)}</div>`;
+  }).join('');
+  const gridCells=[...Array(w.n)].map((_,k)=>`<span class="${(w.s+k*SLOT)%60===0?'hour':''}"></span>`).join('');
+
+  const groups=[['DM','Duty manager'],['LG','Lifeguards'],['TR','Training'],['SI','Swim instructors'],['OT','Other']];
+  let body='';
+  groups.forEach(([code,title])=>{
+    const list=day.shifts.filter(s=>s.code===code);
+    if(!list.length) return;
+    const rows=packRows(list, code==='LG' ? opts.pack : true).map(r=>{
+      const bars=r.map(s=>{
+        const left=(s.start-w.s)/total*100, width=(s.end-s.start)/total*100;
+        const hrs=((s.end-s.start)/60).toFixed(2).replace(/\.?0+$/,'');
+        const cls=(s.emp||s.repl)?code:'UN';
+        const label=`${hmm(s.start)}-${hmm(s.end)} (${hrs}) ${displayName(day,s)}`;
+        return `<div class="bar ${cls}" style="left:${left}%;width:${width}%" title="${esc(s.role+' · '+label)}">${esc(label)}</div>`;
+      }).join('');
+      return `<div class="row">${bars}</div>`;
+    }).join('');
+    body+=`<div class="grpttl">${title} (${list.length})</div>
+      <div class="track-wrap"><div class="gutter">${code}</div>
+      <div class="track" style="width:${w.n}*var(--col)"><div class="grid">${gridCells}</div>${rows}</div></div>`;
+  });
+
+  // auto count of lifeguards (+DM-less cover check) per slot
+  const counts=[...Array(w.n)].map((_,k)=>{
+    const mid=w.s+k*SLOT+SLOT/2;
+    return day.shifts.filter(s=>s.code==='LG'&&(s.emp||s.repl)&&s.start<=mid&&s.end>mid).length;
+  });
+  const countRow=counts.map(c=>`<div class="cell">${c}</div>`).join('');
+  const taskRow=[...Array(w.n)].map((_,k)=>
+    `<div class="cell" contenteditable data-date="${key}" data-slot="${k}">${esc(note.slots[k]||'')}</div>`).join('');
+
+  const unfilled=day.shifts.filter(s=>!s.emp&&!s.repl).length;
+  return `<section class="sheet" data-dow="${day.dow}">
+    <h2>${DOWN[day.dow]} ${day.date.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})}</h2>
+    <div class="meta">Yawa Aquatic Centre (Operations) · roster window ${hhmm(w.s)}–${hhmm(w.e)}
+      · ${day.shifts.length} shifts${unfilled?` · <strong class="flag">${unfilled} UNFILLED</strong>`:''}</div>
+    <div class="track-wrap"><div class="gutter">Time</div><div class="track"><div class="ticks">${ticks}</div></div></div>
+    <div class="track-wrap"><div class="gutter">LGs on deck</div><div class="track"><div class="cells countrow">${countRow}</div></div></div>
+    <div class="track-wrap"><div class="gutter">Tasks / breaks</div><div class="track"><div class="cells">${taskRow}</div></div></div>
+    ${body}
+    <div class="notes">
+      <label>Programs / bookings<br><textarea data-note="banner" data-date="${key}">${esc(note.banner)}</textarea></label>
+      <label>Day notes &amp; priorities<br><textarea data-note="text" data-date="${key}">${esc(note.text)}</textarea></label>
+    </div>
+    <div class="legend">Legend:<i style="background:var(--dm)"></i>Duty manager<i style="background:var(--lg)"></i>Lifeguard
+      <i style="background:var(--tr)"></i>Training<i style="background:var(--si)"></i>Swim instructor
+      <i style="background:var(--un)"></i>Unfilled · <strong>*</strong> = replacement staff</div>
+  </section>`;
+}
+
+function draw(){
+  const opts={autofit:autofit.checked,pack:pack.checked};
+  document.documentElement.style.setProperty('--col',colw.value+'px');
+  const wk=weeks[curWeek]||[];
+  tabs.innerHTML=[1,2,3,4,5,6,0].map(d=>{
+    const day=wk.find(x=>x.dow===d);
+    const u=day?day.shifts.filter(s=>!s.emp&&!s.repl).length:0;
+    return `<div class="tab ${d===curDow?'active':''}" data-dow="${d}">${DOWS[d]}
+      <span class="sub">${day?day.date.getDate()+'/'+(day.date.getMonth()+1)+' · '+day.shifts.length+' shifts':'no data'}
+      ${u?`<span class="flag">⚠${u}</span>`:''}</span></div>`;
+  }).join('');
+  const day=wk.find(x=>x.dow===curDow);
+  out.innerHTML=day?renderSheet(day,opts):'<div class="warn">No roster rows found for that day.</div>';
+}
+
+/* =============================== events =============================== */
+file.onchange=async ev=>{
+  const f=ev.target.files[0]; if(!f) return;
+  const wb=XLSX.read(await f.arrayBuffer(),{cellDates:false});
+  DAYS=parseWorkbook(wb);
+  const list=Object.values(DAYS).sort((a,b)=>a.date-b.date);
+  if(!list.length){ msg.innerHTML='Could not find any shift rows. Check the file is the <em>Working Day Sheet</em> export.'; return; }
+  const byWeek={}; list.forEach(d=>{ const k=iso(mondayOf(d.date)); (byWeek[k]=byWeek[k]||[]).push(d); });
+  weeks=Object.keys(byWeek).sort().map(k=>byWeek[k]);
+  week.innerHTML=Object.keys(byWeek).sort().map((k,i)=>{
+    const m=new Date(k+'T00:00'),e=new Date(m);e.setDate(e.getDate()+6);
+    return `<option value="${i}">w/c ${m.toLocaleDateString('en-AU')} – ${e.toLocaleDateString('en-AU')}</option>`;
+  }).join('');
+  curWeek=0; curDow=list[0].dow;
+  msg.innerHTML=`Loaded ${list.length} day(s), ${list.reduce((n,d)=>n+d.shifts.length,0)} shifts. Click a half-hour cell to type tasks/breaks — they save in this browser.`;
+  draw();
+};
+tabs.onclick=e=>{ const t=e.target.closest('.tab'); if(t){ curDow=+t.dataset.dow; draw(); } };
+week.onchange=e=>{ curWeek=+e.target.value; draw(); };
+[colw,pack,autofit].forEach(el=>el.onchange=draw);
+out.addEventListener('input',e=>{
+  const el=e.target, k=el.dataset.date; if(!k) return;
+  notes[k]=notes[k]||{slots:{},text:'',banner:''};
+  if(el.dataset.note) notes[k][el.dataset.note]=el.value; else notes[k].slots[el.dataset.slot]=el.textContent.trim();
+  saveNotes();
+});
+aliasBtn.onclick=()=>{ aliases=loadAliases();
+  aliasText.value=Object.entries(aliases).map(([k,v])=>k+' = '+v).join('\n');
+  document.getElementById('aliases').classList.toggle('hidden'); };
+aliasSave.onclick=()=>{ const o={};
+  aliasText.value.split('\n').forEach(l=>{ const i=l.indexOf('='); if(i>0) o[l.slice(0,i).trim()]=l.slice(i+1).trim(); });
+  aliases=o; localStorage.setItem('ds-aliases',JSON.stringify(o));
+  document.getElementById('aliases').classList.add('hidden'); draw(); };
+
+function buildAll(){
+  const opts={autofit:autofit.checked,pack:pack.checked};
+  return [1,2,3,4,5,6,0].map(d=>{ const day=(weeks[curWeek]||[]).find(x=>x.dow===d);
+    return day?renderSheet(day,opts):''; }).join('');
+}
+printBtn.onclick=()=>{
+  const keep=out.innerHTML; out.innerHTML=buildAll(); window.print();
+  setTimeout(()=>{ out.innerHTML=keep; },500);
+};
+dlBtn.onclick=()=>{
+  const css=document.getElementById('appcss').textContent;
+  const wk=weeks[curWeek]||[]; if(!wk.length) return alert('Load a roster first.');
+  const label=wk[0].date.toLocaleDateString('en-AU')+' – '+wk[wk.length-1].date.toLocaleDateString('en-AU');
+  const html=`<!DOCTYPE html><html lang="en-AU"><head><meta charset="utf-8">
+<title>Day sheets ${label}</title><style>${css}
+body{background:#fff}[contenteditable]{-webkit-user-modify:read-only}</style></head>
+<body><div style="padding:12px 14px"><h1 style="font:bold 18px Arial">Yawa Aquatic Centre – day sheets ${label}</h1></div>
+${buildAll().replace(/ contenteditable/g,'')}</body></html>`;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download='day-sheets-'+iso(wk[0].date)+'.html'; a.click(); URL.revokeObjectURL(a.href);
+};
+</script>
+</body>
+</html>
