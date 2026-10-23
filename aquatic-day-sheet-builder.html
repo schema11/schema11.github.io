@@ -86,9 +86,6 @@ button.primary{background:#2e7d4f;color:#fff;border-color:#2e7d4f}
   <label>Roster file: <input type="file" id="file" accept=".xlsx,.xls,.xlsm,.csv"></label>
   <label>Week: <select id="week"></select></label>
   <label>Col width <input type="number" id="colw" value="58" min="24" max="120" style="width:58px"></label>
-  <label>LG rows <input type="number" id="lgrows" value="5" min="1" max="12" style="width:48px"></label>
-  <label><input type="checkbox" id="forcelg"> Force LG rows (clip extras)</label>
-  <label>Handover overlap <input type="number" id="tol" value="30" min="0" max="60" step="5" style="width:52px">min</label>
   <label>Min LGs <input type="number" id="minlg" value="2" min="0" max="10" style="width:46px"></label>
   <label><input type="checkbox" id="autofit" checked> Auto-fit hours</label>
   <button id="aliasBtn">Name aliases</button>
@@ -119,12 +116,13 @@ const DEFAULT_ALIASES = {
   'Toner, Mitch':'Mitch T', 'Adams, John':'John A', 'Dunn, John':'John D', 'Mascaro, John':'John M'
 };
 const SLOT = 30;            // minutes per column
+const HANDOVER_TOL = 30;
 const GREEN_SPLIT = 180;    // <= 3 h light green, > 3 h dark green
 const DOWN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DOWS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const GROUPS = [
   {code:'DM',title:'Duty manager',      lanes:1, force:true },
-  {code:'LG',title:'Lifeguards',        lanes:5, force:false},
+  {code:'LG',title:'Lifeguards',        lanes:5, force:true },
   {code:'TR',title:'Training',          lanes:3, force:false},
   {code:'SI',title:'Swim instructors',  lanes:2, force:false},
   {code:'OT',title:'Other',             lanes:2, force:false}
@@ -241,10 +239,11 @@ function laneLayout(list,maxLanes,force,tol){
   const lanes=[];
   sorted.forEach(sh=>{
     const it={...sh};
-    let best=-1,bestEnd=-Infinity;
+    let best=-1,bestDistance=Infinity;
     lanes.forEach((ln,i)=>{
       const lastSh=ln[ln.length-1];
-      if(it.start>=lastSh.end-tol && lastSh.end>bestEnd){ best=i; bestEnd=lastSh.end; }
+      const distance=Math.abs(it.start-lastSh.end);
+      if(it.start>=lastSh.end-tol && distance<bestDistance){ best=i; bestDistance=distance; }
     });
     if(best<0){
       if(!force || lanes.length<maxLanes){ lanes.push([it]); return; }
@@ -266,6 +265,21 @@ function laneLayout(list,maxLanes,force,tol){
   });
   return lanes;
 }
+function laneColumnSpans(lane,w){
+  let previousStart=-1;
+  const starts=lane.map(sh=>{
+    const start=Math.max(0,Math.floor((sh.cs-w.s)/SLOT),previousStart+1);
+    previousStart=start;
+    return start;
+  });
+  return lane.map((shift,i)=>{
+    const startCol=starts[i];
+    const nextLimit=i+1<starts.length?starts[i+1]-1:w.n-1;
+    const rosterEnd=Math.ceil((shift.ce-w.s)/SLOT)-1;
+    const endCol=Math.min(w.n-1,Math.max(startCol,Math.min(rosterEnd,nextLimit)));
+    return {shift,startCol,endCol};
+  }).filter(span=>span.startCol<w.n);
+}
 function lgCounts(day,w){
   return [...Array(w.n)].map((_,k)=>{
     const mid=w.s+k*SLOT+SLOT/2;
@@ -273,13 +287,10 @@ function lgCounts(day,w){
   });
 }
 const durHrs=s=>((s.end-s.start)/60).toFixed(2).replace(/\.?0+$/,'');
-const shiftLabel=(day,s)=>`${hmm(s.start)}-${hmm(s.end)} (${durHrs(s)}) ${displayName(day,s)}`;
+const shiftLabel=(day,s)=>`${hmm(s.start)}-${hmm(s.end)} (${durHrs(s)}) ${displayName(day,s)}${s.spareIn?` · spare to ${hhmm(s.start+s.spareIn)}`:''}`;
 const durKey=s=>!filled(s)?'unfill':((s.end-s.start)<=GREEN_SPLIT?'light':'dark');
 const durClass=s=>({unfill:'UN',light:'d3',dark:'dlong'})[durKey(s)];
-function groupCfg(code,opts){
-  const g=GROUPS.find(x=>x.code===code);
-  return code==='LG' ? {...g,lanes:opts.lanes,force:opts.forcelg} : g;
-}
+function groupCfg(code){ return GROUPS.find(x=>x.code===code); }
 
 /* =============================== render =============================== */
 function renderSheet(day,opts){
@@ -291,8 +302,8 @@ function renderSheet(day,opts){
   }).join('');
   const gridCells=[...Array(w.n)].map((_,k)=>`<span class="${(w.s+k*SLOT)%60===0?'hour':''}"></span>`).join('');
 
-  const laneHtml=ln=>`<div class="row">${ln.map(s=>{
-      const left=(s.cs-w.s)/total*100, width=(s.ce-s.cs)/total*100;
+    const laneHtml=ln=>`<div class="row">${laneColumnSpans(ln,w).map(({shift:s,startCol,endCol})=>{
+      const left=startCol/w.n*100, width=(endCol-startCol+1)/w.n*100;
       const cls=['bar',durClass(s),'r-'+s.code,s.spareOut?'clipR':'',s.spareIn?'clipL':''].filter(Boolean).join(' ');
       const tip=[s.role,shiftLabel(day,s),
         s.spareOut?`stays on as spare until ${hhmm(s.end)} (${s.spareOut} min handover)`:'',
@@ -302,7 +313,7 @@ function renderSheet(day,opts){
 
   let body='';
   GROUPS.forEach(g0=>{
-    const g=groupCfg(g0.code,opts);
+    const g=groupCfg(g0.code);
     const list=day.shifts.filter(s=>s.code===g.code);
     if(!list.length) return;
     const lanes=laneLayout(list,g.lanes,g.force,opts.tol);
@@ -340,8 +351,7 @@ function renderSheet(day,opts){
   </section>`;
 }
 
-function currentOpts(){ return {autofit:autofit.checked,lanes:+lgrows.value||5,
-  forcelg:forcelg.checked,tol:+tol.value||0,minlg:+minlg.value||0}; }
+function currentOpts(){ return {autofit:autofit.checked,minlg:+minlg.value||0}; }
 
 function draw(){
   const opts=currentOpts();
