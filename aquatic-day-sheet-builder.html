@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aquatic Day Sheet Builder</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <style id="appcss">
-:root{--col:58px;--dm:#6b4fbb;--lg:#1f6fb2;--tr:#b8860b;--si:#2e7d4f;--un:#c0392b;}
+:root{--col:58px;--dm:#6b4fbb;--lg:#1f6fb2;--tr:#b8860b;--si:#2e7d4f;--ot:#52606d;}
 *{box-sizing:border-box}
 body{margin:0;font:13px/1.35 Arial,Helvetica,sans-serif;color:#1a1a1a;background:#f4f5f7}
 header{background:#102a43;color:#fff;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
@@ -20,19 +21,16 @@ button.primary{background:#2e7d4f;color:#fff;border-color:#2e7d4f}
 .tab .sub{display:block;font-weight:normal;font-size:11px;color:#52606d}
 .tab .flag{color:#c0392b}
 
-/* ---- sheet shell ---- */
-.sheet{background:#fff;margin:0 14px 18px;border:1px solid #cbd2d9;padding:12px;overflow:visible}
+.sheet{background:#fff;margin:0 14px 18px;border:1px solid #cbd2d9;padding:12px}
 .sheet h2{margin:0 0 2px;font-size:17px}
 .sheet .meta{color:#52606d;font-size:12px;margin-bottom:10px}
 
-/* ---- FIX: scroller + real track widths ---- */
 .scroller{overflow-x:auto;overflow-y:visible;border:1px solid #d9dde1;background:#fff}
 .track-wrap{display:flex;align-items:stretch;border-top:1px solid #d9dde1;
             width:calc(96px + var(--n) * var(--col));min-width:100%}
 .track-wrap:first-child{border-top:none}
-.gutter{flex:0 0 96px;width:96px;position:sticky;left:0;z-index:4;
-        padding:4px 6px;font-size:11px;font-weight:bold;color:#52606d;
-        border-right:2px solid #cbd2d9;background:#fafbfc}
+.gutter{flex:0 0 96px;width:96px;position:sticky;left:0;z-index:4;padding:4px 6px;font-size:11px;
+        font-weight:bold;color:#52606d;border-right:2px solid #cbd2d9;background:#fafbfc}
 .track{position:relative;flex:0 0 calc(var(--n) * var(--col));width:calc(var(--n) * var(--col))}
 .ticks{display:flex}
 .tick{flex:0 0 var(--col);width:var(--col);border-left:1px solid #d9dde1;font-size:10px;
@@ -42,24 +40,32 @@ button.primary{background:#2e7d4f;color:#fff;border-color:#2e7d4f}
 .grid span{flex:0 0 var(--col);border-left:1px solid #edf0f2}
 .grid span.hour{border-left:1px solid #d3d9de}
 .row{position:relative;height:26px;border-bottom:1px solid #f0f2f4}
-.bar{position:absolute;top:2px;bottom:2px;border-radius:4px;color:#fff;font-size:11px;padding:0 6px;
+
+.bar{position:absolute;top:2px;bottom:2px;border-radius:4px;font-size:11px;padding:0 5px;
      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:21px;
-     box-shadow:inset 0 -1px rgba(0,0,0,.15)}
-.bar.DM{background:var(--dm)}.bar.LG{background:var(--lg)}.bar.TR{background:var(--tr)}
-.bar.SI{background:var(--si)}.bar.OT{background:#52606d}
-.bar.UN{background:repeating-linear-gradient(45deg,var(--un),var(--un) 6px,#e07a6d 6px,#e07a6d 12px)}
+     border-left:4px solid rgba(0,0,0,.3);box-shadow:inset 0 -1px rgba(0,0,0,.12)}
+.bar.d3   {background:#bfe6b8;color:#12391b}
+.bar.dlong{background:#1d6b39;color:#fff}
+.bar.UN   {background:#c0392b;color:#fff;font-weight:bold;
+           background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 5px,transparent 5px 10px)}
+.bar.r-DM{border-left-color:var(--dm)}.bar.r-LG{border-left-color:var(--lg)}
+.bar.r-TR{border-left-color:var(--tr)}.bar.r-SI{border-left-color:var(--si)}
+.bar.r-OT{border-left-color:var(--ot)}
+.bar.clipR{border-right:2px dashed rgba(0,0,0,.5);border-radius:4px 0 0 4px}
+.bar.clipL{border-radius:0 4px 4px 0}
+
 .cells{display:flex}
 .cell{flex:0 0 var(--col);width:var(--col);border-left:1px solid #e3e7ea;min-height:22px;
       font-size:10px;text-align:center;padding:2px 1px}
 .cell[contenteditable]:focus{outline:2px solid #1f6fb2;background:#fffbe6}
 .countrow .cell{font-weight:bold;background:#f7f9fa}
-.countrow .cell.low{background:#ffe3e0;color:#9b1c13}
+.countrow .cell.low{background:#ffd9d4;color:#8f1a11}
 .grpttl{position:sticky;left:0;z-index:5;display:block;padding:8px 6px 2px;font-size:12px;font-weight:bold;
         color:#102a43;text-transform:uppercase;letter-spacing:.04em;background:#fff;width:max-content}
 .notes{margin-top:12px;display:flex;gap:14px;flex-wrap:wrap}
 .notes textarea{width:340px;height:70px;font:12px Arial;padding:6px;border:1px solid #cbd2d9;border-radius:4px}
 .legend{font-size:11px;color:#52606d;margin-top:10px}
-.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin:0 4px 0 12px;vertical-align:-1px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin:0 4px 0 12px;vertical-align:-1px;border:1px solid #cbd2d9}
 .hidden{display:none}
 .warn{background:#fff4e5;border:1px solid #f0b429;padding:8px 10px;margin:10px 14px;font-size:12px}
 #aliases{margin:0 14px 12px;background:#fff;border:1px solid #cbd2d9;padding:10px}
@@ -69,9 +75,7 @@ button.primary{background:#2e7d4f;color:#fff;border-color:#2e7d4f}
   header,#tabs,#aliases,#msg{display:none}
   .sheet{border:none;margin:0;page-break-after:always}
   .scroller{overflow:visible;border:none}
-  .track-wrap{width:auto}
-  .gutter{position:static}
-  .grpttl{position:static}
+  .track-wrap{width:auto}.gutter,.grpttl{position:static}
   .hidden{display:block!important}
 }
 </style>
@@ -81,13 +85,15 @@ button.primary{background:#2e7d4f;color:#fff;border-color:#2e7d4f}
   <h1>Aquatic Day Sheet Builder</h1>
   <label>Roster file: <input type="file" id="file" accept=".xlsx,.xls,.xlsm,.csv"></label>
   <label>Week: <select id="week"></select></label>
-  <label>Col width <input type="number" id="colw" value="58" min="24" max="120" style="width:60px"></label>
-  <label><input type="checkbox" id="pack"> Compact rows</label>
+  <label>Col width <input type="number" id="colw" value="58" min="24" max="120" style="width:58px"></label>
+  <label>LG rows <input type="number" id="lgrows" value="5" min="1" max="12" style="width:48px"></label>
+  <label><input type="checkbox" id="forcelg"> Force LG rows (clip extras)</label>
+  <label>Handover overlap <input type="number" id="tol" value="30" min="0" max="60" step="5" style="width:52px">min</label>
+  <label>Min LGs <input type="number" id="minlg" value="2" min="0" max="10" style="width:46px"></label>
   <label><input type="checkbox" id="autofit" checked> Auto-fit hours</label>
-  <label>Min LGs <input type="number" id="minlg" value="2" min="0" max="10" style="width:50px"></label>
   <button id="aliasBtn">Name aliases</button>
   <button id="printBtn">Print / PDF (all days)</button>
-  <button class="primary" id="xlsxBtn">Download Excel (.xlsx)</button>
+  <button class="primary" id="xlsxBtn">Download coloured Excel (.xlsx)</button>
 </header>
 
 <div id="aliases" class="hidden">
@@ -112,12 +118,30 @@ const DEFAULT_ALIASES = {
   'Davis, Matildah':'Tildy', 'Giblin, Christine':'Crissy', 'Whyte, Mitchell':'Mitch W',
   'Toner, Mitch':'Mitch T', 'Adams, John':'John A', 'Dunn, John':'John D', 'Mascaro, John':'John M'
 };
-const SLOT = 30;
+const SLOT = 30;            // minutes per column
+const GREEN_SPLIT = 180;    // <= 3 h light green, > 3 h dark green
 const DOWN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DOWS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const GROUPS = [['DM','Duty manager'],['LG','Lifeguards'],['TR','Training'],['SI','Swim instructors'],['OT','Other']];
+const GROUPS = [
+  {code:'DM',title:'Duty manager',      lanes:1, force:true },
+  {code:'LG',title:'Lifeguards',        lanes:5, force:false},
+  {code:'TR',title:'Training',          lanes:3, force:false},
+  {code:'SI',title:'Swim instructors',  lanes:2, force:false},
+  {code:'OT',title:'Other',             lanes:2, force:false}
+];
 const MONTHS = {jan:0,january:0,feb:1,february:1,mar:2,march:2,apr:3,april:3,may:4,jun:5,june:5,
   jul:6,july:6,aug:7,august:7,sep:8,sept:8,september:8,oct:9,october:9,nov:10,november:10,dec:11,december:11};
+
+/* ------- single source of truth for colours (screen + Excel) --------- */
+const PAL = {
+  light :{fill:'FFBFE6B8', font:'FF12391B'},   // 3 h or less
+  dark  :{fill:'FF1D6B39', font:'FFFFFFFF'},   // more than 3 h
+  unfill:{fill:'FFC0392B', font:'FFFFFFFF'},   // unfilled / no employee
+  title :'FF102A43', sub:'FFEEF1F4', hdr:'FFE2E8EE', hdrAlt:'FFEEF1F4',
+  grp   :'FFDCE3EA', count:'FFF2F5F7', low:'FFFFD9D4', lowFont:'FF8F1A11',
+  gut   :'FFFAFBFC', note:'FFFFFDF2',
+  role  :{DM:'FF6B4FBB',LG:'FF1F6FB2',TR:'FFB8860B',SI:'FF2E7D4F',OT:'FF52606D'}
+};
 
 /* ============================== utilities ============================== */
 const pad=n=>String(n).padStart(2,'0');
@@ -133,6 +157,7 @@ function roleCode(r){ r=String(r).toLowerCase();
   if(/duty\s*m|\bdm\b/.test(r))return'DM'; if(/train/.test(r))return'TR';
   if(/swim\s*instr|instructor/.test(r))return'SI'; if(/lifeguard|\blg\b/.test(r))return'LG'; return'OT'; }
 const isNameToken=s=>/^[A-Za-z][A-Za-z'\-]+$/.test(s||'');
+const filled=s=>!!(s.emp||s.repl);
 
 /* ============================== state ================================= */
 let DAYS={}, weeks=[], curWeek=0, curDow=1;
@@ -152,7 +177,6 @@ function parseWorkbook(wb){
       const nz=cells.filter(c=>c!=='');
       if(!nz.length) return;
       if(nz.some(c=>/^start$/i.test(c))&&nz.some(c=>/^end$/i.test(c))) return;
-      /* date header, e.g. "Mon, Oct 12, 2026" / "12 October 2026" */
       for(const c of nz){
         const m=c.match(/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*,?\s+([A-Za-z]{3,9})\.?\s+(\d{1,2}),?\s*(\d{4})$/i)
               ||c.match(/^(\d{1,2})\s+([A-Za-z]{3,9})\.?\s+(\d{4})$/);
@@ -165,7 +189,6 @@ function parseWorkbook(wb){
         }
       }
       if(!cur) return;
-      /* shift line: start, end, role, [employee], [replacement] */
       let i=-1,j=-1;
       for(let k=0;k<cells.length;k++){
         if(cells[k]==='') continue;
@@ -177,10 +200,9 @@ function parseWorkbook(wb){
         } else { if(isTime(cells[k])) j=k; break; }
       }
       if(i<0||j<0) return;
-      let rest=cells.slice(j+1).filter(c=>c!=='');
+      const rest=cells.slice(j+1).filter(c=>c!=='');
       const role=rest[0]||'Unspecified';
       let emp=(rest[1]||'').replace(/\s+/g,' '), repl=(rest[2]||'').replace(/\s+/g,' ');
-      /* CSV fix: unquoted "Davis, Matildah" arrives as two cells -> rejoin */
       if(emp&&repl&&!emp.includes(',')&&isNameToken(emp)&&isNameToken(repl)){ emp=emp+', '+repl; repl=''; }
       const s=cellMin(cells[i]), e=cellMin(cells[j]);
       if(s==null||e==null||e<=s) return;
@@ -214,20 +236,50 @@ function windowFor(day,autofit){
   s=Math.floor(s/SLOT)*SLOT; e=Math.ceil(e/SLOT)*SLOT;
   return {s,e,n:(e-s)/SLOT};
 }
-function packRows(list,compact){
+function laneLayout(list,maxLanes,force,tol){
   const sorted=list.slice().sort((a,b)=>a.start-b.start||a.end-b.end);
-  if(!compact) return sorted.map(s=>[s]);
-  const rows=[];
-  sorted.forEach(s=>{ const r=rows.find(r=>r[r.length-1].end<=s.start); r?r.push(s):rows.push([s]); });
-  return rows;
+  const lanes=[];
+  sorted.forEach(sh=>{
+    const it={...sh};
+    let best=-1,bestEnd=-Infinity;
+    lanes.forEach((ln,i)=>{
+      const lastSh=ln[ln.length-1];
+      if(it.start>=lastSh.end-tol && lastSh.end>bestEnd){ best=i; bestEnd=lastSh.end; }
+    });
+    if(best<0){
+      if(!force || lanes.length<maxLanes){ lanes.push([it]); return; }
+      let least=Infinity;
+      lanes.forEach((ln,i)=>{ const ov=ln[ln.length-1].end-it.start; if(ov<least){least=ov;best=i;} });
+    }
+    lanes[best].push(it);
+  });
+  lanes.forEach(ln=>{
+    ln.sort((a,b)=>a.start-b.start);
+    ln.forEach((it,i)=>{
+      const next=ln[i+1], prev=ln[i-1];
+      it.cs=it.start;
+      it.ce=next?Math.min(it.end,next.start):it.end;
+      if(it.ce<=it.cs) it.ce=it.cs+SLOT/2;
+      it.spareOut = next ? Math.max(0,it.end-next.start) : 0;
+      it.spareIn  = prev ? Math.max(0,prev.end-it.start)  : 0;
+    });
+  });
+  return lanes;
 }
 function lgCounts(day,w){
   return [...Array(w.n)].map((_,k)=>{
     const mid=w.s+k*SLOT+SLOT/2;
-    return day.shifts.filter(s=>s.code==='LG'&&(s.emp||s.repl)&&s.start<=mid&&s.end>mid).length;
+    return day.shifts.filter(s=>s.code==='LG'&&filled(s)&&s.start<=mid&&s.end>mid).length;
   });
 }
-const shiftLabel=(day,s)=>`${hmm(s.start)}-${hmm(s.end)} (${((s.end-s.start)/60).toFixed(2).replace(/\.?0+$/,'')}) ${displayName(day,s)}`;
+const durHrs=s=>((s.end-s.start)/60).toFixed(2).replace(/\.?0+$/,'');
+const shiftLabel=(day,s)=>`${hmm(s.start)}-${hmm(s.end)} (${durHrs(s)}) ${displayName(day,s)}`;
+const durKey=s=>!filled(s)?'unfill':((s.end-s.start)<=GREEN_SPLIT?'light':'dark');
+const durClass=s=>({unfill:'UN',light:'d3',dark:'dlong'})[durKey(s)];
+function groupCfg(code,opts){
+  const g=GROUPS.find(x=>x.code===code);
+  return code==='LG' ? {...g,lanes:opts.lanes,force:opts.forcelg} : g;
+}
 
 /* =============================== render =============================== */
 function renderSheet(day,opts){
@@ -239,29 +291,34 @@ function renderSheet(day,opts){
   }).join('');
   const gridCells=[...Array(w.n)].map((_,k)=>`<span class="${(w.s+k*SLOT)%60===0?'hour':''}"></span>`).join('');
 
+  const laneHtml=ln=>`<div class="row">${ln.map(s=>{
+      const left=(s.cs-w.s)/total*100, width=(s.ce-s.cs)/total*100;
+      const cls=['bar',durClass(s),'r-'+s.code,s.spareOut?'clipR':'',s.spareIn?'clipL':''].filter(Boolean).join(' ');
+      const tip=[s.role,shiftLabel(day,s),
+        s.spareOut?`stays on as spare until ${hhmm(s.end)} (${s.spareOut} min handover)`:'',
+        s.spareIn ?`spare for first ${s.spareIn} min`:''].filter(Boolean).join(' · ');
+      return `<div class="${cls}" style="left:${left}%;width:${width}%" title="${esc(tip)}">${esc(shiftLabel(day,s))}</div>`;
+    }).join('')}</div>`;
+
   let body='';
-  GROUPS.forEach(([code,title])=>{
-    const list=day.shifts.filter(s=>s.code===code);
+  GROUPS.forEach(g0=>{
+    const g=groupCfg(g0.code,opts);
+    const list=day.shifts.filter(s=>s.code===g.code);
     if(!list.length) return;
-    const rows=packRows(list, code==='LG'?opts.pack:true).map(r=>{
-      const bars=r.map(s=>{
-        const left=(s.start-w.s)/total*100, width=(s.end-s.start)/total*100;
-        const cls=(s.emp||s.repl)?code:'UN';
-        const label=shiftLabel(day,s);
-        return `<div class="bar ${cls}" style="left:${left}%;width:${width}%" title="${esc(s.role+' · '+label)}">${esc(label)}</div>`;
-      }).join('');
-      return `<div class="row">${bars}</div>`;
-    }).join('');
-    body+=`<div class="grpttl">${title} (${list.length})</div>
-      <div class="track-wrap"><div class="gutter">${code}</div>
-        <div class="track"><div class="grid">${gridCells}</div>${rows}</div></div>`;
+    const lanes=laneLayout(list,g.lanes,g.force,opts.tol);
+    const main=lanes.slice(0,g.lanes), extra=lanes.slice(g.lanes);
+    body+=`<div class="grpttl">${g.title} (${list.length} shifts, ${main.length} row${main.length>1?'s':''}${extra.length?` + ${extra.length} extra`:''})</div>
+      <div class="track-wrap"><div class="gutter">${g.code} 1–${main.length}</div>
+        <div class="track"><div class="grid">${gridCells}</div>${main.map(laneHtml).join('')}</div></div>`;
+    if(extra.length) body+=`<div class="track-wrap"><div class="gutter">Extra ${g.code}</div>
+        <div class="track"><div class="grid">${gridCells}</div>${extra.map(laneHtml).join('')}</div></div>`;
   });
 
   const counts=lgCounts(day,w);
   const countRow=counts.map(c=>`<div class="cell${c<opts.minlg?' low':''}">${c}</div>`).join('');
   const taskRow=[...Array(w.n)].map((_,k)=>
     `<div class="cell" contenteditable data-date="${key}" data-slot="${k}">${esc(note.slots[k]||'')}</div>`).join('');
-  const unfilled=day.shifts.filter(s=>!s.emp&&!s.repl).length;
+  const unfilled=day.shifts.filter(s=>!filled(s)).length;
 
   return `<section class="sheet" style="--n:${w.n}" data-dow="${day.dow}">
     <h2>${DOWN[day.dow]} ${day.date.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})}</h2>
@@ -277,13 +334,14 @@ function renderSheet(day,opts){
       <label>Programs / bookings<br><textarea data-note="banner" data-date="${key}">${esc(note.banner)}</textarea></label>
       <label>Day notes &amp; priorities<br><textarea data-note="text" data-date="${key}">${esc(note.text)}</textarea></label>
     </div>
-    <div class="legend">Legend:<i style="background:var(--dm)"></i>Duty manager<i style="background:var(--lg)"></i>Lifeguard
-      <i style="background:var(--tr)"></i>Training<i style="background:var(--si)"></i>Swim instructor
-      <i style="background:var(--un)"></i>Unfilled · <strong>*</strong> = replacement staff</div>
+    <div class="legend">Legend:<i style="background:#bfe6b8"></i>3 hours or less<i style="background:#1d6b39"></i>more than 3 hours
+      <i style="background:#c0392b"></i>unfilled · coloured left stripe = role (DM/LG/TR/SI)
+      · dashed right edge = stays on as spare past the handover · <strong>*</strong> = replacement staff</div>
   </section>`;
 }
 
-function currentOpts(){ return {autofit:autofit.checked,pack:pack.checked,minlg:+minlg.value||0}; }
+function currentOpts(){ return {autofit:autofit.checked,lanes:+lgrows.value||5,
+  forcelg:forcelg.checked,tol:+tol.value||0,minlg:+minlg.value||0}; }
 
 function draw(){
   const opts=currentOpts();
@@ -291,7 +349,7 @@ function draw(){
   const wk=weeks[curWeek]||[];
   tabs.innerHTML=[1,2,3,4,5,6,0].map(d=>{
     const day=wk.find(x=>x.dow===d);
-    const u=day?day.shifts.filter(s=>!s.emp&&!s.repl).length:0;
+    const u=day?day.shifts.filter(s=>!filled(s)).length:0;
     return `<div class="tab ${d===curDow?'active':''}" data-dow="${d}">${DOWS[d]}
       <span class="sub">${day?day.date.getDate()+'/'+(day.date.getMonth()+1)+' · '+day.shifts.length+' shifts':'no data'}
       ${u?`<span class="flag">⚠${u}</span>`:''}</span></div>`;
@@ -300,51 +358,166 @@ function draw(){
   out.innerHTML=day?renderSheet(day,opts):'<div class="warn">No roster rows found for that day.</div>';
 }
 
-/* ========================= Excel (.xlsx) export ======================= */
-function dayToSheet(day,opts){
+/* ================= coloured Excel export (ExcelJS) ==================== */
+const fillOf=argb=>({type:'pattern',pattern:'solid',fgColor:{argb}});
+const thin={style:'thin',color:{argb:'FFCBD2D9'}};
+const box={top:thin,left:thin,bottom:thin,right:thin};
+
+function buildStyledSheet(wb,day,opts){
+  const w=windowFor(day,opts.autofit), N=w.n, LAST=N+1, key=iso(day.date);
+  const note=notes[key]||{slots:{},text:'',banner:''};
+  const ws=wb.addWorksheet(`${DOWS[day.dow]} ${day.date.getDate()}-${day.date.getMonth()+1}`.slice(0,31),{
+    views:[{state:'frozen',xSplit:1,ySplit:4}],
+    pageSetup:{orientation:'landscape',paperSize:8,fitToPage:true,fitToWidth:1,fitToHeight:0,
+      printTitlesRow:'1:4',margins:{left:.3,right:.3,top:.4,bottom:.4,header:.2,footer:.2}}
+  });
+  ws.getColumn(1).width=18;
+  for(let c=2;c<=LAST;c++) ws.getColumn(c).width=9;
+
+  let r=1;
+  const banner=(txt,fill,font,h)=>{
+    ws.mergeCells(r,1,r,LAST); const c=ws.getCell(r,1);
+    c.value=txt; c.fill=fillOf(fill); c.font=font; c.alignment={vertical:'middle'};
+    if(h) ws.getRow(r).height=h; r++;
+  };
+  const unf=day.shifts.filter(s=>!filled(s)).length;
+  banner(`${DOWN[day.dow]} ${day.date.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})} — Yawa Aquatic Centre (Operations)`,
+    PAL.title,{bold:true,size:14,color:{argb:'FFFFFFFF'}},24);
+  banner(`Roster window ${hhmm(w.s)}–${hhmm(w.e)} · ${day.shifts.length} shifts${unf?' · '+unf+' UNFILLED':''}`,
+    PAL.sub,{italic:true,size:10,color:{argb:'FF52606D'}},16);
+  ws.getRow(r).height=6; r++;
+
+  const gut=(txt,fill)=>{ const c=ws.getCell(r,1); c.value=txt;
+    c.font={bold:true,size:10,color:{argb:'FF52606D'}}; c.fill=fillOf(fill||PAL.gut);
+    c.border=box; c.alignment={vertical:'middle'}; return c; };
+
+  /* time header */
+  ws.getRow(r).height=26; gut('Time',PAL.hdr);
+  for(let k=0;k<N;k++){
+    const m=w.s+k*SLOT, c=ws.getCell(r,2+k);
+    c.value=`${hhmm(m)}\n${hhmm(m+SLOT)}`;
+    c.font={bold:m%60===0,size:8}; c.fill=fillOf(m%60===0?PAL.hdr:PAL.hdrAlt);
+    c.alignment={horizontal:'center',vertical:'middle',wrapText:true}; c.border=box;
+  }
+  r++;
+  /* LGs on deck */
+  ws.getRow(r).height=18; gut('LGs on deck',PAL.count);
+  lgCounts(day,w).forEach((n,k)=>{
+    const low=n<opts.minlg, c=ws.getCell(r,2+k);
+    c.value=n; c.fill=fillOf(low?PAL.low:PAL.count);
+    c.font={bold:true,size:10,color:{argb:low?PAL.lowFont:'FF1A1A1A'}};
+    c.alignment={horizontal:'center',vertical:'middle'}; c.border=box;
+  });
+  r++;
+  /* tasks / breaks */
+  ws.getRow(r).height=18; gut('Tasks / breaks',PAL.note);
+  for(let k=0;k<N;k++){
+    const c=ws.getCell(r,2+k); c.value=note.slots[k]||'';
+    c.fill=fillOf(PAL.note); c.font={size:8};
+    c.alignment={horizontal:'center',vertical:'middle',wrapText:true}; c.border=box;
+  }
+  r++; ws.getRow(r).height=6; r++;
+
+  /* role groups */
+  GROUPS.forEach(g0=>{
+    const g=groupCfg(g0.code,opts);
+    const list=day.shifts.filter(s=>s.code===g.code);
+    if(!list.length) return;
+    const lanes=laneLayout(list,g.lanes,g.force,opts.tol);
+    banner(`${g.title.toUpperCase()}  —  ${list.length} shift${list.length>1?'s':''}`,
+      PAL.grp,{bold:true,size:10,color:{argb:'FF102A43'}},16);
+    lanes.forEach((ln,li)=>{
+      ws.getRow(r).height=18;
+      gut(li<g.lanes ? `${g.code} ${li+1}` : `Extra ${g.code}`);
+      for(let k=0;k<N;k++) ws.getCell(r,2+k).border=box;        // grid first
+      ln.forEach(s=>{
+        const c1=2+Math.max(0,Math.floor((s.cs-w.s)/SLOT));
+        const c2=2+Math.min(N-1,Math.max(0,Math.ceil((s.ce-w.s)/SLOT)-1));
+        if(c1>LAST) return;
+        if(c2>c1) ws.mergeCells(r,c1,r,c2);
+        const c=ws.getCell(r,c1), p=PAL[durKey(s)];
+        c.value=shiftLabel(day,s);
+        c.fill=fillOf(p.fill);
+        c.font={size:9,bold:durKey(s)!=='light',color:{argb:p.font}};
+        c.alignment={horizontal:'left',vertical:'middle',indent:1};
+        c.border={top:thin,bottom:thin,
+          left :{style:'medium',color:{argb:PAL.role[s.code]||PAL.role.OT}},
+          right:s.spareOut?{style:'dashed',color:{argb:'FF8F1A11'}}:thin};
+        if(s.spareOut) c.note=`Stays on as spare until ${hhmm(s.end)} (${s.spareOut} min handover).`;
+      });
+      r++;
+    });
+  });
+
+  /* footer */
+  ws.getRow(r).height=6; r++;
+  banner('Programs / bookings: '+(note.banner||''),PAL.note,{size:10},16);
+  banner('Day notes & priorities: '+(note.text||''),PAL.note,{size:10},16);
+  ws.getRow(r).height=18;
+  gut('Legend');
+  const swatch=(col,txt,p)=>{ const c=ws.getCell(r,col); c.value=txt; c.fill=fillOf(p.fill);
+    c.font={size:9,bold:true,color:{argb:p.font}};
+    c.alignment={horizontal:'center',vertical:'middle'}; c.border=box; };
+  if(N>=6){
+    ws.mergeCells(r,2,r,3);  swatch(2,'≤ 3 hours',PAL.light);
+    ws.mergeCells(r,4,r,5);  swatch(4,'> 3 hours',PAL.dark);
+    ws.mergeCells(r,6,r,Math.min(LAST,7)); swatch(6,'UNFILLED',PAL.unfill);
+    if(N>=10){ ws.mergeCells(r,8,r,LAST);
+      const c=ws.getCell(r,8);
+      c.value='Left edge colour = role · dashed right edge = stays on as spare past handover · * = replacement staff';
+      c.font={size:9,italic:true,color:{argb:'FF52606D'}}; c.alignment={vertical:'middle'}; }
+  }
+  return ws;
+}
+
+async function exportColoured(wk,opts){
+  const wb=new ExcelJS.Workbook();
+  wb.creator='Aquatic Day Sheet Builder'; wb.created=new Date();
+  [1,2,3,4,5,6,0].forEach(d=>{ const day=wk.find(x=>x.dow===d); if(day) buildStyledSheet(wb,day,opts); });
+  if(!wb.worksheets.length) throw new Error('No days in this week to export.');
+  const buf=await wb.xlsx.writeBuffer();
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+  a.download='day-sheets-'+iso(wk[0].date)+'.xlsx'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+
+/* ---- plain fallback (no fills) if ExcelJS is unavailable offline ---- */
+function dayToSheetPlain(day,opts){
   const w=windowFor(day,opts.autofit), N=w.n, C0=1, key=iso(day.date);
   const note=notes[key]||{slots:{},text:'',banner:''};
   const aoa=[], merges=[];
   const blank=()=>Array(C0+N).fill('');
-  const push=(label,vals)=>{const r=blank();r[0]=label;(vals||[]).forEach((v,i)=>r[C0+i]=v);aoa.push(r);};
-  const full=t=>{const r=blank();r[0]=t;aoa.push(r);merges.push({s:{r:aoa.length-1,c:0},e:{r:aoa.length-1,c:C0+N-1}});};
-
-  const unf=day.shifts.filter(s=>!s.emp&&!s.repl).length;
-  full(`${DOWN[day.dow]} ${day.date.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})} — Yawa Aquatic Centre (Operations)`);
-  full(`Roster window ${hhmm(w.s)}–${hhmm(w.e)} · ${day.shifts.length} shifts${unf?' · '+unf+' UNFILLED':''}`);
-  aoa.push(blank());
+  const push=(l,v)=>{const row=blank();row[0]=l;(v||[]).forEach((x,i)=>row[C0+i]=x);aoa.push(row);};
+  const full=t=>{const row=blank();row[0]=t;aoa.push(row);merges.push({s:{r:aoa.length-1,c:0},e:{r:aoa.length-1,c:C0+N-1}});};
+  full(`${DOWN[day.dow]} ${day.date.toLocaleDateString('en-AU')} — Yawa Aquatic Centre`);
   push('Time',[...Array(N)].map((_,k)=>hhmm(w.s+k*SLOT)));
   push('LGs on deck',lgCounts(day,w));
   push('Tasks / breaks',[...Array(N)].map((_,k)=>note.slots[k]||''));
-  aoa.push(blank());
-
-  GROUPS.forEach(([code,title])=>{
-    const list=day.shifts.filter(s=>s.code===code);
+  GROUPS.forEach(g0=>{
+    const g=groupCfg(g0.code,opts), list=day.shifts.filter(s=>s.code===g.code);
     if(!list.length) return;
-    full(`${title.toUpperCase()} (${list.length})`);
-    packRows(list, code==='LG'?opts.pack:true).forEach(group=>{
-      const row=blank(); row[0]=code; let lastC=-1;
-      group.forEach(s=>{
-        let c1=Math.floor((s.start-w.s)/SLOT), c2=Math.ceil((s.end-w.s)/SLOT)-1;
-        c1=Math.max(c1,lastC+1,0); c2=Math.min(Math.max(c2,c1),N-1);
-        if(c1>N-1) return;
+    full(g.title.toUpperCase());
+    laneLayout(list,g.lanes,g.force,opts.tol).forEach((ln,li)=>{
+      const row=blank(); row[0]=(li<g.lanes?g.code+' '+(li+1):'Extra '+g.code);
+      ln.forEach(s=>{
+        const c1=Math.max(0,Math.floor((s.cs-w.s)/SLOT));
+        const c2=Math.min(N-1,Math.max(c1,Math.ceil((s.ce-w.s)/SLOT)-1));
         row[C0+c1]=shiftLabel(day,s);
         if(c2>c1) merges.push({s:{r:aoa.length,c:C0+c1},e:{r:aoa.length,c:C0+c2}});
-        lastC=c2;
       });
       aoa.push(row);
     });
   });
-
-  aoa.push(blank());
-  full('Programs / bookings: '+(note.banner||''));
-  full('Day notes & priorities: '+(note.text||''));
-  full('* = replacement staff · UNFILLED = no employee rostered');
-
   const ws=XLSX.utils.aoa_to_sheet(aoa);
-  ws['!merges']=merges;
-  ws['!cols']=[{wch:16},...Array(N).fill({wch:9})];
+  ws['!merges']=merges; ws['!cols']=[{wch:16},...Array(N).fill({wch:9})];
   return ws;
+}
+function exportPlain(wk,opts){
+  const wb=XLSX.utils.book_new();
+  [1,2,3,4,5,6,0].forEach(d=>{ const day=wk.find(x=>x.dow===d); if(!day) return;
+    XLSX.utils.book_append_sheet(wb,dayToSheetPlain(day,opts),`${DOWS[d]} ${day.date.getDate()}-${day.date.getMonth()+1}`.slice(0,31)); });
+  XLSX.writeFile(wb,'day-sheets-'+iso(wk[0].date)+'-plain.xlsx');
 }
 
 /* =============================== events =============================== */
@@ -367,7 +540,7 @@ file.onchange=async ev=>{
 };
 tabs.onclick=e=>{ const t=e.target.closest('.tab'); if(t){ curDow=+t.dataset.dow; draw(); } };
 week.onchange=e=>{ curWeek=+e.target.value; draw(); };
-[colw,pack,autofit,minlg].forEach(el=>el.onchange=draw);
+[colw,lgrows,forcelg,tol,minlg,autofit].forEach(el=>el.onchange=draw);
 out.addEventListener('input',e=>{
   const el=e.target, k=el.dataset.date; if(!k) return;
   notes[k]=notes[k]||{slots:{},text:'',banner:''};
@@ -391,17 +564,18 @@ printBtn.onclick=()=>{
   window.print();
   setTimeout(()=>{ out.innerHTML=keep; draw(); },600);
 };
-xlsxBtn.onclick=()=>{
-  const wk=weeks[curWeek]||[];
+xlsxBtn.onclick=async()=>{
+  const wk=weeks[curWeek]||[], opts=currentOpts();
   if(!wk.length) return alert('Load a roster first.');
-  const opts=currentOpts(), wb=XLSX.utils.book_new();
-  [1,2,3,4,5,6,0].forEach(d=>{
-    const day=wk.find(x=>x.dow===d); if(!day) return;
-    const name=`${DOWS[d]} ${day.date.getDate()}-${day.date.getMonth()+1}`;
-    XLSX.utils.book_append_sheet(wb,dayToSheet(day,opts),name.slice(0,31));
-  });
-  if(!wb.SheetNames.length) return alert('No days in this week to export.');
-  XLSX.writeFile(wb,'day-sheets-'+iso(wk[0].date)+'.xlsx');
+  xlsxBtn.disabled=true; const label=xlsxBtn.textContent; xlsxBtn.textContent='Building…';
+  try{
+    if(typeof ExcelJS==='undefined') throw new Error('ExcelJS not loaded');
+    await exportColoured(wk,opts);
+  }catch(err){
+    console.error(err);
+    alert('Coloured export unavailable ('+err.message+') — downloading the plain version instead.');
+    try{ exportPlain(wk,opts); }catch(e2){ alert('Export failed: '+e2.message); }
+  }finally{ xlsxBtn.disabled=false; xlsxBtn.textContent=label; }
 };
 </script>
 </body>
