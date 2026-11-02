@@ -76,7 +76,7 @@
 <main class="gm-wrap">
   <p class="eyebrow gm-page-heading"><a href="../tools.html" style="color:inherit;text-decoration:none">Tools</a> → Mechanism</p>
   <h1 class="gm-title gm-page-heading">Lead-screw bell-crank gripper</h1>
-  <p class="gm-sub">The lead-screw base connector is the vertical zero-point. Positive heights run away from the motor. Move the nut from 50 mm at fully open to 0 mm at fully closed, then explore the theoretical force available at each tip if an object is contacted at the selected opening.</p>
+  <p class="gm-sub">The lead-screw base connector acts as the vertical datum (y = 0), with positive heights running away from the motor. Drag the stroke/geometry sliders to move the nut from 50 mm (fully open) down to 0 mm (fully closed), so that you can observe how the bell-crank angles and virtual-work jaw force fit together across the travel.</p>
 
   <div class="gm-grid">
     <div class="gm-column gm-controls">
@@ -151,24 +151,24 @@
       <div class="gm-two gm-results">
         <section class="gm-card">
           <h2>Live output</h2>
-          <div id="status" class="gm-badge gm-good" aria-live="polite">—</div>
-          <div class="gm-result"><span>Nut height from screw base</span><b id="r-yn">—</b></div>
-          <div class="gm-result"><span>Screw rotation from open</span><b id="r-rev">—</b></div>
-          <div class="gm-result"><span>Pivot → nut distance r₁</span><b id="r-r1">—</b></div>
-          <div class="gm-result"><span>Arm-1 slot travel Δr₁</span><b id="r-dr1">—</b></div>
-          <div class="gm-result"><span>Arm-1 angle θ</span><b id="r-th">—</b></div>
-          <div class="gm-result"><span>Arm-2 angle φ</span><b id="r-ph">—</b></div>
-          <div class="gm-result"><span>Slider along arm 2, t</span><b id="r-t">—</b></div>
-          <div class="gm-result"><span>Jaw carriage x<sub>J</sub></span><b id="r-jx">—</b></div>
-          <div class="gm-result"><span>Clear opening</span><b id="r-op">—</b></div>
-          <div class="gm-result"><span>d(opening)/dy<sub>N</sub></span><b id="r-ratio">—</b></div>
-          <div class="gm-result"><span>Opening change per screw rev</span><b id="r-rate">—</b></div>
-          <div class="gm-result"><span>Grip on workpiece at</span><b id="r-grip">—</b></div>
-          <div class="gm-result"><span>Force ratio: each tip / axial nut force</span><b id="r-fratio">—</b></div>
-          <div class="gm-result"><span>Estimated axial nut force</span><b id="r-nutforce">—</b></div>
-          <div class="gm-result"><span>Available force at each tip</span><b id="r-tipforce">—</b></div>
-          <div class="gm-result"><span>Total inward force, both tips</span><b id="r-totalforce">—</b></div>
-          <div class="gm-result"><span>Moment at each carriage, if loaded</span><b id="r-moment">—</b></div>
+          <div id="status" class="gm-badge gm-good" aria-live="polite">-</div>
+          <div class="gm-result"><span>Nut height from screw base</span><b id="r-yn">-</b></div>
+          <div class="gm-result"><span>Screw rotation from open</span><b id="r-rev">-</b></div>
+          <div class="gm-result"><span>Pivot → nut distance r₁</span><b id="r-r1">-</b></div>
+          <div class="gm-result"><span>Arm-1 slot travel Δr₁</span><b id="r-dr1">-</b></div>
+          <div class="gm-result"><span>Arm-1 angle θ</span><b id="r-th">-</b></div>
+          <div class="gm-result"><span>Arm-2 angle φ</span><b id="r-ph">-</b></div>
+          <div class="gm-result"><span>Slider along arm 2, t</span><b id="r-t">-</b></div>
+          <div class="gm-result"><span>Jaw carriage x<sub>J</sub></span><b id="r-jx">-</b></div>
+          <div class="gm-result"><span>Clear opening</span><b id="r-op">-</b></div>
+          <div class="gm-result"><span>d(opening)/dy<sub>N</sub></span><b id="r-ratio">-</b></div>
+          <div class="gm-result"><span>Opening change per screw rev</span><b id="r-rate">-</b></div>
+          <div class="gm-result"><span>Grip on workpiece at</span><b id="r-grip">-</b></div>
+          <div class="gm-result"><span>Force ratio: each tip / axial nut force</span><b id="r-fratio">-</b></div>
+          <div class="gm-result"><span>Estimated axial nut force</span><b id="r-nutforce">-</b></div>
+          <div class="gm-result"><span>Available force at each tip</span><b id="r-tipforce">-</b></div>
+          <div class="gm-result"><span>Total inward force, both tips</span><b id="r-totalforce">-</b></div>
+          <div class="gm-result"><span>Moment at each carriage, if loaded</span><b id="r-moment">-</b></div>
         </section>
 
         <section class="gm-card gm-howto">
@@ -185,7 +185,7 @@
 
       <section class="gm-card gm-worked">
         <h2>Kinematics &amp; force for this frame (substituted)</h2>
-        <pre class="gm-work" id="work">—</pre>
+        <pre class="gm-work" id="work">-</pre>
         <p class="gm-note">All vertical coordinates use the lead-screw base connector as y = 0. Force estimates are suppressed where the modelled geometry is invalid.</p>
       </section>
     </div>
@@ -201,7 +201,7 @@
 const DEG = 180 / Math.PI;
 const $ = id => document.getElementById(id);
 const f = (value, decimals = 2) =>
-  Number.isFinite(value) ? value.toFixed(decimals) : '—';
+  Number.isFinite(value) ? value.toFixed(decimals) : '-';
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 /*
@@ -749,7 +749,7 @@ function update() {
   } else {
     status.className = 'gm-badge gm-good';
     status.textContent =
-      'Within modelled reach — opening '+f(g.opening)+
+      'Within modelled reach - opening '+f(g.opening)+
       ' mm; force is available at contact, not applied in free motion';
   }
 
