@@ -30,8 +30,8 @@
     <dt>Role</dt><dd>Design, engineering model and implementation</dd>
     <dt>Type</dt><dd>Interactive calculator - HTML, CSS and vanilla JavaScript, no dependencies</dd>
     <dt>Status</dt><dd>Working · <span class="chip live">live</span></dd>
-    <dt>Date</dt><dd>[Month Year]</dd>
-    <dt>Context</dt><dd>[e.g. personal project supporting a 3-DOF printed arm build]</dd>
+    <dt>Date</dt><dd>October 2026</dd>
+    <dt>Context</dt><dd>Personal project supporting a 3-DOF 3D-printed robotic arm build and RMIT Rover arm analysis</dd>
   </dl>
 
   <div class="btn-row">
@@ -53,7 +53,7 @@
   </figure>
 
   <h2>The problem</h2>
-  <p>Sizing a hobby robot arm usually happens by intuition and forum anecdote. The common failure is to pick servos from their advertised “25 kg” rating, print some links, and discover the arm either sags visibly under its own weight or buzzes and strips gears while holding a pose. Three things cause that:</p>
+  <p>Sizing a hobby robot arm usually happens by intuition and forum anecdote. The common failure is to pick servos from their advertised “25 kg” rating, print some links, and discover the arm either sags visibly under its own weight or buzzes and strips gears whilst holding a pose. Three things cause that:</p>
   <ul>
     <li><strong>The chain is coupled.</strong> Every joint carries the full weight and moment of everything distal to it, so a motor added at the wrist penalises every joint beneath it.</li>
     <li><strong>Stall torque is not working torque.</strong> A servo's kg·cm figure is measured with the rotor locked at maximum current - the one condition in which it does no useful work and overheats fastest.</li>
@@ -99,7 +99,7 @@
     <ul>
       <li>Stress concentrations and fastener detail at the joints - in practice the most common real failure site on a printed arm.</li>
       <li>Servo output-shaft and horn strength, which frequently governs before the link does.</li>
-      <li>Torsion when the base slews with the arm extended sideways; buckling of any compression member.</li>
+      <li>Torsion when the base slews with the arm extended sideways, as well as buckling of any compression member.</li>
       <li>Joint backlash, bearing play and gearbox compliance, which often exceed structural deflection.</li>
       <li>Fatigue, creep and thermal softening - relevant because a high-torque servo sitting near stall genuinely heats the plastic around it.</li>
       <li>Grip force at the end effector, which is a separate calculation.</li>
