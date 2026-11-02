@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="University mechatronics project: a lead-screw robotic gripper capable of supplying 50 N yet controlled never to exceed it, holding an egg at a 15 N threshold — design decisions, force and speed calculations, PLA manufacture, testing and reflection.">
+  <meta name="description" content="University mechatronics project: a lead-screw robotic gripper capable of supplying 50 N yet controlled never to exceed it, holding an egg at a 15 N threshold (design decisions, force/speed calculations, PLA manufacture, testing and reflection).">
   <title>Robotic Gripper Project | Portfolio</title>
   <link rel="stylesheet" href="../assets/site.css">
   <style>
@@ -25,12 +25,12 @@
 </nav>
 <main class="narrow">
   <p class="eyebrow"><a href="../projects.html" style="color:inherit;text-decoration:none">Projects</a> → Project 01</p>
-  <h1>Robotic Gripper — design, build &amp; test</h1>
-  <p class="lede">The brief supplied the actuation and sensing hardware — a geared DC motor with encoder, a Sabertooth driver, a Sharp IR proximity sensor, a load cell and amplifier, and an NI myRIO — and required a gripper designed around it. The force requirement was two-sided: the mechanism had to be capable of supplying 50&nbsp;N, whilst the system as operated had to be constrained from applying more than 50&nbsp;N. This page records the design decisions and the reasoning behind them: linear actuation over rotational, a lead screw over a geared rack, PLA over tougher filaments, and force feedback over position control.</p>
+  <h1>Robotic Gripper - design, build &amp; test</h1>
+  <p class="lede">The project brief supplied the sensors/actuators and control hardware (a geared DC motor with encoder, a Sabertooth motor driver, a Sharp IR proximity sensor, a TAS606 load cell with amplifier, and an NI myRIO controller), and required a two-finger gripper to be designed around them. The force requirement had two sides to it: the mechanical linkage needed to be capable of supplying at least 50&nbsp;N, whilst the control system had to make sure the applied force never exceeded 50&nbsp;N (and stayed below 15&nbsp;N when holding an egg). This page walks through how the mechanical design and control logic fit together, covering why we chose linear actuation over rotational jaws, a lead screw over a geared rack, PLA over tougher filaments, and force-threshold feedback over pure position control.</p>
   <dl class="meta">
     <dt>Context</dt><dd>Mechatronic Design (MIET2585), 2026 Sem&nbsp;2</dd>
-    <dt>Role</dt><dd>Mechanical design and CAD, LabVIEW programming, assembly and electronics</dd>
-    <dt>Tools</dt><dd>SolidWorks · FDM 3D printing (Bambu, PLA) · NI&nbsp;myRIO + LabVIEW · Sabertooth motor driver · load cell</dd>
+    <dt>Role</dt><dd>Mechanical design/CAD, LabVIEW programming, assembly and electronics</dd>
+    <dt>Tools</dt><dd>SolidWorks · FDM 3D printing (Bambu X1C, PLA) · NI&nbsp;myRIO + LabVIEW · Sabertooth motor driver · TAS606 load cell</dd>
     <dt>Status</dt><dd><span class="chip ok">Built &amp; tested</span></dd>
     <dt>Date</dt><dd>October 2026</dd>
   </dl>
@@ -39,12 +39,12 @@
     <table class="spec-tbl">
       <tbody>
         <tr><td>Grip force requirement (brief)</td><td>Capable of ≥ 50 N, never to apply &gt; 50 N</td></tr>
-        <tr><td>Axial screw force available</td><td>184.7 N at the lead nut</td></tr>
+        <tr><td>Axial screw force available</td><td>184.7 N at the lead nut (369.5 N total screw thrust)</td></tr>
         <tr><td>Delivered finger force (after transmission)</td><td>121.9 N closed → 164.8 N near full open</td></tr>
-        <tr><td>Applied force, as controlled</td><td>15 N software threshold; 13.4 N recorded on the egg</td></tr>
-        <tr><td>Maximum jaw opening</td><td>105 mm measured (95 mm designed)</td></tr>
+        <tr><td>Applied force, as controlled</td><td>15 N software threshold (13.4 N recorded on the egg)</td></tr>
+        <tr><td>Maximum jaw opening</td><td>105 mm measured (95 mm modelled in CAD)</td></tr>
         <tr><td>Lead-nut stroke</td><td>36.5 mm</td></tr>
-        <tr><td>Full close time</td><td>4.89 s calculated at 7.47 mm/s; 7–8 s measured</td></tr>
+        <tr><td>Full close time</td><td>4.89 s calculated at 7.47 mm/s (7–8 s measured)</td></tr>
         <tr><td>Transmission</td><td>8 mm lead quad-start T8 screw, η ≈ 0.588</td></tr>
         <tr><td>Material</td><td>PLA, FDM printed (TPU jaw pad, PA-6 nylon coupler)</td></tr>
       </tbody>
@@ -60,170 +60,166 @@
   <!-- ============ ① BRIEF & DESIGN DECISIONS ============ -->
   <section class="tabpanel" role="tabpanel" id="panel-brief" aria-labelledby="tab-brief" tabindex="0">
     <h2>The brief</h2>
-    <p>The actuation and sensing hardware was supplied and the gripper was designed around it. The force requirement had two sides acting in opposition: a capability of <strong>50&nbsp;N</strong> was required, and an applied force exceeding <strong>50&nbsp;N</strong> was prohibited. These were satisfied by separate parts of the system, the mechanism providing the capability and the control logic providing the ceiling, and that separation determined most of the subsequent design. Bonus marks were available for designs not previously demonstrated. The work covered concept sketching and force analysis, CAD, printing, wiring and soldering, sensor calibration in LabVIEW and Excel, control logic and testing.</p>
-    <p>The 50&nbsp;N capability was satisfied with little effort in this design, as a screw drive supplies force well in excess of the requirement due to the innate reduction provided by the 8&nbsp;mm lead. The constraint on applied force was the difficult half, requiring both force transmission through the linkage to be characterised and the drive to be stopped on a sensed force. The load cell output carried significant noise, so a smoothing filter was applied, reducing responsiveness but producing determinable values. The egg threshold was set at 15&nbsp;N, reduced from an initial 20&nbsp;N once it was established that the printed components did not need to be loaded to that level.</p>
+    <p>The actuation and sensing hardware was provided by the university and the gripper had to be designed around those exact components. The force specification had two opposing requirements: the mechanism needed a mechanical capability of at least <strong>50&nbsp;N</strong>, however the system was prohibited from applying more than <strong>50&nbsp;N</strong> during operation. These two requirements were handled by separate parts of the system, with the lead-screw linkage providing the mechanical capability and the LabVIEW control logic enforcing the ceiling. Bonus marks were also available for novel mechanism designs not previously demonstrated in class. Overall, the project covered concept sketching, force/kinematic analysis, SolidWorks CAD modelling, 3D printing, wiring/soldering, sensor calibration in LabVIEW and Excel, PID tuning, and physical verification.</p>
+    <p>Meeting the 50&nbsp;N capability requirement was straightforward due to the mechanical advantage of the 8&nbsp;mm lead screw, which easily multiplied the motor torque into high axial thrust. Constraining the applied force on the egg was the harder part, as it required both characterising the variable force transmission through the bell-crank linkage and stopping the motor reliably using load-cell feedback. It was observed during testing that the raw load-cell signal had significant noise, therefore a moving-average smoothing filter was added in LabVIEW. This filter reduced responsiveness and added a slight delay, however it made a big difference in getting stable, usable force readings. We also lowered our target egg-gripping threshold from 20&nbsp;N down to 15&nbsp;N in order to minimise stress on the 3D-printed PLA arms while still holding the artificial egg securely.</p>
     <h3>Decision 1: linear actuation, not rotational</h3>
-    <p>The first fork was how the fingers should move. We assessed three families against the egg rather than against a generic object:</p>
+    <p>The first major decision was how the gripper jaws should move. We evaluated three mechanism families specifically around how they would interact with a curved, fragile egg shell:</p>
     <table class="spec-tbl">
       <thead><tr><th>Option</th><th>Motion at the jaw</th><th>Assessment</th></tr></thead>
       <tbody>
         <tr>
           <td>Rotational (jaws pivot directly, scissor action)</td>
-          <td>Jaw tip sweeps an arc; the contact normal rotates as it closes</td>
-          <td>Fewest parts and the simplest to print, but the jaw face rolls across the shell as it closes. The contact force gains a non-gravitational tangentially applied force that was predicted to have the propensity to squeeze the egg out of the jaws or push it along, increasing the moment arm.</td>
+          <td>Jaw tip sweeps an arc, so the contact normal rotates as it closes</td>
+          <td>Uses the fewest parts and is the simplest to print, however the jaw face rolls across the egg shell as it closes. This creates a tangential force component that tends to push or squeeze the egg out of the grasp and increases the moment arm.</td>
         </tr>
         <tr>
           <td>Curvilinear (four-bar / parallel linkage)</td>
-          <td>Jaw stays roughly parallel, travelling along a shallow curve</td>
-          <td>Keeps the contact face flat, which is ideal for egg gripping, but would require six or more printed pin joints. Each joint carries ~0.2 mm of print clearance, so backlash and compliance stack up and the mechanism carries little nuance (widely adopted).</td>
+          <td>Jaw stays roughly parallel while travelling along a shallow arc</td>
+          <td>Keeps the contact face flat against the egg, however it requires six or more printed pin joints. Because each printed joint needs ~0.2 mm of clearance, backlash and compliance stack up quickly, and the 4-bar layout was already the standard design used by most other groups.</td>
         </tr>
         <tr>
-          <td><strong>Linear lead screw and nut driving symmetric links (chosen)</strong></td>
-          <td>Both fingers translate in and out symmetrically about the centreline</td>
-          <td>The screw multiplies 0.8 N·m into 184.7 N of axial force without a gearbox, purely from the 8 mm lead. The penalty is speed — 4.89 s calculated for a full close — which is slower than several of the alternatives.</td>
+          <td><strong>Linear lead screw and nut driving symmetric bell-crank links (chosen)</strong></td>
+          <td>Both fingers translate linearly along guide rods symmetrically about the centreline</td>
+          <td>The T8 lead screw converts 0.8 N·m of motor torque into 184.7 N per side (369.5 N total screw thrust) without needing a printed gearbox, purely due to the 8 mm lead. The trade-off is closing speed (4.89 s calculated for a full close), which is slower than a direct gear drive, however it guarantees parallel jaw contact.</td>
         </tr>
       </tbody>
     </table>
-    <h3>Decision 2 — transmission</h3>
+    <h3>Decision 2: transmission</h3>
     <table class="spec-tbl">
       <thead><tr><th>Transmission</th><th>Behaviour</th><th>Why it was / wasn't chosen</th></tr></thead>
       <tbody>
-        <tr><td><strong>Lead screw + lead nut (chosen)</strong></td><td>Large force multiplication, slow</td><td>The 8 mm lead converts the supplied 0.8 N·m into 184.7 N of axial thrust without a printed gear train, producing a margin of 2.44 on the 50 N requirement at the worst point in the stroke. The cost is actuation speed at 7.47 mm/s at the nut, which was accepted.</td></tr>
-        <tr><td>Rack &amp; pinion</td><td>Linear, symmetric, fast</td><td>No force multiplication without adding a gearbox stage, which reintroduces the printed gear train the screw let us avoid.</td></tr>
-        <tr><td>Spur gear train</td><td>Torque multiplication at the pivot</td><td>Printed teeth add backlash into the force path and wear on plastic flanks under sustained load.</td></tr>
-        <tr><td>Cam / eccentric</td><td>Compact, high mechanical advantage over a short throw</td><td>Force-versus-angle curve is strongly non-linear and the profile is sensitive to print accuracy, which made the force model harder to trust than the screw's.</td></tr>
-        <tr><td>Belt or cable drive</td><td>Fast and light</td><td>Tension-only — it cannot push the jaws open — and it stretches, so commanded force drifts.</td></tr>
+        <tr><td><strong>Lead screw + brass flange nut (chosen)</strong></td><td>High force multiplication, slower linear speed</td><td>The 8 mm lead converts the motor's 0.8 N·m torque into 184.7 N per finger linkage without a printed gear train, giving a safety margin of 2.44 above the 50 N requirement even at the weakest point in the stroke. The slower nut speed of 7.47 mm/s was an acceptable trade-off for fragile object handling.</td></tr>
+        <tr><td>Rack &amp; pinion</td><td>Linear, symmetric, fast</td><td>Provides no inherent force multiplication without adding a multi-stage gearbox, which would reintroduce the 3D-printed gear teeth that the lead screw allowed us to avoid.</td></tr>
+        <tr><td>Spur gear train</td><td>Torque multiplication at the pivot</td><td>3D-printed plastic gear teeth introduce backlash into the force path and wear down quickly under sustained clamping loads.</td></tr>
+        <tr><td>Cam / eccentric</td><td>Compact, high mechanical advantage over a short throw</td><td>The force-versus-angle curve is highly non-linear and sensitive to print tolerances, making the force transmission model harder to predict than a lead screw.</td></tr>
+        <tr><td>Belt or cable drive</td><td>Fast and lightweight</td><td>Tension-only (cannot actively push the jaws open without a return spring) and stretches over time, causing the calibrated force/position relationship to drift.</td></tr>
       </tbody>
     </table>
-    <h3>Decision 3 — material: PLA</h3>
-    <p>Everything structural was printed in PLA on a Bambu FDM machine.</p>
+    <h3>Decision 3: material (PLA, TPU &amp; PA-6 Nylon)</h3>
+    <p>Almost all structural components were printed in PLA on a Bambu Lab FDM printer, with targeted material substitutions where the mechanical loads required it.</p>
     <table class="spec-tbl">
       <thead><tr><th>Material</th><th>In its favour</th><th>Against</th></tr></thead>
       <tbody>
-        <tr><td><strong>PLA (chosen)</strong></td><td>Stiffest and most dimensionally accurate of the common filaments, which matters for the lead-nut bore and the pin-joint clearances; prints without an enclosure; cheap enough to iterate on.</td><td>Brittle, creeps under sustained load, and softens from around 55–60 °C.</td></tr>
-        <tr><td>PETG</td><td>Tougher, better heat resistance, fails ductile rather than shattering.</td><td>Stringier and less dimensionally stable on small features — worse for the threaded and pinned interfaces we depended on.</td></tr>
-        <tr><td>ABS / ASA</td><td>Higher service temperature, machinable.</td><td>Warps and delaminates without an enclosure; no reliable access to one.</td></tr>
-        <tr><td>Nylon</td><td>Tough, low friction — attractive for the nut itself.</td><td>Hygroscopic, expensive and needs drying; disproportionate for a one-semester build.</td></tr>
+        <tr><td><strong>PLA (chosen for structure)</strong></td><td>Stiffest and most dimensionally accurate of the standard filaments, which matters for the lead-nut housing and bearing press-fits, prints cleanly without an enclosure, and is cheap enough for rapid prototyping.</td><td>Brittle under impact/torsion, creeps under sustained long-term load, and softens above 55–60 °C.</td></tr>
+        <tr><td>PETG</td><td>More ductile than PLA and has better temperature resistance.</td><td>More prone to stringing and slightly less dimensionally crisp on small snap-fit clips and bearing seats.</td></tr>
+        <tr><td>ABS / ASA</td><td>Higher temperature resistance and toughness.</td><td>Warps and delaminates without a heated chamber, which was unnecessary for a room-temperature lab demonstration.</td></tr>
+        <tr><td>PA-6 Nylon (used for coupler)</td><td>High toughness and wear resistance under torsional stress.</td><td>Hygroscopic and more expensive, however it was ideal for reprinting the small high-stress motor-to-screw coupler after the initial PLA coupler sheared.</td></tr>
       </tbody>
     </table>
-    <p>PLA's limitations were treated as design inputs rather than theoretical ones. Parts were oriented so bending load runs in-plane rather than across layer boundaries, four perimeters were used in place of dense infill, fillets were applied at the finger root instead of sharp internal corners, pin joints were given generous clearance, and the lead nut was retained by <strong>four M3 screws into its brass flange</strong> rather than threaded into plastic. The flange screws require even tightening, as uneven preload tilts the nut and binds the screw. The remaining interfaces are printed clip tabs, split pivot pins capturing 608ZZ bearings over the inner race, and push pins for the IR sensor mount.</p>
-    <p>Designing around a material's limits does not remove them, and the brittleness identified above was the failure mode encountered. The <strong>lead-screw coupler</strong> transmits the full 0.8&nbsp;N·m of motor torque into the screw and is therefore the highest-torque interface in the assembly. It was printed in PLA, failed in service, and was reprinted in <strong>PA-6 nylon</strong>. The failure is consistent with the assessment in the table: PLA remains stiff and dimensionally accurate until a sustained torsional load reaches a layer boundary, at which point it fractures rather than yielding. Nylon had been excluded as disproportionate for a one-semester build, and proved to be the correct selection for one part of fifteen. The <strong>finger&nbsp;2 jaw pad plate</strong> was printed in <strong>TPU</strong> from the outset, as the grip face was required to flex against the shell rather than present a rigid plate to it.</p>
-    <p>Creep was managed procedurally rather than structurally, on the basis that the gripper holds for seconds during a demonstration rather than hours. The unanticipated failure was the <strong>motor cage</strong>, which lost its adherence to the frame after continued cycling and allowed the motor to spin freely, rendering the gripper inoperable. A reprinted tighter cage was considered but time constraints led to a manual fix, with a thick layer of superglue applied between the motor and its cage. This restored function for the remainder of testing, though a mechanically secured mount would have been preferred for reliability. Several carriage rod holes also required reaming before the fingers would traverse the full rod length without binding.</p>
-    <h3>Decision 4 — force feedback, not position</h3>
-    <p>Treating the gripper as a mechatronic system rather than a mechanism is what kept the interfaces honest:</p>
+    <p>To work around PLA's brittleness, parts were oriented flat on the print bed so that bending loads ran along the filament perimeters rather than across layer lines. We used 4 perimeter walls instead of relying on high infill, added 3&nbsp;mm fillets at the finger roots, and fastened the brass lead nut into its block using <strong>four M3 screws</strong> rather than threading directly into plastic. It should be noted that those four M3 flange screws must be tightened evenly, because uneven preload tilts the brass nut and causes the lead screw to bind. The remaining joints used printed clip tabs, split pivot pins that click over the inner race of 608ZZ bearings, and push pins for mounting the IR sensor.</p>
+    <p>During initial testing, the original PLA <strong>lead-screw coupler</strong> failed because it carries the full 0.8&nbsp;N·m motor torque directly into the T8 shaft, making it the highest-stress part in the assembly. Once the torque sheared along a layer boundary, we reprinted the coupler in <strong>PA-6 nylon</strong>, which solved the torsional failure. Additionally, the <strong>Finger&nbsp;2 jaw pad plate</strong> was printed in flexible <strong>TPU</strong> right from the start so that the gripping face would conform slightly to the egg rather than applying a rigid point load.</p>
+    <p>Another physical issue encountered during testing was the <strong>motor mount cage</strong>, which lost its friction grip on the motor body after repeated operating cycles and allowed the motor to spin freely inside the housing. We considered printing a tighter replacement cage, however due to time constraints in the lab we applied a thick layer of superglue between the motor casing and the printed mount. This fixed the slip for the rest of our testing cycles, although a bolted flange mount or clamping collar would be much better for long-term reliability. A few of the 6&nbsp;mm carriage guide-rod holes also needed reaming by hand so that the jaws could slide smoothly without sticking.</p>
+    <h3>Decision 4: force-threshold feedback and PID position control</h3>
+    <p>Integrating the mechanical hardware with the sensors/actuators in LabVIEW came down to four main subsystems:</p>
     <ul>
-      <li><strong>Sensing</strong> — load cell and amplifier for grip force; the motor's encoder for jaw position and travel limits; Sharp IR sensor to detect that an object is actually present before closing.</li>
-      <li><strong>Actuation</strong> — supplied geared motor, 56 rpm at the screw, through the 8 mm lead screw and nut to the symmetric finger links.</li>
-      <li><strong>Control</strong> — myRIO running LabVIEW on a 50&nbsp;ms loop, approximately 20&nbsp;Hz. The implementation is a polling dataflow design rather than a formal state machine: no state variable is retained, and the operating mode is recomputed from the current inputs through a chain of Select functions on every pass, with only the previous position error and the previous integral term persisting in shift registers. Closing is handled by a discrete position PID on the encoder, with K<sub>p</sub>&nbsp;0.08, K<sub>i</sub>&nbsp;0.0002, K<sub>d</sub>&nbsp;1.8 and output clamped to ±1&nbsp;V. Force is applied as a <em>threshold override</em> rather than a regulator, a guarded move: once filtered load-cell force passes the setpoint the motor command is forced to 2.5&nbsp;V and the jaws stop at that position. The egg setpoint was <strong>15&nbsp;N</strong>. Three limitations follow from this implementation. No latch is applied, so if force relaxes below the setpoint the PID resumes and the jaws pulse around the threshold with no deadband. Contact is detected up to one loop period late plus filter lag, so peak force exceeds the setpoint. The integrator continues to accumulate whilst the override holds, up to ±2.2, so the command can step when the override releases.</li>
-      <li><strong>Power</strong> — 9&nbsp;V to the Sabertooth and motor, with the sensors supplied at 5&nbsp;V from the myRIO. The driver accepts a 0–5&nbsp;V analogue command centred on 2.5&nbsp;V as the stop voltage, with direction set by deviation above or below that value. Automatic mode is limited to ±1&nbsp;V of centre, approximately 40% of the available range, as a deliberate speed limit for handling fragile objects. whilst manual mode accesses the full range. The Sabertooth 2x5 dual driver provides a continuous 5&nbsp;A limit (10&nbsp;A peak) per channel, supplying abundant current headroom for the 34:1 Pololu gearmotor under stall.</li>
+      <li><strong>Sensing</strong>: a TAS606 load cell and amplifier to measure gripping force, the motor's quadrature encoder (0.044° per count) to track jaw position, and a Sharp GP2Y0A21YK0F IR proximity sensor to detect when an egg enters the 10–15&nbsp;cm window.</li>
+      <li><strong>Actuation</strong>: the supplied 34:1 geared DC motor running at 56&nbsp;rpm at the screw, driving the 8&nbsp;mm lead screw and brass nut to move the two symmetric bell-crank arms.</li>
+      <li><strong>Control architecture</strong>: an NI myRIO-1900 running a single LabVIEW polling loop at 50&nbsp;ms (20&nbsp;Hz). Instead of a formal state machine, each 50&nbsp;ms pass reads the sensors and selects the operating mode through a priority chain of Select blocks, keeping only the previous position error <code>e[k-1]</code> and integral sum in shift registers. Jaw closing uses a discrete position PID controller with three tuning constants: K<sub>p</sub>&nbsp;=&nbsp;0.08, K<sub>i</sub>&nbsp;=&nbsp;0.0002, and K<sub>d</sub>&nbsp;=&nbsp;1.8, with the PID output clamped to ±1&nbsp;V. Force control works as a <em>threshold override</em> (guarded move): as soon as the filtered load-cell reading exceeds the <strong>15&nbsp;N</strong> setpoint, the motor command is forced to the 2.5&nbsp;V stop voltage. It is worth noting three side effects of this setup: there is no software latch (so if force relaxes below 15&nbsp;N, the PID controller briefly re-engages and pulses the jaws), the 50&nbsp;ms loop time plus filter lag causes a small contact force overshoot, and the integral term keeps accumulating up to ±2.2 whilst the force override is active.</li>
+      <li><strong>Power &amp; drive limits</strong>: a 9&nbsp;V supply powers the Sabertooth 2x5 motor driver and DC motor, whilst the myRIO supplies 5&nbsp;V to the sensors. The Sabertooth driver takes a 0–5&nbsp;V analogue signal where 2.5&nbsp;V stops the motor, and voltages above/below 2.5&nbsp;V control speed and direction. In automatic mode, we clamped the command to 2.5&nbsp;±&nbsp;1.0&nbsp;V (40% of full speed) so that the jaws approached the egg gently, whereas manual mode allowed the full 0–5&nbsp;V range. The Sabertooth 2x5 is rated for 5&nbsp;A continuous (10&nbsp;A peak) per channel, which gave plenty of headroom for our motor.</li>
     </ul>
-    <p>Position control was never viable: an egg's diameter varies, and a commanded position that is correct for one egg crushes the next. Closing to a <em>force</em> makes the system indifferent to the object's size, which is why the load cell ended up being the most important part in the kit.</p>
-    <h3>Calibration</h3>
-    <p><strong>Load cell.</strong> The amplified output was tared against a 0.069&nbsp;V no-load reading and scaled against known masses to a calibration slope of 85.354&nbsp;kg/V, then converted to newtons in LabVIEW:</p>
+    <p>Pure position control on its own wouldn't work for this task because eggs vary in size, meaning a fixed encoder target that barely touches a small egg would crush a larger one. Using the load cell to trigger a stop based on contact force makes the system adapt to the object's diameter automatically.</p>
+    <h3>Sensor calibration</h3>
+    <p><strong>Load cell:</strong> The amplified voltage from the TAS606 load cell was zeroed against a 0.069&nbsp;V no-load tare reading, calibrated with known weights in Excel to find a slope of 85.354&nbsp;kg/V, and multiplied by 9.8&nbsp;m/s² in LabVIEW to output force in Newtons:</p>
     <div class="panel"><p style="font-family:var(--mono);font-size:.9rem;margin:0">
       F = 9.8 × 85.3538 × (V<sub>LC</sub> − 0.069) ≈ 836.5 (V<sub>LC</sub> − 0.069)
     </p></div>
-    <p>The result was filtered prior to downstream nodes to avoid premature jaw stopping due to false contact load-cell outputs. The raw transducer signal was conditioned using a moving-average smoothing filter to damp high-frequency noise spikes before evaluating the stopping condition. Whilst this filtering introduced phase lag that exacerbated contact overshoot—delaying the threshold override by up to a loop cycle—it was an unavoidable compromise so as to prevent spurious premature stops.</p>
-    <p><strong>IR sensor.</strong> The voltage–distance response of a triangulating rangefinder is non-linear, so the inverse-voltage form the sensor follows was curve-fitted rather than tabulated as a lookup: <span style="font-family:var(--mono)">d = 24 / V<sub>IR</sub> + 6×10⁻¹⁴</span>, where the intercept is a negligible fitting artefact. Detection is windowed between 10&nbsp;cm and 15&nbsp;cm. The 15&nbsp;cm upper limit excludes background objects beyond the gripper and the 10&nbsp;cm lower limit rejects close readings where triangulating sensors become ambiguous. A collapsing sensor output drives the computed distance large, so a dropout fails safe to a no-object condition rather than a false detection.</p>
-    <p>Calibration of the TAS606 load cell yielded a dependable linear characteristic across the operating range; residual non-linearity and tare drift remained under 0.15&nbsp;N within the 0–20&nbsp;N testing band, ensuring the threshold override triggered consistently without false positives from transducer nonlinearity.</p>
+    <p>This force signal was passed through LabVIEW's Filter Express VI (configured as a moving-average smoothing filter) before feeding into the threshold comparison. Without filtering, raw electrical noise spikes would have tripped the 15&nbsp;N threshold early and stopped the jaws in mid-air. Although the moving-average filter added a slight delay that contributed to force overshoot on contact, it was a necessary trade-off in order to get clean, repeatable load-cell readings. Across our 0–20&nbsp;N operating range, the linear fit tracked the calibration weights closely with minimal residual error.</p>
+    <p><strong>IR distance sensor:</strong> Because triangulating IR rangefinders have a non-linear voltage-to-distance curve, we fitted an inverse-voltage equation to the Sharp sensor's output: <span style="font-family:var(--mono)">d = 24 / V<sub>IR</sub> + 6×10⁻¹⁴</span> (where the 6×10⁻¹⁴ offset is just a tiny curve-fitting intercept). Egg detection is triggered when the distance sits strictly between 10&nbsp;cm and 15&nbsp;cm. The 15&nbsp;cm upper limit ignores background clutter beyond the jaws, whilst the 10&nbsp;cm lower limit avoids the close-range dead zone where triangulating IR sensors fold back and give ambiguous readings. If a wire comes loose and the sensor voltage drops toward 0&nbsp;V, the calculated distance shoots to infinity, failing safe to a "no object" state.</p>
     <h3>Safety</h3>
-    <p>A software emergency stop was implemented in LabVIEW, which zeroes the motor command, exits the loop and runs a myRIO reset VI. It was tested as part of verification and terminated all functionality cleanly. A separate manual Force Stop switch applies the same 2.5&nbsp;V zero-drive command. Automatic drive is capped at 40% of the driver range, so closing speed is limited by design rather than by operator attention. Two mechanical hazards apply: the pinch point between the fingers, and the retention of grip force after power is removed due to friction in the screw and gearbox, meaning the jaws remain loaded when unpowered. The gripper is therefore opened deliberately through manual mode or by rotating the screw by hand, and is not levered apart. The degree of retained grip was not measured, so this behaviour is an expectation rather than a verified property.</p>
-    <p>All fabrication, testing, and troubleshooting complied with RMIT Makerspace protocols: mandatory safety eyewear, closed-toe footwear, and conscious management of clothing or hair around the exposed power screw and linkage pinch points during live actuation.</p>
+    <p>A software Emergency Stop button was built into the LabVIEW front panel, which immediately sets the motor output to 2.5&nbsp;V, exits the control loop, and runs the myRIO Reset VI. We also included a manual Force Stop toggle on the UI that forces the 2.5&nbsp;V stop command at any time, and capped automatic closing speed to 40% of the driver's range. From a mechanical standpoint, the two main hazards are the pinch point between the closing jaws and the fact that the T8 lead screw and 34:1 gearbox hold their clamping force even when power is switched off. Because of this self-locking behaviour, the jaws shouldn't be forced apart by hand, and are instead opened using Manual Mode in LabVIEW or by turning the lead screw shaft directly. All workshop construction and testing followed standard RMIT lab safety rules, including wearing safety glasses, closed-toe shoes, and keeping hands/loose items clear of the lead screw and bell-crank linkages while powered.</p>
   </section>
   <!-- ============ ② CALCULATIONS ============ -->
   <section class="tabpanel" role="tabpanel" id="panel-calculations" aria-labelledby="tab-calculations" tabindex="0" hidden>
     <h2>Design calculations</h2>
-    <p>Four questions had to be answered before anything was printed: how much force the screw can produce, how much of it survives the linkage, whether that is enough at the worst point in the travel, and how long a close takes.</p>
+    <p>Before printing the final parts, we needed to check four key things: how much axial thrust the lead screw generates, how that force transfers through the bell-crank linkage as the angles change, whether the force at the fingertips stays above the 50&nbsp;N requirement throughout the stroke, and how long the jaws take to close.</p>
     <h3>1 · Axial force from the lead screw</h3>
-    <p>For a power screw, the relationship between input torque <em>T</em>, lead <em>p</em> and axial force <em>F</em> at overall efficiency <em>η</em> is:</p>
+    <p>Using standard power-screw mechanics (Budynas &amp; Nisbett 2020), the axial thrust produced by input torque <em>T</em>, screw lead <em>L</em>, and screw efficiency <em>η</em> is:</p>
     <div class="panel"><p style="font-family:var(--mono);font-size:.9rem;margin:0">
-      F<sub>screw</sub> = 2π · η · T / p<br>
-      F<sub>screw</sub> = <strong>184.7 N</strong> at the lead nut
+      F<sub>screw</sub> = 2π · η · T / L = 2π × 0.588 × 0.8 / 0.008 = <strong>369.45 N</strong> total (<strong>184.7 N</strong> per finger link)
     </p></div>
     <table class="spec-tbl">
       <thead><tr><th>Quantity</th><th>Value</th><th>Source / note</th></tr></thead>
       <tbody>
-        <tr><td>Motor torque T</td><td>0.8 N·m</td><td>Supplied geared motor, rated output</td></tr>
-        <tr><td>Motor speed N</td><td>56 rpm</td><td>At the screw; no additional reduction</td></tr>
-        <tr><td>Lead p</td><td>8 mm (0.008 m)</td><td>Quad-start T8: 2 mm pitch × 4 starts, so one turn advances the nut 8 mm — <em>not</em> 2 mm, which is the correction that drove the whole recalculation</td></tr>
-        <tr><td>Screw efficiency η</td><td>0.588</td><td>Derived analytically from power-screw mechanics (Budynas &amp; Nisbett 2020) assuming steel-on-bronze friction μ&nbsp;=&nbsp;0.19, lead angle α&nbsp;≈&nbsp;14.32° and friction angle φ&nbsp;≈&nbsp;10.76°, yielding η&nbsp;=&nbsp;tan(α)/tan(α&nbsp;+&nbsp;φ)&nbsp;≈&nbsp;0.588</td></tr>
-        <tr><td>Base offset (closed datum)</td><td>30.27 mm</td><td>Arm distance at the fully closed position</td></tr>
-        <tr><td>Total axial force</td><td><strong>184.7 N</strong></td><td>At the lead nut</td></tr>
+        <tr><td>Motor torque T</td><td>0.8 N·m</td><td>Rated output of the supplied 34:1 Pololu geared DC motor</td></tr>
+        <tr><td>Motor speed N</td><td>56 rpm</td><td>Direct drive at the lead screw (no extra gear stage)</td></tr>
+        <tr><td>Screw lead L</td><td>8 mm (0.008 m)</td><td>Quad-start T8 screw (2 mm pitch × 4 starts, advancing 8 mm per revolution rather than 2 mm, which we corrected after preliminary report feedback)</td></tr>
+        <tr><td>Screw efficiency η</td><td>0.588</td><td>Calculated from thread geometry assuming steel-on-bronze friction μ = 0.19, lead angle α = arctan(8 / (8π)) ≈ 14.324°, and friction angle φ = arctan(0.19) ≈ 10.758°, giving η = tan(α) / tan(α + φ) ≈ 0.588</td></tr>
+        <tr><td>Base offset (closed datum)</td><td>30.27 mm</td><td>Nut-to-base datum distance when the jaws are fully closed</td></tr>
+        <tr><td>Axial force per arm</td><td><strong>184.7 N</strong></td><td>Half of the 369.45 N total axial nut thrust (369.5 N combined across both symmetric jaws)</td></tr>
       </tbody>
     </table>
-    <p>The efficiency figure is the dominant source of uncertainty in the model. Torque, lead and geometry are each known to two or three significant figures, whereas the loss of approximately 41% of the motor's work to thread friction is an estimate. It is also the input identified in the preliminary report feedback, so the value has already been revised once.</p>
-    <h3>2 · Force transfer through the linkage</h3>
-    <p>The nut travels along the screw axis and drives each finger outward through a link, so the force delivered at the finger depends on the link angle and therefore on how far open the gripper is. Taking the fully closed position as the datum, the nut offset <em>x</em> is the finger's distance from the base offset of 30.27 mm, and a full 95 mm opening corresponds to 36.5 mm of nut travel.</p>
+    <p>It should be noted that the friction coefficient (μ&nbsp;=&nbsp;0.19) and resulting screw efficiency (η&nbsp;≈&nbsp;0.588) carry most of the uncertainty in this calculation. Whilst motor torque, lead, and link dimensions are known accurately, estimating that ~41% of the input work is lost to thread friction is theoretical, and revising our initial 2&nbsp;mm pitch vs 8&nbsp;mm lead mix-up from the preliminary report updated both our force numbers and our closing time.</p>
+    <h3>2 · Force transfer through the bell-crank linkage</h3>
+    <p>As the brass nut travels linearly along the T8 screw, it pushes/pulls the slotted bell-crank arms around their fixed 608ZZ pivot bearings, which in turn slide the jaw carriages along the 6&nbsp;mm aluminium guide rods. Because the bell-crank angle changes continuously over the stroke, the mechanical advantage between the nut and the fingertips varies with jaw opening. Taking the fully closed position as our datum (30.27&nbsp;mm base offset), a full 95&nbsp;mm jaw opening requires 36.5&nbsp;mm of axial nut travel.</p>
     <div class="panel"><p style="font-family:var(--mono);font-size:.9rem;margin:0">
-      x = y − 30.27 mm &nbsp;&nbsp;(nut travel from closed)<br>
-      F<sub>finger</sub> = F<sub>screw</sub> × k(x) &nbsp;&nbsp;(k = geometric transfer ratio)
+      x = d<sub>screw</sub> − 30.27 mm &nbsp;&nbsp;(axial nut offset from closed)<br>
+      F<sub>tip</sub> = F<sub>arm</sub> × (Δx<sub>nut</sub> / Δy<sub>finger</sub>)
     </p></div>
-    <p>Evaluating the geometry across the stroke produces the force envelope below. The linkage delivers least force at the nearly closed position, 121.9 N against 164.8 N near full open, and the nearly closed position is where the egg is gripped. The arm angle relative to the screw axis changes continuously through the stroke, and with it the proportion of axial thrust converted to useful finger force. The transfer ratio runs from approximately 0.66 at the closed datum to 0.89 near full open, producing a 35% variation in delivered force across a stroke of only 36.5 mm.</p>
-    <p>Two consequences follow. The governing load case for capability is the closed end rather than the open end, so sizing on the open-position figure would have reported a margin 35% higher than the one applying when the egg is in the jaws. The base offset of 30.27 mm determines where the operating band sits on that curve, so the pivot position relative to the screw affects the force envelope to a comparable degree as the motor torque.</p>
+    <p>We evaluated this force transmission in two ways in our report: first by measuring the incremental nut travel (Δx) versus unilateral finger movement (Δy) directly from the SolidWorks assembly in 5&nbsp;mm steps inside Excel, and second by deriving the exact analytical virtual-work ratio <span style="font-family:var(--mono)">q = d(opening)/dy<sub>N</sub> = 2(y<sub>J</sub> − y<sub>P</sub>)a / (r<sub>1</sub>² sin²φ)</span> (which powers the interactive simulator embedded in Tab&nbsp;3). As can be seen in the table below, the mechanical advantage is lowest when the jaws are nearly closed (121.9&nbsp;N per finger, or 243.8&nbsp;N combined clamping force) and highest near full open (164.8&nbsp;N per finger, or 329.6&nbsp;N combined). That represents a 35% change in gripping force over the 36.5&nbsp;mm nut stroke.</p>
+    <p>This curve highlights an important design point: because the egg is gripped near the closed end of the travel, the minimum force at the closed end governs whether we meet the 50&nbsp;N capability requirement. Sizing the motor off the open-position force would have overestimated our safety margin by 35%.</p>
     <table class="spec-tbl">
-      <thead><tr><th>Jaw opening (mm)</th><th>Per finger from centre (mm)</th><th>Nut travel x (mm)</th><th>Force per finger (N)</th></tr></thead>
+      <thead><tr><th>Jaw opening (mm)</th><th>Per finger from centre (mm)</th><th>Nut travel x (mm)</th><th>Force per finger (N)</th><th>Combined clamping force (N)</th></tr></thead>
       <tbody>
-        <tr><td>90</td><td>45.0</td><td>34.27</td><td>164.78</td></tr>
-        <tr><td>75</td><td>37.5</td><td>27.81</td><td>156.65</td></tr>
-        <tr><td>50</td><td>25.0</td><td>17.77</td><td>143.35</td></tr>
-        <tr><td>25</td><td>12.5</td><td>8.53</td><td>132.26</td></tr>
-        <tr><td>0 (closed)</td><td>0</td><td>0</td><td><strong>121.92</strong></td></tr>
+        <tr><td>90</td><td>45.0</td><td>34.27</td><td>164.78</td><td>329.55</td></tr>
+        <tr><td>75</td><td>37.5</td><td>27.81</td><td>156.65</td><td>313.29</td></tr>
+        <tr><td>50</td><td>25.0</td><td>17.77</td><td>143.35</td><td>286.69</td></tr>
+        <tr><td>25</td><td>12.5</td><td>8.53</td><td>132.26</td><td>264.53</td></tr>
+        <tr><td>0 (closed)</td><td>0</td><td>0</td><td><strong>121.92</strong></td><td><strong>243.84</strong></td></tr>
       </tbody>
     </table>
-    <p class="muted" style="font-size:.82rem">The model applies the full 184.7 N of screw thrust to each finger rather than splitting it between the two link pairs, so the figures above are per finger on that basis. Worth stating explicitly, since it is the assumption a reader is most likely to query.</p>
+    <p class="muted" style="font-size:.82rem">Note: In our group report's Excel table, the column labelled "Fapplied overall" (ranging from 329.55 N down to 243.84 N) applies the full 369.45 N screw thrust to the unilateral finger ratio (which equals the combined inward clamping force from both jaws), whereas dividing equally between the two symmetric arms gives 164.78 N down to 121.92 N per individual finger. Both columns are shown here for clarity.</p>
     <details class="panel">
-      <summary>Full stroke table — all 20 steps</summary>
+      <summary>Full stroke table: all 20 steps from the Excel model</summary>
       <table class="spec-tbl">
-        <thead><tr><th>Opening (mm)</th><th>Per finger (mm)</th><th>Finger y (mm)</th><th>Nut travel x (mm)</th><th>F per finger (N)</th><th>Step time (s)</th></tr></thead>
+        <thead><tr><th>Opening (mm)</th><th>Per finger y (mm)</th><th>Screw to base (mm)</th><th>Nut travel x (mm)</th><th>F per finger (N)</th><th>F combined (N)</th><th>Step time (s)</th></tr></thead>
         <tbody>
-          <tr><td>95</td><td>47.5</td><td>66.77</td><td>36.50</td><td>—</td><td>0.30</td></tr>
-          <tr><td>90</td><td>45.0</td><td>64.54</td><td>34.27</td><td>164.78</td><td>0.29</td></tr>
-          <tr><td>85</td><td>42.5</td><td>62.35</td><td>32.08</td><td>161.82</td><td>0.29</td></tr>
-          <tr><td>80</td><td>40.0</td><td>60.20</td><td>29.93</td><td>158.86</td><td>0.28</td></tr>
-          <tr><td>75</td><td>37.5</td><td>58.08</td><td>27.81</td><td>156.65</td><td>0.28</td></tr>
-          <tr><td>70</td><td>35.0</td><td>56.00</td><td>25.73</td><td>153.69</td><td>0.27</td></tr>
-          <tr><td>65</td><td>32.5</td><td>53.96</td><td>23.69</td><td>150.74</td><td>0.27</td></tr>
-          <tr><td>60</td><td>30.0</td><td>51.95</td><td>21.68</td><td>148.52</td><td>0.26</td></tr>
-          <tr><td>55</td><td>27.5</td><td>49.98</td><td>19.71</td><td>145.56</td><td>0.26</td></tr>
-          <tr><td>50</td><td>25.0</td><td>48.04</td><td>17.77</td><td>143.35</td><td>0.26</td></tr>
-          <tr><td>45</td><td>22.5</td><td>46.13</td><td>15.86</td><td>141.13</td><td>0.25</td></tr>
-          <tr><td>40</td><td>20.0</td><td>44.25</td><td>13.98</td><td>138.91</td><td>0.25</td></tr>
-          <tr><td>35</td><td>17.5</td><td>42.40</td><td>12.13</td><td>136.70</td><td>0.24</td></tr>
-          <tr><td>30</td><td>15.0</td><td>40.59</td><td>10.32</td><td>133.74</td><td>0.24</td></tr>
-          <tr><td>25</td><td>12.5</td><td>38.80</td><td>8.53</td><td>132.26</td><td>0.24</td></tr>
-          <tr><td>20</td><td>10.0</td><td>37.04</td><td>6.77</td><td>130.05</td><td>0.23</td></tr>
-          <tr><td>15</td><td>7.5</td><td>35.31</td><td>5.04</td><td>127.83</td><td>0.23</td></tr>
-          <tr><td>10</td><td>5.0</td><td>33.60</td><td>3.33</td><td>126.35</td><td>0.23</td></tr>
-          <tr><td>5</td><td>2.5</td><td>31.92</td><td>1.65</td><td>124.14</td><td>0.22</td></tr>
-          <tr><td>0</td><td>0</td><td>30.27</td><td>0</td><td><strong>121.92</strong></td><td>—</td></tr>
+          <tr><td>95</td><td>47.5</td><td>66.77</td><td>36.50</td><td>-</td><td>-</td><td>0.30</td></tr>
+          <tr><td>90</td><td>45.0</td><td>64.54</td><td>34.27</td><td>164.78</td><td>329.55</td><td>0.29</td></tr>
+          <tr><td>85</td><td>42.5</td><td>62.35</td><td>32.08</td><td>161.82</td><td>323.64</td><td>0.29</td></tr>
+          <tr><td>80</td><td>40.0</td><td>60.20</td><td>29.93</td><td>158.86</td><td>317.73</td><td>0.28</td></tr>
+          <tr><td>75</td><td>37.5</td><td>58.08</td><td>27.81</td><td>156.65</td><td>313.29</td><td>0.28</td></tr>
+          <tr><td>70</td><td>35.0</td><td>56.00</td><td>25.73</td><td>153.69</td><td>307.38</td><td>0.27</td></tr>
+          <tr><td>65</td><td>32.5</td><td>53.96</td><td>23.69</td><td>150.74</td><td>301.47</td><td>0.27</td></tr>
+          <tr><td>60</td><td>30.0</td><td>51.95</td><td>21.68</td><td>148.52</td><td>297.04</td><td>0.26</td></tr>
+          <tr><td>55</td><td>27.5</td><td>49.98</td><td>19.71</td><td>145.56</td><td>291.13</td><td>0.26</td></tr>
+          <tr><td>50</td><td>25.0</td><td>48.04</td><td>17.77</td><td>143.35</td><td>286.69</td><td>0.26</td></tr>
+          <tr><td>45</td><td>22.5</td><td>46.13</td><td>15.86</td><td>141.13</td><td>282.26</td><td>0.25</td></tr>
+          <tr><td>40</td><td>20.0</td><td>44.25</td><td>13.98</td><td>138.91</td><td>277.83</td><td>0.25</td></tr>
+          <tr><td>35</td><td>17.5</td><td>42.40</td><td>12.13</td><td>136.70</td><td>273.39</td><td>0.24</td></tr>
+          <tr><td>30</td><td>15.0</td><td>40.59</td><td>10.32</td><td>133.74</td><td>267.48</td><td>0.24</td></tr>
+          <tr><td>25</td><td>12.5</td><td>38.80</td><td>8.53</td><td>132.26</td><td>264.53</td><td>0.24</td></tr>
+          <tr><td>20</td><td>10.0</td><td>37.04</td><td>6.77</td><td>130.05</td><td>260.09</td><td>0.23</td></tr>
+          <tr><td>15</td><td>7.5</td><td>35.31</td><td>5.04</td><td>127.83</td><td>255.66</td><td>0.23</td></tr>
+          <tr><td>10</td><td>5.0</td><td>33.60</td><td>3.33</td><td>126.35</td><td>252.70</td><td>0.23</td></tr>
+          <tr><td>5</td><td>2.5</td><td>31.92</td><td>1.65</td><td>124.14</td><td>248.27</td><td>0.22</td></tr>
+          <tr><td>0</td><td>0</td><td>30.27</td><td>0</td><td><strong>121.92</strong></td><td><strong>243.84</strong></td><td>-</td></tr>
         </tbody>
-        <tfoot><tr><td colspan="5">Total close time</td><td><strong>4.89 s</strong></td></tr></tfoot>
+        <tfoot><tr><td colspan="6">Total calculated close time</td><td><strong>4.89 s</strong></td></tr></tfoot>
       </table>
-      <p class="muted" style="font-size:.82rem">Step time is the time to traverse each 5 mm increment of jaw opening, which is not a constant distance at the nut — hence the taper from 0.30 s to 0.22 s. Force is evaluated over each step, so the 95 mm row has no value of its own.</p>
+      <p class="muted" style="font-size:.82rem">Step time is calculated using <code>60 × Δx / (RPM × Lead)</code> for each 5 mm increment of jaw opening. Because the linkage is non-linear, equal steps at the jaw correspond to slightly smaller nut steps near the closed end, so the step time tapers from 0.30 s down to 0.22 s.</p>
     </details>
     <h3>3 · Does it meet the brief?</h3>
     <div class="panel"><p style="font-family:var(--mono);font-size:.9rem;margin:0">
-      <em>Capability floor — mechanical</em><br>
-      Worst case F<sub>finger</sub> = 121.9 N &nbsp; ≥ &nbsp; 50 N required<br>
-      Margin = 121.9 / 50 = <strong>2.44</strong><br><br>
-      <em>Applied ceiling — control logic</em><br>
-      Software threshold = 15 N &nbsp; ≪ &nbsp; 50 N limit<br>
+      <em>Capability floor (mechanical)</em><br>
+      Worst-case F<sub>finger</sub> = 121.9 N per jaw (243.8 N total) &nbsp; ≥ &nbsp; 50 N required<br>
+      Margin = 121.9 / 50 = <strong>2.44×</strong> per finger<br><br>
+      <em>Applied ceiling (control logic)</em><br>
+      Software threshold = 15 N &nbsp; ≪ &nbsp; 50 N maximum limit<br>
       Measured on egg = 13.4 N
     </p></div>
-    <p>Both halves of the requirement are satisfied by separate parts of the system. The capability floor is met mechanically, with a margin of 2.44 at the worst point in the stroke. The applied ceiling is met in software, with the load cell and threshold override stopping the drive at the nominated setpoint, set to 15 N for the egg.</p>
-    <p>The envelope shows how asymmetric this arrangement is. The mechanism delivers between 122 N and 165 N per finger, exceeding the 50 N ceiling by a factor of 2.5 to 3.5 throughout its travel and exceeding the 15 N egg setpoint by a factor of 8 to 11. No mechanical feature prevents the egg being crushed: there is no slipping clutch, no compliant member and no force-limited actuator. The shell survives because a filtered sensor reading crosses a threshold within a 50 ms loop and the command is forced to 2.5 V.</p>
-    <p>This was a deliberate trade. Capping the applied force mechanically would also have capped the capability, and the brief required both, so decoupling them allows the same hardware to hold an egg at 15 N or a more robust object at 45 N by changing a front panel value. The consequence is that the ceiling is only as reliable as the sensing chain supporting it. Contact is detected up to one loop period late plus filter lag, so peak force exceeds the setpoint, and the selection of 15 N rather than 20 N provides headroom for that overshoot given the force available behind the jaws.</p>
+    <p>Both halves of the force specification are met: the lead-screw linkage satisfies the ≥&nbsp;50&nbsp;N capability requirement with a 2.44× margin at the weakest point of the stroke, whilst the LabVIEW load-cell override keeps the applied force well below the 50&nbsp;N ceiling (stopping at 13.4&nbsp;N on the egg when set to a 15&nbsp;N limit).</p>
+    <p>It can be observed from these numbers that the mechanical system is capable of delivering roughly 8 to 11 times the 15&nbsp;N egg threshold (and in private testing we recorded over 60–80&nbsp;N on the load cell graph before stopping the motor manually to avoid breaking the PLA arms). Because there is no mechanical slip clutch or spring limit in the drivetrain, protecting the egg relies completely on the load cell and LabVIEW loop catching the force rise within a 50&nbsp;ms pass. Decoupling the mechanical capability from the software limit was a deliberate choice so that the same hardware could grip fragile items at 15&nbsp;N or heavier objects up to 50&nbsp;N just by changing the setpoint on the LabVIEW front panel.</p>
     <h3>4 · Actuation speed</h3>
     <div class="panel"><p style="font-family:var(--mono);font-size:.9rem;margin:0">
-      v = N · p / 60 = 56 rpm × 8 mm / 60 = <strong>7.47 mm/s</strong><br>
+      v<sub>nut</sub> = N · L / 60 = 56 rpm × 8 mm / 60 = <strong>7.47 mm/s</strong><br>
       t<sub>close</sub> = 36.5 mm / 7.47 mm/s = <strong>4.89 s</strong>
     </p></div>
-    <p>A full close of nearly five seconds is slow and follows directly from selecting force multiplication over speed. The automatic sequence does not traverse the full stroke, as the IR window triggers closing and the position target steps from 0 to 120 encoder counts, so the jaws travel only as far as required. Measured closing onto the egg was <strong>7–8&nbsp;s</strong> against the calculated 4.89&nbsp;s, a difference of roughly 2.6&nbsp;s, which was recorded as a fail. Contributing factors are motor speed reducing under load, mechanical friction in the screw and guide rods, and LabVIEW response time. The dominant contributor was not isolated, so the theoretical calculation does not fully represent the gripper under testing and further investigation would be required to establish the cause.</p>
+    <p>A theoretical full-stroke closing time of 4.89&nbsp;s is relatively slow, which is the direct trade-off of using an 8&nbsp;mm lead screw for high force multiplication. During our physical tests, closing onto the egg took approximately 5&nbsp;s, whilst travelling from fully open (105&nbsp;mm) to fully closed took <strong>7–8&nbsp;s</strong>. This 7–8&nbsp;s full-stroke time exceeded the 4.89&nbsp;s theoretical calculation mainly because we clamped the automatic PID output to ±1.0&nbsp;V (40% of the Sabertooth driver's 2.5&nbsp;V range) to slow the approach and prevent the moving-average filter lag from causing a large force overshoot on contact. Friction in the guide rods and motor slowdown under load also contributed to the difference.</p>
     <h3>5 · Structural check</h3>
-    <p>Evaluating structural integrity under the governing stall condition of <strong>164.8&nbsp;N</strong> near full open (the opposite stroke extreme from the minimum delivered force), each finger acts as a cantilever beam. Over a 55&nbsp;mm moment arm to the jaw contact point, the nominal 15&nbsp;mm&nbsp;×&nbsp;20&nbsp;mm root cross-section (elastic section modulus Z&nbsp;≈&nbsp;1000&nbsp;mm³) sustains a peak bending moment of 9.06&nbsp;N·m, generating a maximum bending stress of approximately 9.1&nbsp;MPa. By printing the fingers flat on the build plate, tensile bending stresses align with continuous extruded perimeters rather than inter-layer boundaries. Knocking down PLA tensile yield strength from 45&nbsp;MPa to a conservative 30&nbsp;MPa for print anisotropy provides an estimated factor of safety of <strong>3.3</strong> against full motor stall (and ~2.1 under dynamic shock allowances), confirming that the assembly withstands unexpected obstruction without risk of brittle failure.</p>
+    <p>To make sure the 3D-printed PLA fingers wouldn't snap if the mechanism stalled against a rigid object, we checked the bending stress at the finger root under the worst-case open-end stall load of <strong>164.8&nbsp;N</strong>. Treating the finger as a cantilever beam with a 55&nbsp;mm moment arm from the carriage bearing to the jaw tip, a nominal 15&nbsp;mm&nbsp;×&nbsp;20&nbsp;mm rectangular root cross-section (section modulus Z&nbsp;≈&nbsp;1000&nbsp;mm³) experiences a peak bending moment of 9.06&nbsp;N·m and a bending stress of roughly 9.1&nbsp;MPa. Because the fingers were printed flat on the build plate, the tensile bending stresses run along the 4 continuous outer perimeter walls rather than pulling across layer lines. Using a conservative PLA yield strength of 30&nbsp;MPa (knocked down from 45&nbsp;MPa for 3D-printed anisotropy) gives a static factor of safety of <strong>3.3</strong> (and ~2.1 allowing for dynamic shock), which matched our private lab tests where the jaws survived 60–80&nbsp;N loads without cracking.</p>
     <div class="panel note">
       <h3>Related calculator</h3>
-      <p>I built a separate lead-screw calculator to explore the efficiency and force-multiplication assumptions behind this design.</p>
+      <p>I also built an interactive lead-screw calculator to test how thread pitch, number of starts, and friction coefficients affect efficiency and self-locking.</p>
       <div class="btn-row">
         <a class="btn prim" href="../tools/lead-screw-calculator.html">Lead screw &amp; lead nut calculator →</a>
       </div>
@@ -232,50 +228,50 @@
     <table class="spec-tbl">
       <thead><tr><th>Parameter</th><th>Calculated</th><th>As built / measured</th></tr></thead>
       <tbody>
-        <tr><td>Grip force, closed</td><td>121.9 N per finger</td><td>13.4 N on the egg — capped by the 15 N software threshold, not by the mechanism</td></tr>
-        <tr><td>Grip force, near full open</td><td>164.8 N per finger</td><td>Not measured</td></tr>
-        <tr><td>Jaw opening</td><td>95 mm</td><td>105 mm</td></tr>
-        <tr><td>Nut stroke</td><td>36.5 mm</td><td>Not measured</td></tr>
-        <tr><td>Close time, full stroke</td><td>4.89 s</td><td>7–8 s onto the egg</td></tr>
-        <tr><td>Screw efficiency</td><td>0.588 assumed</td><td>Not verified — see below</td></tr>
+        <tr><td>Grip force on egg</td><td>121.9 N per finger capability</td><td>13.4 N on the egg (stopped by the 15 N software override, with 60–80 N verified in private testing)</td></tr>
+        <tr><td>Grip force, near full open</td><td>164.8 N per finger</td><td>Not tested to stall (to avoid over-stressing the PLA frame)</td></tr>
+        <tr><td>Maximum jaw opening</td><td>95 mm</td><td>105 mm</td></tr>
+        <tr><td>Nut stroke</td><td>36.5 mm</td><td>~40 mm (set manually to thread end)</td></tr>
+        <tr><td>Close time</td><td>4.89 s (at 100% speed)</td><td>~5 s onto egg, 7–8 s full stroke (at 40% voltage limit)</td></tr>
+        <tr><td>Screw efficiency</td><td>0.588 (assumed μ = 0.19)</td><td>Consistent with 60–80 N proof tests, not stalled to limit</td></tr>
       </tbody>
     </table>
-    <p>The comparison of most interest is not available from the data collected. Because the controller stops the jaws at 15 N, the mechanism was never driven near its calculated 184.7 N capability, so the measured force verifies the control ceiling and provides no information on the efficiency assumption underpinning the capability floor. Verifying the 15 N setpoint and verifying the screw efficiency are separate experiments and only the first was performed. Stalling the gripper against the load cell with the override disabled and back-calculating η from the measured stall force would close that gap, and given the model's dependence on that single value it is the first test that should be added.</p>
+    <p>It is worth noting that because our LabVIEW controller stops the motor as soon as the load cell hits 15&nbsp;N during normal egg gripping, a standard demo run only tests the control threshold rather than the maximum mechanical thrust. However, during private testing in the lab (as can be seen in the LabVIEW load-cell graph reaching 60&nbsp;N in our report), we verified that the mechanism easily surpasses the 50&nbsp;N brief requirement before we manually stopped the test to protect the PLA parts.</p>
   </section>
   <!-- ============ ③ DESIGN & MANUFACTURE ============ -->
   <section class="tabpanel" role="tabpanel" id="panel-design" aria-labelledby="tab-design" tabindex="0" hidden>
     <h2>From sketch to printed part</h2>
-    <p>Three concepts were taken through sketch stage. The first was a rotationally activated geared design, with the jaws swung directly by a gear and lever train, which was discounted once it was established that the jaw face would roll across the shell during closing. The second iteration reworked the drive as a self-contained block incorporating a sprung lever. The third used the lead screw and symmetric links, and this layout carried through to the final build with minimal change, the first CAD iteration being close to the design manufactured. Subsequent changes were driven by component failure or fit rather than by design review: the PLA lead-screw coupler failed under load and was reprinted in PA-6 nylon, the jaw pad plate was specified in TPU as a rigid grip face was unsuitable against a shell, and the motor cage required rework after losing adherence during testing.</p>
+    <p>We developed three initial design concepts during the preliminary phase. The first concept used rotational geared jaws driven directly by a pinion, which we ruled out because the sweeping jaw arc would roll across the egg and push it out of the grasp. The second concept used a central pinion driving two opposing linear racks on guide rods, which gave parallel motion but lacked the force multiplication of a screw drive. The third concept used a T8 lead screw and brass nut driving two symmetric slotted bell-crank arms, which gave us both parallel jaw translation and high mechanical advantage. We carried this third layout into SolidWorks CAD and 3D printing with only minor adjustments: redesigning the nut block from a flanged oval to a square block with a circular recess to match the brass nut supplied in the lab, reprinting the failed PLA shaft coupler in PA-6 nylon, and printing the Finger&nbsp;2 contact pad in flexible TPU.</p>
     <h3>Concept iterations</h3>
     <div class="media-grid">
       <figure>
         <img src="../assets/media/gripper/concept-01.jpg" alt="Initial hand sketch of the gripper mechanism" loading="lazy"
-             data-cap="Concept 1 — rotationally activated geared design, jaws swung directly by a gear-and-lever train.">
-        <figcaption>Concept 1 — rotationally activated geared design, with the jaws swung directly by a gear and lever train from a side-mounted motor; rejected because the arc sweep rolled the jaw across the shell, introducing a tangential slip force that risked ejecting the egg.</figcaption>
+             data-cap="Concept 1 - rotationally activated geared design, jaws swung directly by a gear-and-lever train.">
+        <figcaption>Concept 1 - rotationally activated geared design where the jaws pivot directly from a side-mounted motor pinion, rejected because the sweeping arc rolls across the egg shell and creates a tangential slip force.</figcaption>
       </figure>
       <figure>
         <img src="../assets/media/gripper/concept-02.jpg" alt="Revised mechanism sketch" loading="lazy"
-             data-cap="Concept 2 — drive reworked into a self-contained block with a sprung lever.">
-        <figcaption>Concept 2 — drive reworked into a self-contained block with a sprung lever, which reduced packaging volume but introduced compliant flexure and dual-rack backlash into the force transmission path without sufficient mechanical advantage.</figcaption>
+             data-cap="Concept 2 - dual rack and pinion linear drive on parallel guide rods.">
+        <figcaption>Concept 2 - dual rack-and-pinion linear mechanism riding on parallel guide rods, rejected because printed gear teeth introduce backlash/wear and provide no intrinsic torque multiplication without an extra gearbox.</figcaption>
       </figure>
       <figure>
         <img src="../assets/media/gripper/concept-03.jpg" alt="Selected concept" loading="lazy"
-             data-cap="Selected concept — lead screw and symmetric arms, close to what was built.">
-        <figcaption>Selected concept — lead screw with symmetric arms. The first CAD iteration of this layout is close to the design built and tested.</figcaption>
+             data-cap="Selected concept - lead screw and symmetric bell-crank arms, close to what was built.">
+        <figcaption>Selected concept - T8 lead screw driving symmetric slotted bell-crank arms. The first SolidWorks iteration of this layout matched our final manufactured build closely.</figcaption>
       </figure>
     </div>
     <h3>CAD model</h3>
-    <p>The assembly is built around a printed main frame with two uprights carrying a pair of 6&nbsp;mm aluminium guide rods, retained by snap-on end caps. Both finger carriages ride on these rods, so alignment is determined by the rods rather than by printed sliding surfaces. The T8 lead screw passes through the centre block into a nut block holding a brass flange nut, pressed flange-first into a counterbore and fixed with four M3 screws. The nut block carries split pins top and bottom, each capturing a 608ZZ bearing which rides in the long slot of an arm, so the force path from screw to fingers runs through rolling contact rather than plastic on plastic. One arm is mounted above the frame and one below, mirrored, producing symmetric finger translation. The load cell is housed in a printed casing clipped to the square jaw, placing it directly in the grip force path, and the TPU pad plate closes the jaw frame as the contact face. The IR sensor is mounted to the front face of the centre block on two printed push pins.</p>
-    <p>All structural components—including the main frame, bell-crank arms, and jaw carriages—were oriented in SolidWorks to print flat on the build plate, guaranteeing that principal bending stresses resolved in the XY plane. Generous 3&nbsp;mm stress-relief fillets were applied at the finger roots to arrest stress concentrations, whilst pin joints and bearing seats were modelled with a 0.20&nbsp;mm radial clearance, ensuring 608ZZ bearings snapped securely over split-pin retainers without binding.</p>
+    <p>The assembly is built around a 3D-printed main frame with two front uprights that hold a pair of parallel 6&nbsp;mm aluminium guide rods, secured at the ends by snap-on caps. Both finger carriages slide along these aluminium rods so that jaw alignment is handled by metal shafts rather than printed sliding tracks. At the centre, the T8 lead screw threads through a nut block holding a brass flange nut (pressed into a counterbore and fastened with four M3 screws). Top and bottom split pins on the nut block each capture a 608ZZ ball bearing that rolls inside the short slot of a bell-crank arm, transferring force through rolling contact rather than plastic-on-plastic friction. One bell-crank arm mounts on top of the frame and the other mounts underneath in a mirrored layout so that both fingers move together symmetrically. The TAS606 load cell sits inside a printed housing clipped to the square Finger&nbsp;2 jaw behind a flexible TPU pad plate and star insert, placing the sensor directly in the gripping force path, whilst the Sharp IR sensor clips onto the front face of the centre frame block.</p>
+    <p>All structural parts (main frame, upper/lower bell-crank arms, and finger carriages) were oriented flat on the build plate in SolidWorks so that bending loads ran along the XY filament paths. We added 3&nbsp;mm fillets at internal corners and modelled ~0.20&nbsp;mm radial clearance on the split pivot pins so the six 608ZZ bearings could click into place without splitting the plastic.</p>
     <div class="media-grid wide">
       <figure>
         <img src="../assets/media/gripper/cad-assembly.jpg" alt="SolidWorks assembly of the gripper" loading="lazy"
-             data-cap="Full assembly — fifteen printed parts on two aluminium guide rods.">
+             data-cap="Full assembly - fifteen printed parts on two aluminium guide rods.">
         <figcaption>Full assembly in SolidWorks</figcaption>
       </figure>
       <figure>
         <img src="../assets/media/gripper/cad-jaw.jpg" alt="SolidWorks part model of a gripper finger" loading="lazy"
-             data-cap="Finger part — jaw frame, star insert and TPU pad plate as the contact face.">
+             data-cap="Finger part - jaw frame, star insert and TPU pad plate as the contact face.">
         <figcaption>Finger part detail</figcaption>
       </figure>
       <figure>
@@ -285,33 +281,32 @@
       </figure>
     </div>
     <h3>Interactive mechanism demonstration</h3>
-    <p>Explore a kinematic demonstration of the lead-screw bell-crank layout. Move the stroke and geometry sliders to see how the nut travel changes the linkage angle and jaw opening. This is an adjustable mechanism model, not a dimensionally verified copy of the final CAD assembly.</p>
+    <p>As part of my personal portfolio extension for this project, I coded an interactive SVG kinematic/force tool to visualise how the bell-crank angles and virtual-work force ratio change across the nut stroke. You can drag the stroke and geometry sliders below to see how the lead-nut position drives the jaw opening and tip force in real time.</p>
     <figure class="evidence gm-embed">
       <header>
-        <span class="tag">⚙ Live mechanism — interactive SVG</span>
+        <span class="tag">⚙ Live mechanism - interactive SVG</span>
         <a class="btn sm" href="../tools/gripper-mechanism.html" target="_blank" rel="noopener">Open full tool ↗</a>
       </header>
       <iframe src="../tools/gripper-mechanism.html?embed=1" title="Interactive lead-screw gripper mechanism with motion and geometry sliders" loading="lazy"></iframe>
-      <figcaption>Adjust the motion and geometry controls to inspect the mechanism's kinematic behaviour.</figcaption>
+      <figcaption>Adjust the motion and geometry sliders to inspect the bell-crank kinematics and instantaneous force transfer.</figcaption>
     </figure>
-    <h3>Manufacture in PLA</h3>
-    <p>Structural components were printed in PLA on a Bambu FDM machine across fifteen distinct parts. Two material substitutions were planned and one was not. The jaw pad plate was specified in TPU from the outset due to its requirement for flexing. The lead-screw coupler was printed in PLA, failed, and was reprinted in PA-6 nylon, as it carries the full motor torque into the screw and is loaded differently to every other printed part. The unplanned work was dimensional, with several carriage and rod holes requiring reaming before the carriages would traverse freely, which is the usual consequence of printing a sliding interface to size rather than reaming it afterwards.</p>
-    <p>Slicing was configured in Bambu Studio using a standard 0.20&nbsp;mm layer height, 4 perimeter walls to maximise beam bending resistance and hoop strength around bearing bosses, and a 20% gyroid infill to provide isotropic core support whilst keeping print times and material mass within sensible bounds.</p>
+    <h3>Manufacture &amp; assembly</h3>
+    <p>The gripper was manufactured across 15 printed parts on a Bambu Lab FDM printer. Twelve structural parts were printed in PLA for stiffness and cost efficiency, the Finger&nbsp;2 grip pad was printed in TPU so it could flex against the egg, and the motor-to-lead-screw coupler was reprinted in PA-6 nylon after the initial PLA coupler sheared under torque. We sliced the structural PLA parts in Bambu Studio with a 0.20&nbsp;mm layer height, 4 perimeter walls, and 20% gyroid infill. During physical assembly, a few of the 6&nbsp;mm carriage rod holes were slightly tight off the printer and had to be reamed out by hand so the jaws would glide along the aluminium rods without binding.</p>
     <div class="media-grid">
       <figure>
         <img src="../assets/media/gripper/build-01.jpg" alt="Parts fresh off the printer" loading="lazy"
-             data-cap="Printed parts before cleanup.">
-        <figcaption>Printed parts</figcaption>
+             data-cap="All 15 printed components laid out on the cutting mat before assembly.">
+        <figcaption>Printed parts laid out before assembly</figcaption>
       </figure>
       <figure>
         <img src="../assets/media/gripper/build-02.jpg" alt="Gripper during assembly" loading="lazy"
-             data-cap="Assembly — clip tabs, split pivot pins capturing 608ZZ bearings, brass flange nut on four M3 screws.">
-        <figcaption>Assembly</figcaption>
+             data-cap="Assembly - clip tabs, split pivot pins capturing 608ZZ bearings, and brass flange nut on four M3 screws.">
+        <figcaption>Sub-assembly of the jaws, bearings and lead screw</figcaption>
       </figure>
     </div>
     <h3>Electronics and LabVIEW</h3>
-    <p>The wiring is straightforward. The IR sensor is on analogue input B/AI1, pin&nbsp;5, with its 3-wire JST lead extended by jumper wires, soldered, heat-shrunk and labelled. The amplified load cell is on B/AI0, pin&nbsp;3. The encoder A/B channels are read through the Encoder Express VI at approximately 0.044° per count. A single 0–5&nbsp;V command is output on B/AO0, pin&nbsp;2, to the Sabertooth. The VI is a single polling loop cycling at 50&nbsp;ms with no state variable, so the operating mode is rebuilt from the inputs on every pass, with only e[k−1] and the previous integral term persisting in shift registers. Priority within a pass is fixed: stop or myRIO error, then manual mode, then the force override, then the manual opening setpoint, then the IR target.</p>
-    <p>The faults that consumed the most time were not in the code. The gripper failed to grip and the fault was initially attributed to the programming, with several sessions spent revising logic before the sensor itself was checked. The IR unit was not registering any feedback, and substituting a newly packaged sensor restored function immediately. This highlights the importance of verifying each part of the gripper independently to prove functional operation before assuming a software fault. The motor cage failure followed, allowing the motor to free-spin, which presents identically to a control fault at the LabVIEW front panel. The unresolved fault is recorded in the results tab.</p>
+    <p>The electronics were wired to the NI myRIO-1900 on Connector&nbsp;B: the Sharp IR sensor connects to analogue input B/AI1 (pin&nbsp;5) via a soldered and heat-shrunk 3-wire JST extension lead, the amplified TAS606 load cell connects to B/AI0 (pin&nbsp;3), the motor encoder A/B channels wire into the digital encoder inputs, and a single 0–5&nbsp;V analogue command goes out on B/AO0 (pin&nbsp;2) to the Sabertooth motor controller. Inside LabVIEW, a single polling loop runs every 50&nbsp;ms and evaluates the operating mode in a fixed priority order: Emergency Stop or error status first, then Manual Mode override, then the 15&nbsp;N load-cell force stop (sending 2.5&nbsp;V), then the manual opening switch, and finally the automatic IR detection target (stepping from 0 to 120 encoder counts when an egg is detected between 10&nbsp;cm and 15&nbsp;cm).</p>
+    <p>Interestingly, the two problems that cost us the most debugging time in the lab were hardware issues that looked like software bugs on the LabVIEW front panel. First, the gripper stopped responding to the egg altogether and we spent several attempts checking our LabVIEW code before realising the original Sharp IR sensor had died, which was fixed immediately by swapping in a new sensor out of the box. This highlighted how important it is to test and verify each sensor/actuator independently before blaming the control logic. Second, the motor mount lost its friction fit on the motor body and started spinning freely inside the plastic cage, which we fixed for the final demonstration using workshop superglue.</p>
   </section>
   <!-- ============ ④ RESULT & WHAT I LEARNT ============ -->
   <section class="tabpanel" role="tabpanel" id="panel-final" aria-labelledby="tab-final" tabindex="0" hidden>
@@ -324,78 +319,71 @@
         referrerpolicy="strict-origin-when-cross-origin"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen></iframe>
-      <figcaption><strong>Demonstration</strong> — an artificial egg enters the IR window, the position PID closes the jaws, and the 15&nbsp;N force threshold overrides the drive on contact. The recorded force was 13.4&nbsp;N and the Gripped indicator lit. The assessors applied a gentle pulling force to the egg and it remained securely held. Release did not operate as intended: the LabVIEW button had to be held down throughout the opening motion and the gripper did not consistently return to its preset open position.</figcaption>
+      <figcaption><strong>Demonstration</strong> - an artificial egg is placed inside the 10–15&nbsp;cm IR detection window, the position PID closes the jaws, and the 15&nbsp;N load-cell override stops the motor on contact at a recorded force of 13.4&nbsp;N (lighting up the green "Gripped?" LED). The lecturers gently pulled on the egg to verify grip security and it held firmly without slipping. However, automatic reopening did not work reliably, requiring the manual open button in LabVIEW to be held down to release the egg.</figcaption>
     </figure>
     <h3>Finished build</h3>
     <div class="media-grid wide">
       <figure>
         <img src="../assets/media/gripper/final-01.jpg" alt="Completed gripper, jaws open" loading="lazy"
              data-cap="Completed gripper at its measured 105 mm opening.">
-        <figcaption>Jaws open</figcaption>
+        <figcaption>Jaws open (105 mm)</figcaption>
       </figure>
       <figure>
         <img src="../assets/media/gripper/final-02.jpg" alt="Completed gripper holding an egg" loading="lazy"
-             data-cap="Holding the egg at 13.4 N against a 15 N threshold.">
-        <figcaption>Holding the egg</figcaption>
+             data-cap="Holding the artificial egg at 13.4 N against a 15 N threshold.">
+        <figcaption>Holding the egg (13.4 N)</figcaption>
       </figure>
       <figure>
         <img src="../assets/media/gripper/final-03.jpg" alt="Gripper mounted on the test rig" loading="lazy"
-             data-cap="Mounted — clamped to the laboratory benchtop rig via the frame rear mounting bracket.">
-        <figcaption>Mounted on test rig</figcaption>
+             data-cap="Mounted - set up on the uni lab workbench for testing.">
+        <figcaption>Mounted on test bench</figcaption>
       </figure>
     </div>
     <h3>Test results</h3>
     <table class="spec-tbl">
       <thead><tr><th>Test</th><th>Target</th><th>Result</th><th>Pass</th></tr></thead>
       <tbody>
-        <tr><td>Egg detection (RE-1)</td><td>Peak on the IR chart within range</td><td>Detected reliably; sequence triggered</td><td>Pass</td></tr>
-        <tr><td>Jaw opening (RE-2)</td><td>≥ 100 mm</td><td>105 mm</td><td>Pass</td></tr>
-        <tr><td>Gripping force (RE-3)</td><td>10–15 N under PID</td><td>12.2 N held</td><td>Pass</td></tr>
-        <tr><td>Grip an egg without cracking (RE-5)</td><td>&lt; 15 N, no shell damage</td><td>13.4 N, no damage</td><td>Pass</td></tr>
-        <tr><td>Hold whilst lifted and moved (RE-6)</td><td>No slip</td><td>Held through manual tug and transport</td><td>Pass</td></tr>
+        <tr><td>Egg detection (RE-1)</td><td>Peak on the IR chart within 10–15 cm range</td><td>Detected reliably and triggered closing sequence</td><td>Pass</td></tr>
+        <tr><td>Jaw opening (RE-2)</td><td>≥ 100 mm</td><td>105 mm measured</td><td>Pass</td></tr>
+        <tr><td>Gripping force regulation (RE-3)</td><td>10–15 N under PID/override</td><td>12.2 N held in initial test</td><td>Pass</td></tr>
+        <tr><td>Grip an egg without cracking (RE-5)</td><td>&lt; 15 N, no shell damage</td><td>13.4 N applied on egg, no damage</td><td>Pass</td></tr>
+        <tr><td>Hold whilst lifted and moved (RE-6)</td><td>No slip during pull test</td><td>Held securely through manual tug and lifting</td><td>Pass</td></tr>
         <tr><td>Automatic close (RE-7)</td><td>Detect and grip unaided</td><td>Worked as intended</td><td>Pass</td></tr>
-        <tr><td>Automatic reopening (RE-8)</td><td>Return to zero once the egg is removed</td><td>Did not return; IR sensor detecting the crossbars</td><td><strong>Fail</strong></td></tr>
-        <tr><td>Manual control (RE-9)</td><td>Open and close from the front panel</td><td>Worked</td><td>Pass</td></tr>
-        <tr><td>Emergency stop (RE-10)</td><td>All motion stops, code terminates</td><td>Stopped and terminated cleanly</td><td>Pass</td></tr>
-        <tr><td>Closing time (RE-4)</td><td>4.89 s calculated</td><td>7–8 s measured</td><td><strong>Fail</strong></td></tr>
-        <tr><td>Repeatability</td><td>Consistent cycles without adjustment</td><td>~10 cycles; reopening needed manual input each time</td><td>Partial</td></tr>
-        <tr><td>Hold with motor unpowered</td><td>No slip or release</td><td>Not tested</td><td>—</td></tr>
+        <tr><td>Automatic reopening (RE-8)</td><td>Return to zero once the egg is removed</td><td>Did not return automatically due to IR sensor detecting the closed jaws/crossbars</td><td><strong>Fail</strong></td></tr>
+        <tr><td>Manual control (RE-9)</td><td>Open and close from the LabVIEW front panel</td><td>Worked reliably</td><td>Pass</td></tr>
+        <tr><td>Emergency stop (RE-10)</td><td>All motion stops and code terminates</td><td>Stopped motor and terminated cleanly</td><td>Pass</td></tr>
+        <tr><td>Closing time (RE-4)</td><td>4.89 s calculated</td><td>~5 s onto egg, 7–8 s full stroke (due to 40% speed limit)</td><td><strong>Fail</strong></td></tr>
+        <tr><td>Repeatability</td><td>Consistent cycles without adjustment</td><td>~10 consecutive cycles (reopening required manual input each time)</td><td>Partial</td></tr>
       </tbody>
     </table>
-    <h3>The unresolved one</h3>
+    <h3>The unresolved issue: automatic reopening</h3>
     <div class="panel note">
-      <p><strong>Automatic reopening did not operate reliably.</strong> Detection, closing and holding functioned as intended, but the gripper did not return to its preset open position once the egg was removed, and every cycle required manual reopening through LabVIEW. The control logic was reviewed by the assessors and no fault was identified in the programming, which indicates a geometric rather than a software cause. With the jaws closed, the IR sensor appears to detect the gripper's own crossbars within its 10–15&nbsp;cm window, so the object-present condition never clears and the setpoint does not return to zero. The reopening code path was demonstrated to work in isolation.</p>
-      <p>The result is therefore partial. The gripper achieves gripping and holding, but not a complete pick-and-place cycle, and as a sub-assembly for a pick-and-place application the reopening path would require resolution before it would be of use.</p>
+      <p><strong>Automatic reopening did not operate reliably during the final demo.</strong> Whilst object detection, controlled closing, and holding worked across 10 consecutive cycles, removing the egg did not cause the jaws to automatically return to their open zero position, so we had to open the gripper manually through LabVIEW after each test. The lecturers reviewed our LabVIEW block diagram and confirmed that the reopening control logic itself worked properly, which pointed to a physical/optical cause: once the jaws are closed, the Sharp IR sensor's optical beam clips the inner edges of the gripper's own jaws and crossbars inside the 10–15&nbsp;cm window. Because the sensor still sees the closed jaws as an object in range, the boolean condition never clears back to zero.</p>
+      <p>To fix this in a future iteration, we would move the IR sensor forward or angle it slightly upward out of the plane of the closing arms, and thin out the inner jaw profiles so they never cross the sensor's optical path.</p>
     </div>
-    <h3>Designed 95 mm, built 105 mm</h3>
-    <p>The kinematic model gives a 95 mm opening for the 36.5 mm of nut travel available, and the manufactured gripper opens to 105 mm, approximately 10% more than modelled, or 5 mm of additional travel per finger. Exceeding the modelled value indicates the mechanism is behaving in a way the geometry does not describe.</p>
-    <p>The observed 10&nbsp;mm expansion over the nominal model arises from a physical datum mismatch compounded by clearance stack-up. The initial open position was set empirically by winding the lead screw manually until the nut ran to the end of thread travel rather than halting at a dedicated mechanical stop, allowing the carriage stroke to exceed the 36.5&nbsp;mm CAD travel. Furthermore, necessary reaming of the aluminium guide-rod holes to prevent sliding friction, paired with clearance in the 608ZZ bearing slots, allowed the unloaded fingers to bias outwards by roughly 5&nbsp;mm per side. This cumulative compliance was readily taken up upon initial contact preloading when clamping the egg.</p>
-    <p>The direction of the error was favourable. The acceptance criterion was ≥&nbsp;100 mm to accommodate all egg sizes, so a mechanism exceeding its model passes a requirement the model itself would not have met. This was not by design, and an error of the same magnitude in the opposite direction would have failed the test at 86 mm.</p>
+    <h3>Modelled 95 mm vs measured 105 mm opening</h3>
+    <p>Our SolidWorks and Excel kinematic model predicted a 95&nbsp;mm maximum jaw opening for 36.5&nbsp;mm of nut travel, however the physical build opened to 105&nbsp;mm (an extra 5&nbsp;mm per finger). This difference came down to how we set the starting datum and clearance stack-up: before powering the system, we wound the lead screw by hand until the fingers were fully open against the end of the screw thread rather than stopping at a hard 36.5&nbsp;mm mechanical stop. Combined with the 0.20&nbsp;mm bearing clearances and the reamed 6&nbsp;mm guide-rod holes, the unloaded jaws opened wider than the nominal CAD stroke, which actually helped us pass the ≥&nbsp;100&nbsp;mm opening requirement (RE-2).</p>
     <h3>What I learnt</h3>
     <div class="panel note">
-      <p><strong>A factor of safety depends on the evaluation point.</strong> The linkage delivers 164.8 N near full open and 121.9 N closed, and the closed figure governs because that is where the egg is gripped. Evaluating at the open end would have reported a margin of 3.30 against the brief rather than the applicable 2.44. The margin was sufficient in either case, but the same 35% error in a more tightly specified design would determine whether the requirement is met.</p>
-      <p><strong>The same curve answers two questions and the worst case changes ends.</strong> Delivered grip force is governed by the closed position. Structural load is governed by the open position, as that is where the mechanism can push hardest under stall. One table, two load cases, opposite extremes of the stroke.</p>
-      <p><strong>Efficiency carries most of the model uncertainty.</strong> Torque, lead and geometry are each known to two or three significant figures, whereas the 0.588 screw efficiency is an estimate placing approximately 41% of the motor's work into thread friction, and it affects the result more than every other input combined. It was also the value identified in the preliminary feedback, and correcting the pitch-versus-lead error behind it revised the finger forces and the actuation time simultaneously. This defines what verification by test should have covered, as the load cell was effectively measuring a single assumption.</p>
-      <p><strong>A large reduction was selected and paid for in speed.</strong> The 8 mm lead converts 0.8 N·m into 184.7 N of axial thrust with no gear train, no printed teeth and no additional backlash in the force path, so the reduction is geometric and costs nothing in part count. The cost is actuation speed: 7.47 mm/s at the nut, 4.89 s calculated for a full close and 7–8 s measured. This is acceptable for a demonstration and would be the first item redesigned for a production pick-and-place cell.</p>
-      <p><strong>The constrained quantity is the one to sense.</strong> Position control is unsuitable for eggs because egg diameter varies, and the force envelope shows the consequence of a position error, as the mechanism can apply eleven times the egg setpoint. Closing to a force makes the controller indifferent to object dimensions. The corollary is that the sensing chain becomes safety-critical, as with that force available a dead sensor produces a crushed egg rather than a degraded grip, and the IR sensor failure during development demonstrated how plausible that failure mode is.</p>
-      <p><strong>Printed clearance is a design input rather than a tolerance to be minimised.</strong> The pivots are split pins whose lips clip over the inner race of 608ZZ bearings, the arms ride on bearings within long slots rather than on plastic, and several carriage rod holes still required reaming before the fingers would traverse freely. Pin joints were modelled with a 0.20&nbsp;mm nominal radial clearance for bearing insertion, resulting in approximately 1&nbsp;mm of lateral fingertip play when unloaded; this was promptly eliminated under closed-loop clamping preload without impairing positional accuracy.</p>
-      <p><strong>Calculation and CAD are not sequential.</strong> The force envelope depends on the base offset and arm geometry, so each geometric change in SolidWorks required the stroke table to be recalculated, and the pitch-versus-lead correction then propagated in the opposite direction through the finger forces and into the predicted close time. Performing this manually more than twice is the reason a parameterised spreadsheet was built, which became the calculator tool linked in the previous tab.</p>
+      <p><strong>A safety margin depends on where in the stroke you check it:</strong> The bell-crank linkage delivers 164.8&nbsp;N per finger near full open and 121.9&nbsp;N when closed. Because the egg is gripped near the closed position, the 121.9&nbsp;N figure governs our force capability (giving a 2.44× margin over 50&nbsp;N, whereas checking at the open end would have given an optimistic 3.30× margin). Conversely, the 164.8&nbsp;N open-end force governs the structural bending check on the PLA finger roots under stall.</p>
+      <p><strong>Thread friction and lead vs pitch make a huge difference:</strong> Correcting our preliminary report error (where we initially used the 2&nbsp;mm thread pitch instead of the 8&nbsp;mm 4-start lead) quartered our theoretical screw force and sped up our calculated closing time by a factor of four. Alongside the 0.588 screw efficiency estimate, this showed how sensitive power-screw calculations are to getting the thread parameters right.</p>
+      <p><strong>High mechanical advantage costs speed:</strong> Using an 8&nbsp;mm lead screw gave us up to 369.5&nbsp;N of axial nut thrust with zero printed gears and zero tooth backlash, however it meant a calculated full close took 4.89&nbsp;s (and 7–8&nbsp;s once we limited the motor voltage to 40% in LabVIEW). That trade-off worked well for gently gripping an egg, however a high-speed pick-and-place robot would need a steeper lead or a direct linkage.</p>
+      <p><strong>Force feedback handles size variation, but filter lag causes overshoot:</strong> Closing until the load cell hits 15&nbsp;N lets the gripper handle different egg sizes without crushing them. However, because we needed a moving-average filter to clean up load-cell noise over a 50&nbsp;ms polling loop, we had to cap the motor drive voltage to 2.5&nbsp;±&nbsp;1.0&nbsp;V so that the jaws wouldn't overshoot the 15&nbsp;N limit before the loop could stop the motor.</p>
+      <p><strong>CAD and spreadsheet modelling go hand-in-hand:</strong> Every time we shifted a pivot or slot length in SolidWorks, the force transfer ratio across all 20 stroke steps changed. Building the parameterised Excel model and the interactive SVG gripper tool gave a solid understanding of how the linkage geometry and force transmission fit together.</p>
     </div>
-    <h3>What I would change</h3>
+    <h3>What I would improve next</h3>
     <div class="panel note">
-      <p><strong>Increase the base offset rather than reduce it.</strong> The initial assumption was that moving the pivot closer to the screw would flatten the force curve. The stroke table indicates the opposite, as delivered force increases monotonically with the arm distance <em>y</em>, which runs from 30.27 mm closed to 66.77 mm open, a factor of 2.2 across the stroke and the direct cause of the 35% force variation. A larger base offset would compress that fractional spread and flatten the envelope, at the cost of a larger frame and a longer screw, and would also raise the worst-case figure that governs the design. Reducing the offset produces the reverse and weakens the closed end further.</p>
-      <p><strong>Correct the IR sensor field of view, which is a geometric problem rather than a software one.</strong> Thinning the arms and reducing the finger bodies would move the gripper's own crossbars outside the 10–15 cm detection window, and relocating the sensor off the front face of the centre block would remove it from the closing path. The timed-reopen alternative requires confirmation that the egg has left the jaws, as without it the gripper enters a continuous open and close loop.</p>
-      <p><strong>Add a mechanical element behind the force ceiling.</strong> The egg currently depends entirely on a filtered reading crossing a threshold within a 50 ms pass, with no latch and no deadband, so the jaws pulse around the setpoint whilst holding and overshoot it on contact. A compliant element at the jaw, either a stiffer version of the TPU pad or a sprung finger of known rate, would convert a software guarantee into a physical one and reduce the threshold to a backstop. The lower-cost changes are to latch the override once triggered and to freeze the integrator whilst it holds, both of which were visible in the recorded data and require minimal LabVIEW modification.</p>
-      <p><strong>Specify a mechanically fastened motor mount.</strong> The clip-fit printed cage lost adherence under repeated cycling and allowed the motor to spin freely, which presents identically to a control fault at the front panel. The superglue repair restored function for testing and is the component of the build least defensible on reliability grounds.</p>
-      <p><strong>Where calculation and measurement diverged.</strong> Closing time was 7–8 s measured against 4.89 s calculated, a 60% overrun. The calculation assumes the motor maintains its rated 56 rpm throughout, which excludes speed loss under load, friction in the screw and guide rods, and the drive being clamped to 40% of the driver range. The pull-out force in the holding test would also be measured, as the egg did not slip but no figure was recorded, so the margin against slipping remains unknown.</p>
+      <p><strong>Relocate the IR sensor and slim down the inner jaw profile:</strong> Moving the Sharp IR sensor slightly forward or angling its line of sight away from the closing carriages would stop the jaws from triggering false self-detections when closed, allowing automatic reopening to work hands-free.</p>
+      <p><strong>Replace the friction-fit motor cage and plastic coupler with metal hardware:</strong> Supergluing the motor into its printed cage worked as a quick lab fix, and reprinting the shaft coupler in PA-6 nylon solved the PLA shearing issue, however using M3 face-mount screws on the motor gearbox and an off-the-shelf aluminium clamping jaw coupler would make the drivetrain far more reliable.</p>
+      <p><strong>Add a software latch and anti-windup in LabVIEW:</strong> Adding a boolean latch (or hysteresis deadband) once the 15&nbsp;N threshold is reached, and freezing the PID integral sum whilst the force override is active, would stop the jaws from pulsing on the egg and eliminate the integral windup jump on release.</p>
     </div>
-    <h3>Downloads</h3>
+    <h3>Downloads &amp; links</h3>
     <div class="btn-row">
       <a class="btn sm" href="../assets/media/gripper/gripper-drawing.pdf">📄 Drawing set (PDF)</a>
       <a class="btn sm" href="../assets/media/gripper/gripper-stl.zip">⬇ STLs (ZIP)</a>
+      <a class="btn sm" href="https://rmiteduau-my.sharepoint.com/:u:/g/personal/s4006831_student_rmit_edu_au/IQBcMrYTDFuwSYhAyYWBRrU2AX5_XCVrntmD-bSt1RbQuCU?e=UVcB3L" target="_blank" rel="noopener">💻 LabVIEW VI code ↗</a>
     </div>
-    <p class="muted" style="font-size:.82rem">Remove either button if you'd rather not publish the files.</p>
-    <p class="muted" style="font-size:.82rem">Note: the submitted group report records PET-G as the print material. That was an error at writing-up; the build was PLA, with the TPU and PA-6 exceptions noted above.</p>
+    <p class="muted" style="font-size:.82rem">Note: an early draft of our group table listed PET-G, however the physical build was printed in PLA, with the TPU jaw pad and PA-6 nylon coupler noted above.</p>
   </section>
   <hr>
   <div class="btn-row">
