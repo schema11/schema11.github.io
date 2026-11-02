@@ -69,7 +69,7 @@
 <main>
   <p class="eyebrow"><a href="../tools.html" style="color:inherit;text-decoration:none">Tools</a> → Calculator</p>
   <h1>Lead screw &amp; lead nut calculator</h1>
-  <p class="lede ls-intro">Estimate power-screw efficiency, self-locking and back-driving from geometry, material pairing and lubrication. The calculation and diagrams update as you change inputs. Friction coefficients are indicative only — confirm against supplier data before using results for design or safety decisions.</p>
+  <p class="lede ls-intro">Estimate power-screw efficiency, self-locking and back-driving from geometry, material pairing and lubrication. The calculation and diagrams update as you change inputs. It should be noted that friction coefficients are indicative only, therefore you should confirm them against supplier datasheets before using these results for safety-critical design decisions.</p>
 
   <div class="ls-grid">
     <div class="ls-column">
@@ -118,13 +118,13 @@
 
       <section class="ls-card ls-figure">
         <h2>Visualisation</h2>
-        <div class="ls-diagram-label">1 — One thread turn unwrapped (lead angle vs friction angle)</div>
+        <div class="ls-diagram-label">1 - One thread turn unwrapped (lead angle vs friction angle)</div>
         <div id="triSvg"></div>
         <p class="ls-caption">Unwrap one revolution at the mean diameter and the thread becomes an inclined plane. The load slides back down on its own only when the incline λ is steeper than the friction angle ρ.</p>
-        <div class="ls-diagram-label">2 — Thread geometry</div>
+        <div class="ls-diagram-label">2 - Thread geometry</div>
         <div id="screwSvg"></div>
         <p class="ls-caption">Axial section showing how lead, pitch and mean diameter relate.</p>
-        <div class="ls-diagram-label">3 — Efficiency vs lead angle (at this μ′)</div>
+        <div class="ls-diagram-label">3 - Efficiency vs lead angle (at this μ′)</div>
         <div id="curveSvg"></div>
         <p class="ls-caption">Shaded band = self-locking (λ &lt; ρ), where forward efficiency is below 50%. Efficiency and back-driving are opposite sides of the same coin.</p>
       </section>
@@ -134,34 +134,34 @@
       <section class="ls-card">
         <h2>Results</h2>
         <div class="ls-hero">
-          <div><small>Forward efficiency η</small><p class="ls-big" id="rEff">—</p></div>
-          <div><small>Back-drive efficiency η<sub>b</sub></small><p class="ls-big" id="rEffB">—</p></div>
+          <div><small>Forward efficiency η</small><p class="ls-big" id="rEff">-</p></div>
+          <div><small>Back-drive efficiency η<sub>b</sub></small><p class="ls-big" id="rEffB">-</p></div>
         </div>
-        <div id="verdict" class="ls-badge ls-warn" aria-live="polite">—</div>
+        <div id="verdict" class="ls-badge ls-warn" aria-live="polite">-</div>
         <p class="ls-note" id="verdictNote"></p>
         <hr>
-        <div class="ls-result"><span>Friction coefficient μ (thread)</span><b id="rMu">—</b></div>
-        <div class="ls-result"><span>Effective μ′ = μ / cos α</span><b id="rMuEff">—</b></div>
-        <div class="ls-result"><span>Mean (pitch) diameter d<sub>m</sub></span><b id="rDm">—</b></div>
-        <div class="ls-result"><span>Thread pitch p</span><b id="rP">—</b></div>
-        <div class="ls-result"><span>Lead angle λ</span><b id="rLam">—</b></div>
-        <div class="ls-result"><span>Friction angle ρ = arctan μ′</span><b id="rRho">—</b></div>
-        <div class="ls-result"><span>tan λ vs μ′</span><b id="rCmp">—</b></div>
-        <div class="ls-result"><span>Self-locking margin μ′ / tan λ</span><b id="rRatio">—</b></div>
+        <div class="ls-result"><span>Friction coefficient μ (thread)</span><b id="rMu">-</b></div>
+        <div class="ls-result"><span>Effective μ′ = μ / cos α</span><b id="rMuEff">-</b></div>
+        <div class="ls-result"><span>Mean (pitch) diameter d<sub>m</sub></span><b id="rDm">-</b></div>
+        <div class="ls-result"><span>Thread pitch p</span><b id="rP">-</b></div>
+        <div class="ls-result"><span>Lead angle λ</span><b id="rLam">-</b></div>
+        <div class="ls-result"><span>Friction angle ρ = arctan μ′</span><b id="rRho">-</b></div>
+        <div class="ls-result"><span>tan λ vs μ′</span><b id="rCmp">-</b></div>
+        <div class="ls-result"><span>Self-locking margin μ′ / tan λ</span><b id="rRatio">-</b></div>
         <hr>
-        <div class="ls-result"><span>Back-drive torque at screw (load-driven)</span><b id="rTb">—</b></div>
-        <div class="ls-result"><span>Holding torque required (brake)</span><b id="rTh">—</b></div>
+        <div class="ls-result"><span>Back-drive torque at screw (load-driven)</span><b id="rTb">-</b></div>
+        <div class="ls-result"><span>Holding torque required (brake)</span><b id="rTh">-</b></div>
       </section>
       <section class="ls-card">
         <h2>Hand calculation</h2>
         <button class="ls-copy" id="copyBtn" type="button">Copy working</button>
         <span id="copyStatus" class="ls-note" role="status"></span>
-        <pre class="ls-work" id="work">—</pre>
-        <p class="ls-note">Every number above is substituted from your inputs so the result can be reproduced step by step. Angles are in degrees; torque uses mean diameter in metres.</p>
+        <pre class="ls-work" id="work">-</pre>
+        <p class="ls-note">Every number above is substituted from your inputs so the result can be reproduced step by step. Angles are in degrees, whilst torque calculations use the mean diameter in metres.</p>
       </section>
       <div class="panel caution">
         <h3>Engineering note</h3>
-        <p>Friction varies with surface finish, wear, temperature, speed and lubrication. A calculated self-locking condition is not a safety-rated brake; use an independent holding or fail-safe device for suspended or safety-critical loads.</p>
+        <p>Friction varies with surface finish, wear, temperature, speed and lubrication. A calculated self-locking condition is not a substitute for a safety-rated brake, so always make sure an independent holding brake or mechanical fail-safe is used for suspended loads.</p>
       </div>
     </div>
   </div>
@@ -196,23 +196,23 @@ const SCREW = {
   chrome:{label:'Chrome-plated steel',f:.85},
   ss303:{label:'Stainless 303/304',f:1.08},
   ss316:{label:'Stainless 316',f:1.12},
-  alu:{label:'Aluminium',f:1.15,warn:'Aluminium screws wear rapidly against metal nuts — use with polymer nuts and light loads only.'},
+  alu:{label:'Aluminium',f:1.15,warn:'Aluminium screws wear rapidly against metal nuts - use with polymer nuts and light loads only.'},
   brassS:{label:'Brass / bronze screw',f:1.02}
 };
 const OVERRIDE = {
-  'carbon|steel':{dry:.25,oil:.15,grease:.13,warn:'Steel-on-steel threads gall and wear quickly — lubricate continuously or change the nut material.'},
+  'carbon|steel':{dry:.25,oil:.15,grease:.13,warn:'Steel-on-steel threads gall and wear quickly - lubricate continuously or change the nut material.'},
   'hardened|steel':{dry:.23,oil:.14,grease:.12,warn:'Steel-on-steel threads require continuous lubrication.'},
   'ss303|steel':{dry:.32,oil:.18,grease:.15,warn:'Stainless against steel is highly galling-prone. Avoid, or use a bronze/polymer nut.'},
   'ss316|steel':{dry:.35,oil:.20,grease:.16,warn:'316 against steel galls severely. Use bronze or polymer nut.'},
   'alu|steel':{dry:.30,oil:.18,grease:.15,warn:'Aluminium on steel: high wear and pick-up. Not recommended for power screws.'},
-  'brassS|brass':{dry:.22,oil:.13,grease:.11,warn:'Brass on brass is prone to seizure — use dissimilar materials.'}
+  'brassS|brass':{dry:.22,oil:.13,grease:.11,warn:'Brass on brass is prone to seizure - use dissimilar materials.'}
 };
 const POLY=['nylon','acetal','acetalptfe','iglide','uhmwpe','peek','ptfe'];
 const LUBE={dry:'dry',oil:'oil-lubricated',grease:'grease-lubricated'};
 const $=id=>document.getElementById(id);
 const val=name=>document.querySelector(`input[name="${name}"]:checked`).value;
 const DEG=180/Math.PI;
-const f=(x,d=5)=>Number.isFinite(x)?x.toFixed(d):'—';
+const f=(x,d=5)=>Number.isFinite(x)?x.toFixed(d):'-';
 
 function buildToggles(id,data,name,checked){
   $(id).innerHTML=Object.entries(data).map(([key,item])=>
@@ -223,7 +223,7 @@ function lookupMu(screw,nut,lube){
   if(override)return {mu:override[lube],warn:override.warn};
   const warn=[];
   if(SCREW[screw].warn)warn.push(SCREW[screw].warn);
-  if(POLY.includes(nut)&&lube!=='dry')warn.push('Polymer nuts are often run dry; check grease compatibility.');
+  if(POLY.includes(nut)&&lube!=='dry')warn.push('Polymer nuts are often run dry, so check grease compatibility first.');
   if(POLY.includes(nut))warn.push('Polymer nuts are PV-limited: check the supplier load/speed (PV) chart.');
   return {mu:NUT[nut][lube]*SCREW[screw].f,warn:warn.join(' ')};
 }
@@ -299,7 +299,7 @@ function curveSVG(muE,lamDeg,eff){
   </svg>`;
 }
 function clearResults(message){
-  ['rEff','rEffB','rMu','rMuEff','rDm','rP','rLam','rRho','rCmp','rRatio','rTb','rTh'].forEach(id=>$(id).textContent='—');
+  ['rEff','rEffB','rMu','rMuEff','rDm','rP','rLam','rRho','rCmp','rRatio','rTb','rTh'].forEach(id=>$(id).textContent='-');
   $('verdict').className='ls-badge ls-warn';
   $('verdict').textContent=message;
   $('verdictNote').textContent='';
@@ -316,7 +316,7 @@ function calc(){
   muInput.disabled=!manual;
   if(!manual)muInput.value=auto.mu.toFixed(3);
   const mu=manual?muInput.valueAsNumber:auto.mu;
-  $('matWarn').textContent=manual?'Manual override active — material table ignored.':auto.warn;
+  $('matWarn').textContent=manual?'Manual override active - material table ignored.':auto.warn;
   $('matWarn').classList.toggle('ls-error',manual);
   const startsValid=Number.isInteger(starts)&&starts>=1;
   if(!Number.isFinite(lead)||lead<=0||!startsValid||!Number.isFinite(diameter)||diameter<=0||!Number.isFinite(load)||load<0||
@@ -337,17 +337,17 @@ function calc(){
   $('rLam').textContent=`${f(lamDeg,3)}°`;$('rRho').textContent=`${f(rhoDeg,3)}°`;
   $('rCmp').textContent=`${f(tanL,5)} vs ${f(muE,5)}`;$('rRatio').textContent=f(ratio,3);
   $('rEff').textContent=`${(Math.max(0,eff)*100).toFixed(1)}%`;$('rEffB').textContent=`${(effB*100).toFixed(1)}%`;
-  $('rTb').textContent=torque>0?torqueText(torque):'none — self-locking';
+  $('rTb').textContent=torque>0?torqueText(torque):'none - self-locking';
   $('rTh').textContent=torque>0?torqueText(torque):'0 (held by thread friction)';
   const badge=$('verdict'),note=$('verdictNote');
   if(ratio>=1.3){
-    badge.className='ls-badge ls-good';badge.textContent=`Self-locking — will not back-drive (μ′ is ${f(ratio,2)}× tan λ)`;
+    badge.className='ls-badge ls-good';badge.textContent=`Self-locking - will not back-drive (μ′ is ${f(ratio,2)}× tan λ)`;
     note.textContent='Comfortable static margin. Still fit a brake or fail-safe device for suspended or safety-critical loads, and re-check with a reduced μ after run-in.';
   }else if(ratio>=1){
     badge.className='ls-badge ls-warn';badge.textContent=`Marginally self-locking (μ′ is only ${f(ratio,2)}× tan λ)`;
     note.textContent='Static friction just holds the load, but vibration, shock, run-in polishing or lubricant ingress can tip this into back-driving. Add a brake or reduce the lead.';
   }else{
-    badge.className='ls-badge ls-bad';badge.textContent=`Will back-drive — not self-locking (μ′ is ${f(ratio,2)}× tan λ)`;
+    badge.className='ls-badge ls-bad';badge.textContent=`Will back-drive - not self-locking (μ′ is ${f(ratio,2)}× tan λ)`;
     note.textContent='The load will turn the screw when input torque is removed. A brake, worm reducer, counterbalance or finer lead is required to hold position.';
   }
   $('triSvg').innerHTML=triSVG(dm,lead,lamDeg,rhoDeg);
@@ -360,35 +360,35 @@ function calc(){
     `  Axial load            F  = ${f(load,2)} N`,`  Thread half-angle     α  = ${f(alpha,2)}°  (${formName})`,
     `  Pair  : ${SCREW[screw].label} screw / ${NUT[nut].label} nut, ${LUBE[lube]}`,
     `  Friction              μ  = ${f(mu,3)}${manual?'  (manual override)':'  (from table)'}`,'',
-    rule('STEP 1 — Thread pitch'),'  p  = L / n',`     = ${f(lead,3)} / ${starts}`,`     = ${f(pitch,4)} mm`,'',
-    rule('STEP 2 — Mean (pitch) diameter'));
+    rule('STEP 1 - Thread pitch'),'  p  = L / n',`     = ${f(lead,3)} / ${starts}`,`     = ${f(pitch,4)} mm`,'',
+    rule('STEP 2 - Mean (pitch) diameter'));
   if(nominal)lines.push('  dm = d − p/2',`     = ${f(diameter,3)} − ${f(pitch,4)}/2`,`     = ${f(dm,4)} mm`);
   else lines.push(`  dm = ${f(dm,4)} mm   (entered directly)`,`  d  = dm + p/2 = ${f(dm,4)} + ${f(pitch,4)}/2 = ${f(dMaj,4)} mm  (major Ø, for reference)`);
   lines.push('',
-    rule('STEP 3 — Lead angle (helix angle at dm)'),'  tan λ = L / (π · dm)',`        = ${f(lead,3)} / (π × ${f(dm,4)})`,
+    rule('STEP 3 - Lead angle (helix angle at dm)'),'  tan λ = L / (π · dm)',`        = ${f(lead,3)} / (π × ${f(dm,4)})`,
     `        = ${f(lead,3)} / ${f(Math.PI*dm,4)}`,`        = ${f(tanL,5)}`,`  λ     = arctan(${f(tanL,5)}) = ${f(lamDeg,3)}°`,'',
-    rule('STEP 4 — Effective friction coefficient'),'  μ′ = μ / cos α',`     = ${f(mu,3)} / cos(${f(alpha,2)}°)`,
+    rule('STEP 4 - Effective friction coefficient'),'  μ′ = μ / cos α',`     = ${f(mu,3)} / cos(${f(alpha,2)}°)`,
     `     = ${f(mu,3)} / ${f(cosA,5)}`,`     = ${f(muE,5)}`,`  friction angle  ρ = arctan(μ′) = arctan(${f(muE,5)}) = ${f(rhoDeg,3)}°`,'',
-    rule('STEP 5 — Self-locking check  (μ′ ≥ tan λ ?)'),`  μ′     = ${f(muE,5)}`,`  tan λ  = ${f(tanL,5)}`,
+    rule('STEP 5 - Self-locking check  (μ′ ≥ tan λ ?)'),`  μ′     = ${f(muE,5)}`,`  tan λ  = ${f(tanL,5)}`,
     `  margin = μ′ / tan λ = ${f(muE,5)} / ${f(tanL,5)} = ${f(ratio,3)}`,
-    `  → ${ratio>=1?'μ′ ≥ tan λ, so the thread is SELF-LOCKING':'μ′ < tan λ, so the thread WILL BACK-DRIVE'}${ratio>=1&&ratio<1.3?' (margin < 1.3 — treat as marginal)':''}`,'',
-    rule('STEP 6 — Forward (drive) efficiency'),'  η = tan λ · (1 − μ′ · tan λ) / (tan λ + μ′)',
+    `  → ${ratio>=1?'μ′ ≥ tan λ, so the thread is SELF-LOCKING':'μ′ < tan λ, so the thread WILL BACK-DRIVE'}${ratio>=1&&ratio<1.3?' (margin < 1.3 - treat as marginal)':''}`,'',
+    rule('STEP 6 - Forward (drive) efficiency'),'  η = tan λ · (1 − μ′ · tan λ) / (tan λ + μ′)',
     `    = ${f(tanL,5)} × (1 − ${f(muE,5)} × ${f(tanL,5)}) / (${f(tanL,5)} + ${f(muE,5)})`,
     `    = ${f(tanL,5)} × ${f(1-muE*tanL,5)} / ${f(den,5)}`,`    = ${f(num,5)} / ${f(den,5)}`,
     `    = ${f(eff,5)}   →   η = ${(Math.max(0,eff)*100).toFixed(2)} %`,'',
-    rule('STEP 7 — Back-driving efficiency'),'  ηb = (tan λ − μ′) / [ tan λ · (1 + μ′ · tan λ) ]',
+    rule('STEP 7 - Back-driving efficiency'),'  ηb = (tan λ − μ′) / [ tan λ · (1 + μ′ · tan λ) ]',
     `     = (${f(tanL,5)} − ${f(muE,5)}) / (${f(tanL,5)} × ${f(1+muE*tanL,5)})`,
     `     = ${f(nb,5)} / ${f(db,5)}`);
   if(nb>0)lines.push(`     = ${f(effB,5)}   →   ηb = ${(effB*100).toFixed(2)} %`);
   else lines.push(`     = ${f(nb/db,5)}  (negative)`,'  A negative result means no back-driving is possible: ηb = 0 %.');
   lines.push('',
-    rule('STEP 8 — Torque the load applies to the screw'),'  Tb = F · (dm/2) · (tan λ − μ′) / (1 + μ′ · tan λ)        [dm in metres]',
+    rule('STEP 8 - Torque the load applies to the screw'),'  Tb = F · (dm/2) · (tan λ − μ′) / (1 + μ′ · tan λ)        [dm in metres]',
     `     = ${f(load,2)} × ${f(dm/2000,6)} × (${f(tanL,5)} − ${f(muE,5)}) / ${f(1+muE*tanL,5)}`,
     `     = ${f(load,2)} × ${f(dm/2000,6)} × ${f((tanL-muE)/(1+muE*tanL),6)}`,
     `     = ${f(torque,5)} N·m`,
     torque>0?`  → positive: the load WILL turn the screw. A brake must hold ${f(torque,4)} N·m (${f(torque*1000,1)} N·mm).`:'  → zero or negative: the load cannot turn the screw; holding torque = 0.',
     '',rule('NOTES'),'  • Friction coefficients are indicative; verify with supplier data.',
-    '  • Dynamic μ falls with speed, run-in and vibration — a self-locking margin',
+    '  • Dynamic μ falls with speed, run-in and vibration - a self-locking margin',
     '    of about 1.3 (η below ~40 %) is normally required before relying on it.',
     '  • Never use self-locking as the sole safety device for a suspended load.');
   $('work').textContent=lines.join('\n');
