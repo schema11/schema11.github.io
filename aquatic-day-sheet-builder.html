@@ -94,7 +94,7 @@ button.primary{background:#2e7d4f;color:#fff;border-color:#2e7d4f}
 </header>
 
 <div id="aliases" class="hidden">
-  <strong>Display-name aliases</strong> — one per line, <code>Surname, Firstname = Display</code> (saved in this browser).
+  <strong>Display-name aliases</strong> - one per line, <code>Surname, Firstname = Display</code> (saved in this browser).
   <textarea id="aliasText"></textarea>
   <button class="primary" id="aliasSave">Save &amp; redraw</button>
 </div>
@@ -399,7 +399,7 @@ function buildStyledSheet(wb,day,opts){
     if(h) ws.getRow(r).height=h; r++;
   };
   const unf=day.shifts.filter(s=>!filled(s)).length;
-  banner(`${DOWN[day.dow]} ${day.date.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})} — Yawa Aquatic Centre (Operations)`,
+  banner(`${DOWN[day.dow]} ${day.date.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})} - Yawa Aquatic Centre (Operations)`,
     PAL.title,{bold:true,size:14,color:{argb:'FFFFFFFF'}},24);
   banner(`Roster window ${hhmm(w.s)}–${hhmm(w.e)} · ${day.shifts.length} shifts${unf?' · '+unf+' UNFILLED':''}`,
     PAL.sub,{italic:true,size:10,color:{argb:'FF52606D'}},16);
@@ -442,7 +442,7 @@ function buildStyledSheet(wb,day,opts){
     const list=day.shifts.filter(s=>s.code===g.code);
     if(!list.length) return;
     const lanes=laneLayout(list,g.lanes,g.force,HANDOVER_TOL);
-    banner(`${g.title.toUpperCase()}  —  ${list.length} shift${list.length>1?'s':''}`,
+    banner(`${g.title.toUpperCase()}  -  ${list.length} shift${list.length>1?'s':''}`,
       PAL.grp,{bold:true,size:10,color:{argb:'FF102A43'}},16);
     lanes.forEach((ln,li)=>{
       ws.getRow(r).height=18;
@@ -508,7 +508,7 @@ function dayToSheetPlain(day,opts){
   const blank=()=>Array(C0+N).fill('');
   const push=(l,v)=>{const row=blank();row[0]=l;(v||[]).forEach((x,i)=>row[C0+i]=x);aoa.push(row);};
   const full=t=>{const row=blank();row[0]=t;aoa.push(row);merges.push({s:{r:aoa.length-1,c:0},e:{r:aoa.length-1,c:C0+N-1}});};
-  full(`${DOWN[day.dow]} ${day.date.toLocaleDateString('en-AU')} — Yawa Aquatic Centre`);
+  full(`${DOWN[day.dow]} ${day.date.toLocaleDateString('en-AU')} - Yawa Aquatic Centre`);
   push('Time',[...Array(N)].map((_,k)=>hhmm(w.s+k*SLOT)));
   push('LGs on deck',lgCounts(day,w));
   push('Tasks / breaks',[...Array(N)].map((_,k)=>note.slots[k]||''));
@@ -553,7 +553,7 @@ file.onchange=async ev=>{
     return `<option value="${i}">w/c ${m.toLocaleDateString('en-AU')} – ${e.toLocaleDateString('en-AU')}</option>`;
   }).join('');
   curWeek=0; curDow=list[0].dow;
-  msg.innerHTML=`Loaded ${list.length} day(s), ${list.reduce((n,d)=>n+d.shifts.length,0)} shifts. Click a half-hour cell to type tasks/breaks — they save in this browser.`;
+  msg.innerHTML=`Loaded ${list.length} day(s), ${list.reduce((n,d)=>n+d.shifts.length,0)} shifts. Click a half-hour cell to type tasks/breaks - they save in this browser.`;
   draw();
 };
 tabs.onclick=e=>{ const t=e.target.closest('.tab'); if(t){ curDow=+t.dataset.dow; draw(); } };
@@ -591,7 +591,7 @@ xlsxBtn.onclick=async()=>{
     await exportColoured(wk,opts);
   }catch(err){
     console.error(err);
-    alert('Coloured export unavailable ('+err.message+') — downloading the plain version instead.');
+    alert('Coloured export unavailable ('+err.message+') - downloading the plain version instead.');
     try{ exportPlain(wk,opts); }catch(e2){ alert('Export failed: '+e2.message); }
   }finally{ xlsxBtn.disabled=false; xlsxBtn.textContent=label; }
 };
