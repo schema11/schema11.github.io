@@ -186,7 +186,7 @@ footer div{max-width:1480px;margin:0 auto}
       <button type="button" class="ib" data-help="dyn.on" title="What is this?">i</button>
     </div></div>
     <div class="g" id="dyn" style="margin-top:.55rem"></div>
-    <p class="hint">Computed with K<sub>d</sub>=1 to avoid double-counting; compare against the static result.</p>
+    <p class="hint">Computed with K<sub>d</sub>=1 to avoid double-counting, whilst allowing you to compare against the static modelling result.</p>
   </div>
 </div>
 <!-- ================= OUTPUTS ================= -->
@@ -246,7 +246,7 @@ DEMAND       M_i = Kd * g * ( Payload*a_i + Sig_i )               [N.mm]
 CAPACITY     V_i = Z_i * yield_i * k / FoS         (bending)      [N.mm]
              W_i = T_rated_i * qty_i * derate * ratio_i * eta * 1000
              X_i = MIN(V_i, W_i)
-PAYLOAD      P_i = ( X_i/(Kd*g) - Sig_i ) / a_i ; limit = MIN_i   [kg]
+PAYLOAD      P_i = ( X_i/(Kd*g) - Sig_i ) / a_i , limit = MIN_i   [kg]
 DEFLECTION   F_i  = Kd*g*(Payload + P_i + sum of distal m,P)      [N]
              Me_i = Kd*g*(Payload*a_i+1 + Sig_i+1)                [N.mm]
              w_i  = Kd*g*m_i / L_i                                [N/mm]
@@ -254,7 +254,7 @@ DEFLECTION   F_i  = Kd*g*(Payload + P_i + sum of distal m,P)      [N]
              d_i  = (F L^3/3 + Me L^2/2 + w L^4/8)/(E I)          [mm]
              droop = SUM d_i + SUM th_i * S_i+1
 SERVO TORQUE T[N.m] = T[kg.cm] * 9.80665 / 100
-SERVO SPEED  no-load deg/s = 60 / t60 ; expect 50-70% under load
+SERVO SPEED  no-load deg/s = 60 / t60 (expect 50-70% under load)
 DYNAMICS     J_i = SUM_j>=i [ m_j(L_j^2/12 + dcg^2) + P_j*dl^2 ] + Payload*a_i^2
              T_req = g*(Payload*a_i+Sig_i)/1000 + J_i*alpha       [N.m]
 FREQUENCY    f_n ~ (1/2pi) * sqrt(3 E I / (m L^3))                [Hz]</pre></details></div>
