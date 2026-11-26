@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Case study: an interactive robot arm calculator checking bending stress, actuator torque and tip deflection, with a servo database and live scaled diagrams.">
-  <title>Robot Arm Calculator | Portfolio</title>
+  <meta name="description" content="Case study: interactive robot arm calculator checking bending stress, actuator torque and tip deflection.">
+  <title>Robot Arm Calculator | Matthew Schembri</title>
   <link rel="stylesheet" href="../assets/site.css">
 </head>
 <body>
@@ -14,133 +14,109 @@
     <a class="brand" href="../index.html"><span class="mark">◆</span> Matthew Schembri</a>
     <ul>
       <li><a href="../index.html">Home</a></li>
-      <li><a href="../tools.html" aria-current="page">Tools</a></li>
-      <li><a href="../projects.html">Projects</a></li>
-      <li><a href="../about.html">About Me</a></li>
+      <li><a href="../projects.html" aria-current="page">Projects</a></li>
+      <li><a href="../tools.html">Tools</a></li>
+      <li><a href="../about.html">About</a></li>
     </ul>
   </div>
 </nav>
 
 <main class="narrow">
-  <p class="eyebrow"><a href="../tools.html" style="color:inherit;text-decoration:none">Tools</a> → Project 01</p>
+  <p class="eyebrow"><a href="../projects.html">Projects</a> → Robot Arm Calculator</p>
   <h1>Robot Arm Load &amp; Link-Length Calculator</h1>
-  <p class="lede">An interactive tool that answers two questions for a serial robot arm: <em>how much can this geometry lift?</em> and <em>how long can the links be for a given payload?</em> It checks bending stress, actuator torque and tip deflection simultaneously, and reports which one is actually stopping you.</p>
+  <p class="lede">An offline browser tool answering two sizing questions for a serial robot arm: how much can this geometry lift, and how long can the links be for a target payload? It evaluates bending stress, actuator torque, and tip deflection together and names whichever limit binds first.</p>
 
   <dl class="meta">
-    <dt>Role</dt><dd>Design, engineering model and implementation</dd>
-    <dt>Type</dt><dd>Interactive calculator - HTML, CSS and vanilla JavaScript, no dependencies</dd>
-    <dt>Status</dt><dd>Working · <span class="chip live">live</span></dd>
-    <dt>Date</dt><dd>October 2026</dd>
-    <dt>Context</dt><dd>Personal project supporting a 3-DOF 3D-printed robotic arm build and RMIT Rover arm analysis</dd>
+    <dt>Role</dt><dd>Engineering model, UI, and vanilla JS/SVG implementation</dd>
+    <dt>Status</dt><dd><span class="chip live">Live</span> · October 2026</dd>
+    <dt>Context</dt><dd>Personal 3-DOF 3D-printed robotic arm build and RMIT Rover arm analysis</dd>
   </dl>
 
   <div class="btn-row">
-    <a class="btn prim" href="../tools/armActuatorCalculation.html">Open the tool full screen →</a>
-    <a class="btn" href="../tools/armToolExplanation.html">Read the method &amp; formulas</a>
+    <a class="btn prim" href="../tools/armActuatorCalculation.html">Open tool full screen →</a>
+    <a class="btn" href="../tools/armToolExplanation.html">Method &amp; formulas</a>
   </div>
 
-  <h2 id="evidence">Evidence - the working tool</h2>
-  <p>The tool below is live and fully interactive. Drag any slider and every number, table and diagram recalculates immediately. Each field carries a small <strong>ⓘ</strong> button that expands an explanation of what the value means, so it is usable without reading the method document first.</p>
+  <h2 id="evidence">Live tool</h2>
+  <p>Adjust any slider or dropdown below to recalculate all joint limits, tables, and scaled SVG diagrams immediately. Use the <strong>Info</strong> buttons for quick definitions without leaving the calculator.</p>
 
   <figure class="evidence">
     <header>
-      <span class="tag">⚙️ Live tool - embedded</span>
+      <span class="tag">Live calculator (embedded)</span>
       <a class="btn sm" href="../tools/armActuatorCalculation.html" target="_blank" rel="noopener">Open in new tab ↗</a>
     </header>
-    <iframe src="../tools/armActuatorCalculation.html" loading="lazy"
+    <iframe src="../tools/armActuatorCalculation.html?embed=1" loading="lazy"
             title="Robot Arm Load and Link-Length Calculator"></iframe>
-    <figcaption>Try this: switch to <strong>② Find link lengths</strong>, set a payload, then change the actuator on joint J1 from a DS3225 to an MG996R and watch the maximum reach collapse. The verdict line names the joint and the constraint responsible.</figcaption>
+    <figcaption>Try switching to <strong>2. Find link lengths</strong>, setting a payload, and swapping joint J1 from a DS3225 to an MG996R to watch the reach drop.</figcaption>
   </figure>
 
-  <h2>The problem</h2>
-  <p>Sizing a hobby robot arm usually happens by intuition and forum anecdote. The common failure is to pick servos from their advertised “25 kg” rating, print some links, and discover the arm either sags visibly under its own weight or buzzes and strips gears whilst holding a pose. Three things cause that:</p>
+  <h2>Why I built it</h2>
+  <p>Hobby robot arms often fail after printing because three coupled effects get ignored during rough sizing:</p>
   <ul>
-    <li><strong>The chain is coupled.</strong> Every joint carries the full weight and moment of everything distal to it, so a motor added at the wrist penalises every joint beneath it.</li>
-    <li><strong>Stall torque is not working torque.</strong> A servo's kg·cm figure is measured with the rotor locked at maximum current - the one condition in which it does no useful work and overheats fastest.</li>
-    <li><strong>Stiffness fails before strength.</strong> A printed link will droop out of tolerance long before it yields, and droop compounds down the chain because each link also passes on its slope.</li>
+    <li><strong>Coupled chain loads:</strong> every joint carries everything outboard of it, so wrist mass penalises every joint underneath.</li>
+    <li><strong>Stall torque vs working torque:</strong> servo kg·cm ratings are stall figures at maximum current and heat, not continuous working capacity.</li>
+    <li><strong>Stiffness governs printed links:</strong> plastic links sag out of tolerance long before yielding, and each link's end slope compounds down the chain.</li>
   </ul>
-  <p>I wanted a tool that made those three effects visible at the moment of making a design decision, rather than after a print had failed.</p>
 
-  <h2>Approach</h2>
-  <p>The model places the arm in its <strong>worst-case pose</strong> - fully extended, horizontal, gravity perpendicular to the links - and evaluates three independent limits at every joint. The arm's real capability is the smallest of them.</p>
-
-  <h3>① Bending stress</h3>
-  <p>Section properties are derived for six profiles (solid and hollow rod, square and rectangular). Allowable moment is <code>Z × yield × k ÷ FoS</code>, where <code>k</code> is a print knockdown factor for layer adhesion and voids. Hollow sections are handled properly, which matters because removing material near the neutral axis costs almost no stiffness.</p>
-
-  <h3>② Actuator torque</h3>
-  <p>Available torque is <code>rated × quantity × derate × gear ratio × η</code>. The derate term is deliberately prominent and defaults to 0.5, because treating a stall rating as usable capacity is the single most common sizing error in hobby robotics.</p>
-
-  <h3>③ Tip deflection</h3>
-  <p>Each link is solved as a cantilever carrying a tip force, an end moment fed back by the outboard chain, and its own distributed weight. Total droop sums each link's local sag <em>plus</em> the slope it hands to everything beyond it - which is why a four-link arm sags far more than any single-link calculation predicts.</p>
+  <h2>Engineering model</h2>
+  <p>The arm is evaluated in its worst-case pose (fully extended horizontally) against three independent checks, with the smallest limit governing:</p>
+  <ul>
+    <li><strong>1. Bending stress:</strong> six solid and hollow cross-sections checked against <code>Z × yield × k / FoS</code>, where <code>k</code> accounts for FDM print anisotropy.</li>
+    <li><strong>2. Actuator torque:</strong> available torque equals <code>rated × qty × derate × gear ratio × η</code>, defaulting to a 0.50 derate so stall ratings are never treated as working limits.</li>
+    <li><strong>3. Tip deflection:</strong> each link is solved as a cantilever under tip force, outboard moment, and self-weight, summing local sag plus carried slope across all joints.</li>
+  </ul>
 
   <div class="panel note">
-    <h3>Design decisions worth calling out</h3>
+    <h3>Key design decisions</h3>
     <ul>
-      <li><strong>Component mass is assembled, not estimated.</strong> Selecting a servo for joint J<sub>i+1</sub> applies its mass to the distal end of link <em>i</em>, because that is where it physically bolts. The base actuator is tracked in the mass budget but excluded from structural load, since the base carries it directly.</li>
-      <li><strong>Two solve directions from one model.</strong> Mode ① evaluates a geometry. Mode ② inverts it, bisecting total reach until the worst utilisation equals exactly 1.00 - so the answer is a dimension, not a pass/fail.</li>
-      <li><strong>Utilisation as the common currency.</strong> Expressing all three limits as a ratio to 1.00 makes them directly comparable and lets the tool name the binding constraint instead of leaving the user to infer it.</li>
-      <li><strong>Payload CoG offset.</strong> Gripping a part 80 mm beyond the flange adds that distance to every joint's lever arm. It is a large effect, easy to forget, and cheap to fix in hardware.</li>
-      <li><strong>No dependencies.</strong> Everything is inline - the diagrams are generated SVG, the state serialises into the URL hash for sharing, and the page works from a local file with no network.</li>
+      <li><strong>Automatic component mass:</strong> selecting a motor for joint J<sub>i+1</sub> places its mass at the distal end of link <em>i</em> automatically (J1 sits on the base and does not load the arm).</li>
+      <li><strong>Two solve directions:</strong> Mode 1 evaluates payload for fixed links, whilst Mode 2 bisects total reach until worst utilisation hits 1.00.</li>
+      <li><strong>Payload CoG offset:</strong> adds grip overhang to every joint's lever arm, making its torque penalty obvious.</li>
+      <li><strong>Zero dependencies:</strong> inline SVG diagrams, CSV export, and URL-hash state sharing work completely offline.</li>
     </ul>
   </div>
 
-  <h2>What the tool outputs</h2>
-  <ul>
-    <li><strong>Practical payload</strong> - the lesser of the strength/torque limit and the deflection limit, with both shown separately so the trade-off is explicit.</li>
-    <li><strong>Maximum link lengths</strong> for a target payload, distributed by proportional shares you control.</li>
-    <li><strong>Per-joint breakdown</strong> - utilisation bars, demand and capacity in N·m, local deflection and estimated natural frequency.</li>
-    <li><strong>Actuator schedule and mass budget</strong> - what each motor must deliver, and where the arm's mass actually lives.</li>
-    <li><strong>Generated design advice</strong> that names the binding joint and the specific remedy, including practical traps the equations alone would not flag: servo duty cycles, PLA creep, dual-servo synchronisation, supply current.</li>
-  </ul>
-
-  <h2>Limitations - what this does not do</h2>
+  <h2>Limitations</h2>
   <div class="panel caution">
-    <p>Stating these plainly is part of the deliverable. The model is idealised Euler–Bernoulli beam theory on a single worst-case pose, so it excludes:</p>
+    <p>Idealised Euler-Bernoulli beam theory in one static pose excludes:</p>
     <ul>
-      <li>Stress concentrations and fastener detail at the joints - in practice the most common real failure site on a printed arm.</li>
-      <li>Servo output-shaft and horn strength, which frequently governs before the link does.</li>
-      <li>Torsion when the base slews with the arm extended sideways, as well as buckling of any compression member.</li>
-      <li>Joint backlash, bearing play and gearbox compliance, which often exceed structural deflection.</li>
-      <li>Fatigue, creep and thermal softening - relevant because a high-torque servo sitting near stall genuinely heats the plastic around it.</li>
-      <li>Grip force at the end effector, which is a separate calculation.</li>
+      <li>Joint stress concentrations, fastener pull-out, and servo horn/shaft strength.</li>
+      <li>Torsion during base slewing and buckling of compression linkages.</li>
+      <li>Gearbox backlash, bearing play, PLA creep, and thermal softening near warm motors.</li>
+      <li>End-effector grip force (handled separately by the gripper tools).</li>
     </ul>
-    <p>Actuator figures are indicative values for each common clone class, not datasheet guarantees. Clone quality varies enormously between sellers.</p>
+    <p class="small muted">Built-in actuator ratings are indicative class values, not datasheet guarantees.</p>
   </div>
 
   <h2>Validation plan</h2>
-  <p>A model is only as good as its calibration, so the intended next step is physical:</p>
   <ol class="steps">
-    <li>Hang known masses at the tip in the worst-case pose and measure droop with a dial indicator.</li>
-    <li>Back-calculate the real print knockdown factor <code>k</code> from the measured deflection and update the default.</li>
-    <li>Hold a loaded pose for an hour and re-measure, to quantify creep that no static calculation captures.</li>
-    <li>Confirm the final joint geometry in FEA, where the stress concentrations this model ignores actually appear.</li>
+    <li>Hang known test masses in the horizontal pose and measure tip droop with a dial indicator.</li>
+    <li>Back-calculate the real print knockdown factor <code>k</code> from measured stiffness.</li>
+    <li>Hold a loaded pose for one hour to quantify PLA/PETG creep.</li>
+    <li>Verify final joint geometry and fastener stress concentrations in FEA.</li>
   </ol>
 
   <h2>Skills demonstrated</h2>
   <ul class="chips">
     <li class="chip">Mechanics of materials</li>
     <li class="chip">Beam deflection &amp; superposition</li>
-    <li class="chip">Actuator selection</li>
-    <li class="chip">Numerical root-finding</li>
-    <li class="chip">Vanilla JS architecture</li>
-    <li class="chip">Generated SVG</li>
-    <li class="chip">Technical writing</li>
-    <li class="chip">UX for engineering tools</li>
-    <li class="chip">Accessibility &amp; offline-first</li>
+    <li class="chip">Actuator sizing</li>
+    <li class="chip">Numerical bisection</li>
+    <li class="chip">Vanilla JS &amp; SVG</li>
   </ul>
 
   <hr>
   <div class="btn-row">
-    <a class="btn" href="../tools.html">← All tools</a>
-    <a class="btn prim" href="../tools/armActuatorCalculation.html">Open the tool →</a>
+    <a class="btn" href="../projects.html">← All projects</a>
+    <a class="btn prim" href="../tools/armActuatorCalculation.html">Open tool →</a>
   </div>
 </main>
 
 <footer class="site"><div>
   <span>© <span id="yr"></span> Matthew Schembri</span>
-  <span><a href="../index.html">Home</a> · <a href="../tools.html">Tools</a> · <a href="../projects.html">Projects</a></span>
+  <span><a href="../index.html">Home</a> · <a href="../projects.html">Projects</a> · <a href="../tools.html">Tools</a> · <a href="../about.html">About</a></span>
 </div></footer>
 
-<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+<script src="../assets/site.js"></script>
 </body>
 </html>

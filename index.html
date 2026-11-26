@@ -3,44 +3,113 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Engineering portfolio - interactive design tools, calculators and project documentation.">
-  <title>Home | Portfolio</title>
+  <meta name="description" content="Matthew Schembri - mechatronics engineering portfolio, hardware builds and interactive design calculators.">
+  <title>Matthew Schembri | Engineering Portfolio</title>
   <link rel="stylesheet" href="assets/site.css">
 </head>
-<body class="glow">
+<body>
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="index.html"><span class="mark">◆</span> Matthew Schembri's Portfolio</a>
+    <a class="brand" href="index.html"><span class="mark">◆</span> Matthew Schembri</a>
     <ul>
       <li><a href="index.html" aria-current="page">Home</a></li>
-      <li><a href="tools.html">Tools</a></li>
       <li><a href="projects.html">Projects</a></li>
-      <li><a href="about.html">About Me</a></li>
+      <li><a href="tools.html">Tools</a></li>
+      <li><a href="about.html">About</a></li>
     </ul>
   </div>
 </nav>
 
 <main>
-  <div class="center">
-    <div class="hero">
-      <p class="eyebrow">Engineering portfolio</p>
-      <h1>Design tools, built to be used</h1>
-      <p class="lede">I am a third-year mechatronics engineering student at RMIT with a strong interest in personal robotics/automation projects, CAD modelling, and learning by doing. This site brings together the interactive calculation/simulation tools and physical hardware builds I have worked on so that you can see how the theory and practical testing fit together.</p>
-      <div class="btn-stack">
-        <a class="btn prim" href="tools.html">Browse tools →</a>
-        <a class="btn" href="projects.html">Browse projects →</a>
-        <a class="btn" href="about.html">About me →</a>
-      </div>
+  <section class="hero">
+    <p class="eyebrow">Mechatronics Engineering Portfolio</p>
+    <h1>Practical builds and interactive design tools</h1>
+    <p class="lede">Third-year mechatronics engineering student at RMIT. This site brings together my hardware builds, CAD modelling, and browser-based calculation tools so the theory and physical testing sit side by side.</p>
+    <div class="btn-row">
+      <a class="btn prim" href="projects.html">Projects →</a>
+      <a class="btn" href="tools.html">Interactive tools →</a>
+      <a class="btn" href="about.html">About me</a>
     </div>
+  </section>
+
+  <div class="section-hd">
+    <h2>Projects</h2>
+    <a href="projects.html">All projects →</a>
+  </div>
+  <div class="grid">
+    <article class="card">
+      <div class="body">
+        <h3>Robotic Gripper</h3>
+        <p>3D-printed lead-screw bell-crank gripper designed around supplied RMIT hardware, delivering 122–165 N capability whilst holding an egg at a 13.4 N LabVIEW force limit.</p>
+        <ul class="chips">
+          <li class="chip ok">Built &amp; tested</li>
+          <li class="chip">SolidWorks</li>
+          <li class="chip">LabVIEW</li>
+        </ul>
+        <div class="btn-row">
+          <a class="btn prim sm" href="projects/gripper.html">Case study →</a>
+          <a class="btn sm" href="projects/gripper.html#final">Demo video</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="body">
+        <h3>Robot Arm Load &amp; Link-Length Calculator</h3>
+        <p>Browser sizing tool checking bending stress, derated actuator torque, and tip deflection simultaneously across up to six serial links.</p>
+        <ul class="chips">
+          <li class="chip live">Live tool</li>
+          <li class="chip">Beam theory</li>
+          <li class="chip">JavaScript · SVG</li>
+        </ul>
+        <div class="btn-row">
+          <a class="btn prim sm" href="projects/robot-arm.html">Case study →</a>
+          <a class="btn sm" href="tools/armActuatorCalculation.html">Open tool</a>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="section-hd">
+    <h2>Interactive tools</h2>
+    <a href="tools.html">All tools →</a>
+  </div>
+  <div class="grid">
+    <article class="card">
+      <div class="body">
+        <h3>Gripper Mechanism Simulator</h3>
+        <p>Animated bell-crank linkage model showing live jaw opening, virtual-work force transfer, and SVG export.</p>
+        <div class="btn-row"><a class="btn sm" href="tools/gripper-mechanism.html">Open tool →</a></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="body">
+        <h3>Lead Screw &amp; Nut Calculator</h3>
+        <p>Power-screw efficiency, self-locking margin, back-drive torque, live diagrams, and step-by-step hand working.</p>
+        <div class="btn-row"><a class="btn sm" href="tools/lead-screw-calculator.html">Open tool →</a></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="body">
+        <h3>Arm Payload &amp; Actuator Calculator</h3>
+        <p>Size link sections and motors for a serial robot arm with a 20-entry actuator database and live deflection plots.</p>
+        <div class="btn-row">
+          <a class="btn sm" href="tools/armActuatorCalculation.html">Open tool →</a>
+          <a class="btn sm" href="tools/armToolExplanation.html">Method</a>
+        </div>
+      </div>
+    </article>
   </div>
 </main>
 
 <footer class="site"><div>
   <span>© <span id="yr"></span> Matthew Schembri</span>
-  <span><a href="tools.html">Tools</a> · <a href="projects.html">Projects</a> · <a href="https://github.com/schema11">GitHub</a></span>
+  <span><a href="projects.html">Projects</a> · <a href="tools.html">Tools</a> · <a href="about.html">About</a> · <a href="https://github.com/schema11" target="_blank" rel="noopener">GitHub</a></span>
 </div></footer>
 
-<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+<script src="assets/site.js"></script>
 </body>
 </html>

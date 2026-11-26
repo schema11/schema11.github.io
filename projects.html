@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Engineering projects covering design, calculation, manufacture and testing.">
-  <title>Projects | Portfolio</title>
+  <meta name="description" content="Engineering projects covering mechanical design, calculations, 3D printing and testing.">
+  <title>Projects | Matthew Schembri</title>
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
@@ -14,9 +14,9 @@
     <a class="brand" href="index.html"><span class="mark">◆</span> Matthew Schembri</a>
     <ul>
       <li><a href="index.html">Home</a></li>
-      <li><a href="tools.html">Tools</a></li>
       <li><a href="projects.html" aria-current="page">Projects</a></li>
-      <li><a href="about.html">About Me</a></li>
+      <li><a href="tools.html">Tools</a></li>
+      <li><a href="about.html">About</a></li>
     </ul>
   </div>
 </nav>
@@ -24,37 +24,65 @@
 <main>
   <p class="eyebrow">Projects</p>
   <h1>Engineering projects</h1>
-  <p class="lede">Design, build, and test projects showing how the mechanical modelling, sensor/actuator selection, and control systems fit together in practice.</p>
+  <p class="lede">Design, build, and test case studies showing how mechanical modelling, actuator sizing, and control logic fit together.</p>
 
   <div class="grid">
     <article class="card">
       <div class="thumb">
-        <svg viewBox="0 0 320 120" role="img" aria-label="Gripper jaws schematic">
-          <rect x="140" y="20" width="40" height="34" rx="4" fill="#1c2330" stroke="#30363d"/>
-          <circle cx="160" cy="37" r="9" fill="none" stroke="#58a6ff" stroke-width="2"/>
-          <circle cx="160" cy="37" r="3" fill="#58a6ff"/>
-          <path d="M150,54 L110,78 L110,100" fill="none" stroke="#8957e5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M170,54 L210,78 L210,100" fill="none" stroke="#8957e5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-          <rect x="128" y="82" width="64" height="30" rx="4" fill="#3fb95026" stroke="#3fb950" stroke-width="2"/>
-          <g stroke="#f85149" stroke-width="2">
-            <line x1="118" y1="94" x2="128" y2="94"/><line x1="202" y1="94" x2="192" y2="94"/>
-          </g>
-          <text x="236" y="40" fill="#6e7b8a" font-size="9" font-family="system-ui">servo</text>
-          <text x="236" y="98" fill="#6e7b8a" font-size="9" font-family="system-ui">grip force</text>
+        <svg viewBox="0 0 320 110" role="img" aria-label="Gripper jaws schematic">
+          <rect x="140" y="16" width="40" height="32" rx="4" fill="#161b22" stroke="#30363d"/>
+          <circle cx="160" cy="32" r="8" fill="none" stroke="#58a6ff" stroke-width="2"/>
+          <circle cx="160" cy="32" r="2.5" fill="#58a6ff"/>
+          <path d="M150 48 112 72v22M170 48l38 24v22" fill="none" stroke="#8957e5" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="128" y="76" width="64" height="26" rx="4" fill="#3fb95026" stroke="#3fb950" stroke-width="2"/>
+          <path d="M118 88h10M202 88h-10" stroke="#f85149" stroke-width="2"/>
         </svg>
       </div>
       <div class="body">
         <h3>Robotic Gripper - university project</h3>
-        <p>Full design/build cycle for a 3D-printed mechatronic gripper: lead-screw mechanism selection, virtual-work grip force and torque calculations, SolidWorks CAD modelling, PLA/TPU/Nylon manufacture, and LabVIEW force-threshold testing on an egg.</p>
+        <p>Full design/build cycle for a 3D-printed lead-screw gripper: mechanism selection, virtual-work force calculations, SolidWorks CAD, PLA/TPU/Nylon manufacture, and LabVIEW force-threshold testing on an egg.</p>
         <ul class="chips">
           <li class="chip ok">Built &amp; tested</li>
           <li class="chip">SolidWorks</li>
           <li class="chip">FDM printing</li>
-          <li class="chip">Mechatronics</li>
+          <li class="chip">LabVIEW</li>
         </ul>
         <div class="btn-row">
-          <a class="btn prim" href="projects/gripper.html">Case study →</a>
-          <a class="btn sm" href="projects/gripper.html#final">Watch the demo</a>
+          <a class="btn prim sm" href="projects/gripper.html">Case study →</a>
+          <a class="btn sm" href="projects/gripper.html#final">Demo video</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <svg viewBox="0 0 320 110" role="img" aria-label="Robot arm deflection schematic">
+          <rect x="14" y="34" width="12" height="42" fill="#161b22" stroke="#30363d"/>
+          <line x1="26" y1="55" x2="294" y2="55" stroke="#30363d" stroke-dasharray="5 4"/>
+          <line x1="26" y1="55" x2="128" y2="55" stroke="#3fb950" stroke-width="8" stroke-linecap="round" opacity=".3"/>
+          <line x1="26" y1="55" x2="128" y2="55" stroke="#3fb950" stroke-width="2"/>
+          <path d="M128 55 Q186 57 224 68" fill="none" stroke="#d29922" stroke-width="7" stroke-linecap="round" opacity=".3"/>
+          <path d="M128 55 Q186 57 224 68" fill="none" stroke="#d29922" stroke-width="2"/>
+          <path d="M224 68 Q254 72 274 82" fill="none" stroke="#f85149" stroke-width="5" stroke-linecap="round" opacity=".3"/>
+          <path d="M224 68 Q254 72 274 82" fill="none" stroke="#f85149" stroke-width="2"/>
+          <g fill="#0d1117" stroke="#58a6ff" stroke-width="2">
+            <circle cx="26" cy="55" r="5.5"/><circle cx="128" cy="55" r="5.5"/><circle cx="224" cy="68" r="4.5"/>
+          </g>
+          <rect x="274" y="74" width="16" height="16" rx="3" fill="#1f6feb33" stroke="#58a6ff" stroke-width="1.6"/>
+        </svg>
+      </div>
+      <div class="body">
+        <h3>Robot Arm Load &amp; Link-Length Calculator</h3>
+        <p>Offline browser tool sizing a serial robot arm against bending stress, derated actuator torque, and tip deflection, complete with a 20-actuator database and scaled SVG diagrams.</p>
+        <ul class="chips">
+          <li class="chip live">Live tool</li>
+          <li class="chip">Beam theory</li>
+          <li class="chip">JavaScript · SVG</li>
+        </ul>
+        <div class="btn-row">
+          <a class="btn prim sm" href="projects/robot-arm.html">Case study →</a>
+          <a class="btn sm" href="tools/armActuatorCalculation.html">Open tool</a>
+          <a class="btn sm" href="tools/armToolExplanation.html">Method</a>
         </div>
       </div>
     </article>
@@ -63,9 +91,9 @@
 
 <footer class="site"><div>
   <span>© <span id="yr"></span> Matthew Schembri</span>
-  <span><a href="index.html">Home</a> · <a href="tools.html">Tools</a> · <a href="https://github.com/schema11">GitHub</a></span>
+  <span><a href="index.html">Home</a> · <a href="tools.html">Tools</a> · <a href="about.html">About</a> · <a href="https://github.com/schema11" target="_blank" rel="noopener">GitHub</a></span>
 </div></footer>
 
-<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+<script src="assets/site.js"></script>
 </body>
 </html>
