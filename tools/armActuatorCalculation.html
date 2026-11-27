@@ -4,12 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Interactive robot arm calculator checking bending stress, actuator torque and tip deflection with a 20-entry actuator database and live scaled diagrams.">
-  <title>Arm Payload &amp; Actuator Calculator | Matthew Schembri</title>
+  <title>Robot Arm Load and Link-Length Calculator | Matthew Schembri</title>
   <link rel="stylesheet" href="../assets/site.css">
   <style>
     .arm-bar { display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: .9rem; border-bottom: 1px solid var(--line); }
+    .arm-bar > div:first-child { flex: 1 1 320px; max-width: 68ch; }
     .arm-bar h1 { font-size: 1.35rem; margin: 0; }
-    .arm-bar small { display: block; font-size: .78rem; font-weight: 400; color: var(--muted); }
+    .arm-bar small { display: block; font-size: .8rem; font-weight: 400; color: var(--muted); margin-top: .25rem; line-height: 1.45; }
     .arm-actions { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
     .col-r { position: sticky; top: 4.25rem; }
     body.embedded .col-r { top: .65rem; }
@@ -97,7 +98,7 @@
 <main class="wide">
   <div class="arm-bar">
     <div>
-      <h1><span data-text="armCalcTool.title"></span><small data-text="armCalcTool.subtitle"></small></h1>
+      <h1><span data-text="robotArm.title"></span><small data-text="robotArm.description"></small></h1>
     </div>
     <div class="arm-actions">
       <button class="btn sm prim" id="bHelp" type="button">Info</button>
@@ -134,7 +135,7 @@
         <h2><span>Links &amp; joints</span><span style="display:flex;gap:.4rem;align-items:center"><span class="chip" id="chipN"></span><button type="button" class="ib" data-help="links" data-dock="#dockLinks" aria-label="Links info">i</button></span></h2>
         <div class="helpdock" id="dockLinks"></div>
         <div id="links"></div>
-        <p class="hint" data-html="armCalcTool.linksHintHtml"></p>
+        <p class="hint" data-html="robotArm.calc.linksHintHtml"></p>
       </section>
 
       <section class="tool-card">
@@ -149,7 +150,7 @@
         <div class="helpdock" id="dockDyn"></div>
         <label class="check"><input type="checkbox" id="dynOn"> Include inertia torque (J·α)</label>
         <div class="g" id="dyn" style="margin-top:.4rem"></div>
-        <p class="hint" data-html="armCalcTool.dynHintHtml"></p>
+        <p class="hint" data-html="robotArm.calc.dynHintHtml"></p>
       </section>
     </div>
 
@@ -181,7 +182,7 @@
         <h2><span>Actuator schedule</span><button type="button" class="ib" data-help="act" data-dock="#dockAct" aria-label="Actuator schedule info">i</button></h2>
         <div class="helpdock" id="dockAct"></div>
         <div class="scroll" id="actTbl"></div>
-        <p class="hint" data-text="armCalcTool.actHint"></p>
+        <p class="hint" data-text="robotArm.calc.actHint"></p>
       </section>
 
       <section class="tool-card">
@@ -219,7 +220,7 @@ DYNAMICS     T_req = g*(Payload*a_i + Sig_i)/1000 + J_i*alpha    [N.m]
 FREQUENCY    f_n ~ (1/2pi) * sqrt(3 E I / (m L^3))               [Hz]</pre>
       </details>
 
-      <p class="small muted" data-text="armCalcTool.disclaimer"></p>
+      <p class="small muted" data-text="robotArm.calc.disclaimer"></p>
     </div>
   </div>
 </main>
@@ -278,7 +279,7 @@ const SGROUPS = [
 ];
 const SK = k => SERV[k] || SERV.None;
 
-const HELP = window.SITE_CONTENT?.armCalcTool?.help || {};
+const HELP = window.SITE_CONTENT?.robotArm?.calc?.help || {};
 
 const L_ = o => ({ L: 150, share: 1, mat: 'PETG', sec: 'Rect Tube', d1: 20, d2: 30, t: 2.5, act: 'DS3225', qty: 1, hw: 15, auto: true, lump: .08, tq: 1, gr: 1, ...o });
 const defaults = () => ({

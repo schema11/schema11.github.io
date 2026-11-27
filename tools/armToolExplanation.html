@@ -67,16 +67,16 @@
     </aside>
 
     <div>
-      <p class="eyebrow"><a href="../tools.html">Tools</a> → Arm Calculator Method</p>
-      <h1 data-text="armMethodTool.title"></h1>
-      <p class="lede" data-text="armMethodTool.lede"></p>
+      <p class="eyebrow"><a href="../tools.html">Tools</a> → Method &amp; Excel Spec</p>
+      <h1 data-text="armMethod.title"></h1>
+      <p class="lede" data-text="armMethod.description"></p>
       <div class="btn-row">
         <a class="btn prim sm" href="armActuatorCalculation.html">Open live calculator →</a>
         <a class="btn sm" href="../projects/robot-arm.html">Case study</a>
       </div>
 
-      <h2 id="method" data-text="armMethodTool.approachHeading"></h2>
-      <p data-html="armMethodTool.approachBodyHtml"></p>
+      <h2 id="method" data-text="armMethod.approachHeading"></h2>
+      <p data-html="armMethod.approachBodyHtml"></p>
 
       <figure class="fig">
         <svg viewBox="0 0 880 315" role="img" aria-label="Three-link robot arm in worst-case horizontal pose">
@@ -102,7 +102,7 @@
           <text x="580" y="234" text-anchor="middle" class="lbl">S₃</text><text x="480" y="262" text-anchor="middle" class="lbl">S₂</text><text x="370" y="290" text-anchor="middle" class="lbl">S₁ (total reach)</text>
           <text x="745" y="100" class="lbl">P = payload (kg)</text><text x="745" y="120" class="lbl">Pᵢ = distal lump</text><text x="745" y="140" class="lbl">EE = end effector</text>
         </svg>
-        <figcaption data-html="armMethodTool.approachCaptionHtml"></figcaption>
+        <figcaption data-html="armMethod.approachCaptionHtml"></figcaption>
       </figure>
 
       <div class="panel note">
@@ -110,7 +110,7 @@
         <p>$$M_{cap,i} = \min\!\left(Z_i\,\frac{\sigma_{y,i}\,k}{\text{FoS}},\ T_{motor,i}\cdot i_{gear}\cdot \eta\right) \qquad P_{max,i} = \frac{M_{cap,i}/(K_d\,g) - \Sigma_i}{S_i}$$</p>
       </div>
 
-      <h2 id="flow" data-text="armMethodTool.flowHeading"></h2>
+      <h2 id="flow" data-text="armMethod.flowHeading"></h2>
       <div class="mermaid">
 flowchart TD
   A[Geometry, material, motors] --> B[Section properties A, I, c, Z]
@@ -124,8 +124,8 @@ flowchart TD
   I --> B
       </div>
 
-      <h2 id="materials" data-text="armMethodTool.materialsHeading"></h2>
-      <p data-text="armMethodTool.materialsBody"></p>
+      <h2 id="materials" data-text="armMethod.materialsHeading"></h2>
+      <p data-text="armMethod.materialsBody"></p>
       <div class="scroll">
         <table class="spec-tbl">
           <thead><tr><th>Row</th><th>A - Material</th><th>B - Density (kg/m³)</th><th>C - Yield (MPa)</th><th>D - E (MPa)</th><th>E - T<sub>g</sub> (°C)</th></tr></thead>
@@ -139,8 +139,8 @@ flowchart TD
         </table>
       </div>
 
-      <h2 id="sections" data-text="armMethodTool.sectionsHeading"></h2>
-      <p data-html="armMethodTool.sectionsBodyHtml"></p>
+      <h2 id="sections" data-text="armMethod.sectionsHeading"></h2>
+      <p data-html="armMethod.sectionsBodyHtml"></p>
       <figure class="fig">
         <svg viewBox="0 0 880 185" role="img" aria-label="Six supported cross-section types">
           <circle class="sect" cx="75" cy="78" r="40"/><text x="75" y="146" text-anchor="middle">Solid Rod</text>
@@ -153,7 +153,7 @@ flowchart TD
         <figcaption>$$I_{rect}=\frac{bh^3}{12} \qquad I_{tube}=\frac{\pi(D^4-d^4)}{64} \qquad Z=\frac{I}{c} \qquad \sigma=\frac{M}{Z}$$</figcaption>
       </figure>
 
-      <h2 id="t1-globals" data-text="armMethodTool.tab1Heading"></h2>
+      <h2 id="t1-globals" data-text="armMethod.tab1Heading"></h2>
       <div class="scroll">
         <table class="spec-tbl">
           <thead><tr><th>Cell</th><th>Global input</th><th>Suggested</th></tr></thead>
@@ -165,7 +165,7 @@ flowchart TD
           </tbody>
         </table>
       </div>
-      <p data-html="armMethodTool.tab1LinksHtml"></p>
+      <p data-html="armMethod.tab1LinksHtml"></p>
       <div class="f"><code>Solid Rod,Hollow Rod,Solid Square,Square Tube,Rectangle,Rect Tube</code><button class="btn sm" onclick="cp(this)">Copy</button></div>
 
       <h3>Calculated columns (enter in row 12, fill down to 17)</h3>
@@ -206,8 +206,8 @@ B22 (load limit): =MIN($Y$12:$Y$17)
 B29 (tip droop):  =SUMPRODUCT($AF$12:$AF$17)+SUMPRODUCT($AE$12:$AE$17,IFERROR($S$13:$S$18,0))
 B30 (verdict):    =IF($B$29&lt;=$B$9,"OK","FAILS - stiffen or shorten")</code><button class="btn sm" onclick="cp(this)">Copy</button></div>
 
-      <h2 id="t2-globals" data-text="armMethodTool.tab2Heading"></h2>
-      <p data-html="armMethodTool.tab2BodyHtml"></p>
+      <h2 id="t2-globals" data-text="armMethod.tab2Heading"></h2>
+      <p data-html="armMethod.tab2BodyHtml"></p>
       <div class="f"><code>B12 (length):     =IF($A12&gt;$B$3,0,$B$10*$AH12/SUMPRODUCT(($A$12:$A$17&lt;=$B$3)*$AH$12:$AH$17))
 AI12 (demand):    =$B$8*$B$7*($B$4*$S12+$T12)
 AJ12 (bend util): =IF($A12&gt;$B$3,"",IFERROR($AI12/$V12,9))
@@ -223,11 +223,11 @@ flowchart LR
   C --> D[Read max link lengths & binding mode]
       </div>
 
-      <h2 id="extra" data-text="armMethodTool.extraHeading"></h2>
-      <ul data-list="armMethodTool.extraList"></ul>
+      <h2 id="extra" data-text="armMethod.extraHeading"></h2>
+      <ul data-list="armMethod.extraList"></ul>
 
-      <h2 id="checklist" data-text="armMethodTool.checklistHeading"></h2>
-      <div class="grid" style="margin-top:.75rem" data-cards="armMethodTool.checklist"></div>
+      <h2 id="checklist" data-text="armMethod.checklistHeading"></h2>
+      <div class="grid" style="margin-top:.75rem" data-cards="armMethod.checklist"></div>
 
       <hr>
       <div class="btn-row">
