@@ -1,679 +1,273 @@
 <!DOCTYPE html>
 <html lang="en-AU">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Arm Tool Explanation</title>
-<meta name="description" content="Specification for an Excel workbook that calculates robot arm load limits and permissible link lengths from material, cross-section and motor torque inputs.">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<style>
-  :root{
-    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --line:#30363d;
-    --tx:#e6edf3; --tx2:#9aa7b4; --accent:#58a6ff; --ok:#3fb950;
-    --warn:#d29922; --bad:#f85149; --mono:ui-monospace,SFMono-Regular,Consolas,monospace;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth; scroll-padding-top:1rem}
-  body{margin:0; background:var(--bg); color:var(--tx);
-       font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
-  .wrap{display:grid; grid-template-columns:260px minmax(0,1fr); gap:2.5rem;
-        max-width:1300px; margin:0 auto; padding:2rem 1.25rem 5rem;}
-  /* ---- sidebar ---- */
-  nav{position:sticky; top:5rem; align-self:start; max-height:calc(100vh - 6rem); overflow-y:auto;
-      border-left:2px solid var(--line); padding-left:1rem; font-size:.875rem;}
-  nav strong{display:block; color:var(--tx2); text-transform:uppercase; letter-spacing:.08em;
-             font-size:.72rem; margin:1.25rem 0 .5rem;}
-  nav a{display:block; color:var(--tx2); text-decoration:none; padding:.22rem 0;}
-  nav a:hover{color:var(--accent)}
-  /* ---- type ---- */
-  h1{font-size:2rem; line-height:1.2; margin:0 0 .4rem}
-  h2{font-size:1.4rem; margin:3rem 0 1rem; padding-bottom:.4rem; border-bottom:1px solid var(--line)}
-  h3{font-size:1.08rem; margin:2rem 0 .6rem; color:var(--accent)}
-  h4{font-size:.95rem; margin:1.4rem 0 .4rem; color:var(--tx2); text-transform:uppercase; letter-spacing:.05em}
-  p,li{color:var(--tx)}
-  .lede{color:var(--tx2); font-size:1.05rem}
-  code{font-family:var(--mono); font-size:.86em; background:var(--panel2);
-       padding:.1em .35em; border-radius:4px; color:#ffa657}
-  /* ---- panels ---- */
-  .panel{background:var(--panel); border:1px solid var(--line); border-radius:10px;
-         padding:1.1rem 1.25rem; margin:1.25rem 0;}
-  .note{border-left:3px solid var(--accent)}
-  .caution{border-left:3px solid var(--warn)}
-  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:.9rem; margin:1.25rem 0}
-  .card{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:1rem}
-  .card h5{margin:0 0 .35rem; font-size:.95rem}
-  .card p{margin:0; font-size:.88rem; color:var(--tx2)}
-  .pill{display:inline-block; font-size:.7rem; letter-spacing:.05em; text-transform:uppercase;
-        padding:.15rem .5rem; border-radius:99px; border:1px solid var(--line); color:var(--tx2)}
-  .page-link{display:inline-block; margin:0 0 1rem; padding:.4rem .7rem; border:1px solid var(--line);
-             border-radius:7px; background:var(--panel2); color:var(--tx); text-decoration:none; font-size:.85rem}
-  .page-link:hover{border-color:var(--accent); color:var(--accent)}
-  /* ---- tables ---- */
-  .scroll{overflow-x:auto; margin:1rem 0}
-  table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:520px}
-  th,td{border:1px solid var(--line); padding:.5rem .6rem; text-align:left; vertical-align:top}
-  th{background:var(--panel2); font-weight:600; color:var(--tx2); white-space:nowrap}
-  tbody tr:nth-child(even){background:#12171f}
-  td.cell{font-family:var(--mono); color:var(--accent); white-space:nowrap}
-  /* ---- formula blocks ---- */
-  .f{position:relative; background:#010409; border:1px solid var(--line); border-radius:8px;
-     margin:.5rem 0 1rem; padding:.7rem 5.5rem .7rem .8rem; overflow-x:auto}
-  .f code{background:none; padding:0; color:#7ee787; white-space:pre; font-size:.82rem; line-height:1.6}
-  .f button{position:absolute; top:.5rem; right:.5rem; background:var(--panel2); color:var(--tx2);
-            border:1px solid var(--line); border-radius:6px; font-size:.72rem; padding:.25rem .55rem; cursor:pointer}
-  .f button:hover{color:var(--tx); border-color:var(--accent)}
-  .f button.done{color:var(--ok); border-color:var(--ok)}
-  /* ---- diagrams ---- */
-  figure{margin:1.5rem 0; background:var(--panel); border:1px solid var(--line);
-         border-radius:10px; padding:1rem}
-  figure svg{display:block; width:100%; height:auto}
-  figcaption{font-size:.82rem; color:var(--tx2); margin-top:.6rem; text-align:center}
-  .mermaid{background:var(--panel); border:1px solid var(--line); border-radius:10px;
-           padding:1rem; margin:1.5rem 0; text-align:center}
-  svg text{font-family:-apple-system,"Segoe UI",Roboto,sans-serif; fill:#e6edf3; font-size:13px}
-  svg .dim{stroke:#9aa7b4; stroke-width:1}
-  svg .lbl{fill:#9aa7b4; font-size:12px}
-  svg .acc{stroke:#58a6ff; stroke-width:2.5; fill:none}
-  svg .frc{stroke:#f85149; stroke-width:2}
-  svg .frctx{fill:#f85149; font-size:12px; font-weight:600}
-  svg .sect{fill:#1f6feb33; stroke:#58a6ff; stroke-width:2}
-  svg .hole{fill:#0d1117; stroke:#58a6ff; stroke-width:1.5}
-  footer{grid-column:1/-1; border-top:1px solid var(--line); margin-top:3rem; padding-top:1.25rem;
-         color:var(--tx2); font-size:.84rem}
-  ol.steps{counter-reset:s; list-style:none; padding:0}
-  ol.steps li{counter-increment:s; position:relative; padding:0 0 .9rem 2.4rem}
-  ol.steps li::before{content:counter(s); position:absolute; left:0; top:.05rem; width:1.6rem; height:1.6rem;
-    background:var(--panel2); border:1px solid var(--line); border-radius:50%; text-align:center;
-    line-height:1.5rem; font-size:.8rem; color:var(--accent)}
-  @media (max-width:900px){ .wrap{grid-template-columns:1fr} nav{display:none} }
-  @media print{ body{background:#fff;color:#000} nav,.f button{display:none} }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Method and Excel workbook specification for calculating robot arm load limits and permissible link lengths.">
+  <title>Arm Calculator Method &amp; Formulas | Matthew Schembri</title>
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <style>
+    .doc-wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 2rem; align-items: start; }
+    .doc-wrap > div { min-width: 0; }
+    .toc { position: sticky; top: 4.5rem; border-left: 2px solid var(--line); padding-left: .9rem; font-size: .84rem; }
+    .toc strong { display: block; color: var(--faint); text-transform: uppercase; letter-spacing: .08em; font-size: .7rem; margin: 1rem 0 .35rem; }
+    .toc strong:first-child { margin-top: 0; }
+    .toc a { display: block; color: var(--muted); text-decoration: none; padding: .18rem 0; }
+    .toc a:hover { color: var(--accent); }
+    .f { display: flex; align-items: flex-start; gap: .6rem; background: var(--inset); border: 1px solid var(--line); border-radius: 7px; margin: .45rem 0 .9rem; padding: .6rem .7rem; }
+    .f code { flex: 1; min-width: 0; overflow-x: auto; background: none; padding: 0; color: #7ee787; white-space: pre; font-size: .8rem; line-height: 1.55; }
+    .f button { flex: 0 0 auto; }
+    .panel { overflow-x: auto; }
+    .fig { margin: 1.25rem 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: .85rem; }
+    .fig svg { display: block; width: 100%; height: auto; }
+    .fig figcaption { font-size: .8rem; color: var(--muted); margin-top: .5rem; text-align: center; }
+    .mermaid { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: .85rem; margin: 1.25rem 0; text-align: center; }
+    svg text { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; fill: #e6edf3; font-size: 13px; }
+    svg .dim { stroke: #9aa7b4; stroke-width: 1; }
+    svg .lbl { fill: #9aa7b4; font-size: 12px; }
+    svg .acc { stroke: #58a6ff; stroke-width: 2.5; fill: none; }
+    svg .frc { stroke: #f85149; stroke-width: 2; }
+    svg .frctx { fill: #f85149; font-size: 12px; font-weight: 600; }
+    svg .sect { fill: #1f6feb33; stroke: #58a6ff; stroke-width: 2; }
+    svg .hole { fill: #0d1117; stroke: #58a6ff; stroke-width: 1.5; }
+    td.cell { font-family: var(--mono); color: var(--accent); white-space: nowrap; }
+    @media (max-width: 880px) { .doc-wrap { grid-template-columns: 1fr; } .toc { display: none; } }
+  </style>
 </head>
 <body>
-<header style="position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:.75rem;
- align-items:center;justify-content:space-between;background:#0d1117f2;backdrop-filter:blur(8px);
- border-bottom:1px solid #30363d;padding:.7rem 1.25rem;
- font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
-  <span style="font-size:.84rem;color:#9aa7b4">📘 Build specification &amp; method - Robot Arm Calculator</span>
-  <span style="display:flex;gap:.5rem;flex-wrap:wrap">
-    <a href="../tools.html" style="display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;
-      background:#1c2330;color:#e6edf3;border:1px solid #30363d;border-radius:7px;
-      padding:.4rem .75rem;font-size:.82rem">← Portfolio tools</a>
-    <a href="armActuatorCalculation.html" style="display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;
-      background:#1f6feb1a;color:#58a6ff;border:1px solid #1f6feb66;border-radius:7px;
-      padding:.4rem .75rem;font-size:.82rem">⚙️ Open the live calculator →</a>
-  </span>
-</header>
-<div class="wrap">
 
-<nav>
-  <strong>Tools</strong>
-  <a href="armActuatorCalculation.html">Arm Payload and Actuator Calculator</a>
-  <a href="armToolExplanation.html" aria-current="page">Arm Tool Explanation</a>
-  <strong>Method</strong>
-  <a href="#method">Modelling approach</a>
-  <a href="#flow">Constraint logic</a>
-  <a href="#materials">Material reference</a>
-  <a href="#sections">Cross-sections</a>
-  <strong>Tab 1 - Load Limit</strong>
-  <a href="#t1-globals">Global inputs</a>
-  <a href="#t1-links">Link table</a>
-  <a href="#t1-calc">Calculated columns</a>
-  <a href="#t1-defl">Deflection block</a>
-  <a href="#t1-results">Results</a>
-  <strong>Tab 2 - Link Lengths</strong>
-  <a href="#t2-globals">Global inputs</a>
-  <a href="#t2-calc">Demand &amp; utilisation</a>
-  <a href="#t2-solve">Goal Seek</a>
-  <strong>Going further</strong>
-  <a href="#extra">Extra calculations</a>
-  <a href="#checklist">Validation checklist</a>
+<nav class="nav" aria-label="Main">
+  <div class="nav-in">
+    <a class="brand" href="../index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../projects.html">Projects</a></li>
+      <li><a href="../tools.html" aria-current="page">Tools</a></li>
+      <li><a href="../about.html">About</a></li>
+    </ul>
+  </div>
 </nav>
 
 <main>
-  <a class="page-link" href="armActuatorCalculation.html">Open Arm Payload and Actuator Calculator</a>
-  <span class="pill">Engineering aid · v1.0</span>
-  <h1>Arm Tool Explanation</h1>
-  <p class="lede">A complete build specification for a two-tab Excel workbook. <strong>Tab 1</strong> takes a geometry and returns the maximum payload. <strong>Tab 2</strong> takes a payload and returns the maximum permissible length of every link. Every formula below is copy-paste ready.</p>
+  <div class="doc-wrap">
+    <aside class="toc" aria-label="Contents">
+      <strong>Method</strong>
+      <a href="#method">1. Approach</a>
+      <a href="#flow">2. Constraint logic</a>
+      <a href="#materials">3. Materials</a>
+      <a href="#sections">4. Cross-sections</a>
+      <strong>Excel Workbook</strong>
+      <a href="#t1-globals">5. Tab 1 - Load limit</a>
+      <a href="#t1-defl">Deflection block</a>
+      <a href="#t2-globals">6. Tab 2 - Link lengths</a>
+      <strong>Further checks</strong>
+      <a href="#extra">7. Extra checks</a>
+      <a href="#checklist">8. Validation</a>
+    </aside>
 
-  <!-- ================= METHOD ================= -->
-  <h2 id="method">1 · Modelling approach</h2>
-  <p>A serial arm is a <strong>coupled chain</strong>: each joint carries the weight and moment of everything distal to it. Both tabs model the <strong>worst-case pose</strong> - fully extended, straight, horizontal, gravity perpendicular to the links - and test three independent limits at every joint.</p>
+    <div>
+      <p class="eyebrow"><a href="../tools.html">Tools</a> → Arm Calculator Method</p>
+      <h1>Robot Arm Calculator - Method &amp; Excel Spec</h1>
+      <p class="lede">The underlying beam model and copy-paste Excel specification behind the browser tool. Tab 1 solves maximum payload for fixed links, whilst Tab 2 solves maximum link lengths for a fixed payload.</p>
+      <div class="btn-row">
+        <a class="btn prim sm" href="armActuatorCalculation.html">Open live calculator →</a>
+        <a class="btn sm" href="../projects/robot-arm.html">Case study</a>
+      </div>
 
-  <div class="cards">
-    <div class="card"><h5>① Bending stress</h5><p>Will the link snap? Compares applied moment against section modulus × allowable stress.</p></div>
-    <div class="card"><h5>② Actuator torque</h5><p>Can the motor hold the pose? Compares applied moment against peak torque × gear ratio × efficiency.</p></div>
-    <div class="card"><h5>③ Tip deflection</h5><p>Will it droop or wobble? Superposed cantilever deflection plus carried slope from every inboard link.</p></div>
-  </div>
-  <p>The true capability is the <strong>minimum of the three</strong>. For FDM-printed arms, ③ almost always governs long before ① does.</p>
+      <h2 id="method">1. Modelling approach</h2>
+      <p>Each joint carries the full weight and moment of everything outboard of it. The model evaluates the <strong>worst-case pose</strong> (fully extended horizontally) against three independent checks: <strong>bending stress</strong>, <strong>actuator torque</strong>, and <strong>tip deflection</strong>. The smallest limit governs (stiffness usually fails first on printed arms).</p>
 
-  <figure>
-    <svg viewBox="0 0 880 320" role="img" aria-label="Three-link robot arm in worst-case horizontal pose showing moment arms">
-      <!-- base -->
-      <rect x="28" y="95" width="26" height="110" fill="#1c2330" stroke="#30363d"/>
-      <g stroke="#9aa7b4" stroke-width="1">
-        <line x1="28" y1="100" x2="18" y2="110"/><line x1="28" y1="118" x2="18" y2="128"/>
-        <line x1="28" y1="136" x2="18" y2="146"/><line x1="28" y1="154" x2="18" y2="164"/>
-        <line x1="28" y1="172" x2="18" y2="182"/><line x1="28" y1="190" x2="18" y2="200"/>
-      </g>
-      <!-- links -->
-      <line class="acc" x1="70" y1="150" x2="290" y2="150"/>
-      <line class="acc" x1="290" y1="150" x2="490" y2="150"/>
-      <line class="acc" x1="490" y1="150" x2="650" y2="150"/>
-      <!-- joints -->
-      <g fill="#0d1117" stroke="#58a6ff" stroke-width="2.5">
-        <circle cx="70" cy="150" r="11"/><circle cx="290" cy="150" r="11"/><circle cx="490" cy="150" r="11"/>
-      </g>
-      <text x="70" y="128" text-anchor="middle" class="lbl">J1</text>
-      <text x="290" y="128" text-anchor="middle" class="lbl">J2</text>
-      <text x="490" y="128" text-anchor="middle" class="lbl">J3</text>
-      <text x="180" y="138" text-anchor="middle">Link 1 · L₁</text>
-      <text x="390" y="138" text-anchor="middle">Link 2 · L₂</text>
-      <text x="570" y="138" text-anchor="middle">Link 3 · L₃</text>
-      <!-- payload -->
-      <rect x="650" y="136" width="42" height="28" rx="4" fill="#1f6feb33" stroke="#58a6ff" stroke-width="2"/>
-      <text x="671" y="155" text-anchor="middle" font-size="12">EE</text>
-      <!-- force arrows -->
-      <defs>
-        <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
-          <path d="M0,0 L9,4.5 L0,9 z" fill="#f85149"/>
-        </marker>
-        <marker id="ag" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-          <path d="M0,0 L8,4 L0,8 z" fill="#9aa7b4"/>
-        </marker>
-        <marker id="ag2" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto">
-          <path d="M8,0 L0,4 L8,8 z" fill="#9aa7b4"/>
-        </marker>
-      </defs>
-      <g class="frc" marker-end="url(#ar)">
-        <line x1="180" y1="152" x2="180" y2="192"/>
-        <line x1="390" y1="152" x2="390" y2="192"/>
-        <line x1="570" y1="152" x2="570" y2="192"/>
-        <line x1="671" y1="166" x2="671" y2="212"/>
-        <line x1="290" y1="162" x2="290" y2="196"/>
-        <line x1="490" y1="162" x2="490" y2="196"/>
-      </g>
-      <text x="186" y="206" class="frctx">m₁g</text>
-      <text x="396" y="206" class="frctx">m₂g</text>
-      <text x="576" y="206" class="frctx">m₃g</text>
-      <text x="686" y="212" class="frctx">P·g</text>
-      <text x="256" y="211" class="frctx" font-size="11">P₁</text>
-      <text x="456" y="211" class="frctx" font-size="11">P₂</text>
-      <!-- dimension lines: reach from each joint to tip -->
-      <g class="dim" marker-start="url(#ag2)" marker-end="url(#ag)">
-        <line x1="490" y1="240" x2="671" y2="240"/>
-        <line x1="290" y1="268" x2="671" y2="268"/>
-        <line x1="70"  y1="296" x2="671" y2="296"/>
-      </g>
-      <g stroke="#30363d" stroke-dasharray="3 3">
-        <line x1="70" y1="160" x2="70" y2="296"/>
-        <line x1="290" y1="160" x2="290" y2="268"/>
-        <line x1="490" y1="160" x2="490" y2="240"/>
-        <line x1="671" y1="220" x2="671" y2="296"/>
-      </g>
-      <text x="580" y="234" text-anchor="middle" class="lbl">S₃ - reach from J3</text>
-      <text x="480" y="262" text-anchor="middle" class="lbl">S₂ - reach from J2</text>
-      <text x="370" y="290" text-anchor="middle" class="lbl">S₁ - reach from J1 (total reach)</text>
-      <text x="760" y="80" class="lbl">P = payload (kg)</text>
-      <text x="760" y="100" class="lbl">Pᵢ = lumped mass at</text>
-      <text x="760" y="118" class="lbl">distal end of link i</text>
-      <text x="760" y="136" class="lbl">(motor, gearbox, bracket)</text>
-      <text x="760" y="160" class="lbl">EE = end effector</text>
-    </svg>
-    <figcaption>Worst-case pose. The moment at joint <em>i</em> is the payload acting at S<sub>i</sub>, plus every distal link mass and lumped mass acting at its own lever arm.</figcaption>
-  </figure>
+      <figure class="fig">
+        <svg viewBox="0 0 880 315" role="img" aria-label="Three-link robot arm in worst-case horizontal pose">
+          <defs>
+            <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#f85149"/></marker>
+            <marker id="ag" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#9aa7b4"/></marker>
+            <marker id="ag2" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="#9aa7b4"/></marker>
+          </defs>
+          <rect x="28" y="95" width="26" height="110" fill="#1c2330" stroke="#30363d"/>
+          <g stroke="#9aa7b4"><line x1="28" y1="100" x2="18" y2="110"/><line x1="28" y1="122" x2="18" y2="132"/><line x1="28" y1="144" x2="18" y2="154"/><line x1="28" y1="166" x2="18" y2="176"/><line x1="28" y1="188" x2="18" y2="198"/></g>
+          <line class="acc" x1="70" y1="150" x2="650" y2="150"/>
+          <g fill="#0d1117" stroke="#58a6ff" stroke-width="2.5"><circle cx="70" cy="150" r="10"/><circle cx="290" cy="150" r="10"/><circle cx="490" cy="150" r="10"/></g>
+          <text x="70" y="128" text-anchor="middle" class="lbl">J1</text><text x="290" y="128" text-anchor="middle" class="lbl">J2</text><text x="490" y="128" text-anchor="middle" class="lbl">J3</text>
+          <text x="180" y="138" text-anchor="middle">L₁</text><text x="390" y="138" text-anchor="middle">L₂</text><text x="570" y="138" text-anchor="middle">L₃</text>
+          <rect x="650" y="136" width="42" height="28" rx="4" fill="#1f6feb33" stroke="#58a6ff" stroke-width="2"/><text x="671" y="155" text-anchor="middle">EE</text>
+          <g class="frc" marker-end="url(#ar)">
+            <line x1="180" y1="152" x2="180" y2="192"/><line x1="390" y1="152" x2="390" y2="192"/><line x1="570" y1="152" x2="570" y2="192"/>
+            <line x1="671" y1="166" x2="671" y2="210"/><line x1="290" y1="162" x2="290" y2="194"/><line x1="490" y1="162" x2="490" y2="194"/>
+          </g>
+          <text x="186" y="206" class="frctx">m₁g</text><text x="396" y="206" class="frctx">m₂g</text><text x="576" y="206" class="frctx">m₃g</text><text x="686" y="210" class="frctx">P·g</text>
+          <text x="260" y="208" class="frctx">P₁</text><text x="460" y="208" class="frctx">P₂</text>
+          <g class="dim" marker-start="url(#ag2)" marker-end="url(#ag)"><line x1="490" y1="240" x2="671" y2="240"/><line x1="290" y1="268" x2="671" y2="268"/><line x1="70" y1="296" x2="671" y2="296"/></g>
+          <text x="580" y="234" text-anchor="middle" class="lbl">S₃</text><text x="480" y="262" text-anchor="middle" class="lbl">S₂</text><text x="370" y="290" text-anchor="middle" class="lbl">S₁ (total reach)</text>
+          <text x="745" y="100" class="lbl">P = payload (kg)</text><text x="745" y="120" class="lbl">Pᵢ = distal lump</text><text x="745" y="140" class="lbl">EE = end effector</text>
+        </svg>
+        <figcaption>Worst-case horizontal pose showing reach S<sub>i</sub>, link weights m<sub>i</sub>g, and distal component masses P<sub>i</sub>.</figcaption>
+      </figure>
 
-  <div class="panel note">
-    <h4>Governing equations</h4>
-    <p>Moment demand at joint <em>i</em>, with dynamic amplification \(K_d\):</p>
-    <p>$$M_i = K_d\,g\left[P\,S_i + \sum_{j>i}\left(m_j\left(S_i-S_j+\tfrac{L_j}{2}\right) + P_j\left(S_i-S_j+L_j\right)\right)\right]$$</p>
-    <p>Capacity is the lesser of material and motor:</p>
-    <p>$$M_{cap,i} = \min\!\left(\underbrace{Z_i\,\frac{\sigma_{y,i}\,k}{\text{FoS}}}_{\text{bending}},\ \underbrace{T_{motor,i}\cdot i_{gear}\cdot \eta}_{\text{actuator}}\right)$$</p>
-    <p>Rearranged for payload, the limit imposed by joint <em>i</em>:</p>
-    <p>$$P_{max,i} = \frac{M_{cap,i}/(K_d\,g) - \Sigma_i}{S_i} \qquad\Rightarrow\qquad P_{max} = \min_i P_{max,i}$$</p>
-  </div>
+      <div class="panel note">
+        <p>$$M_i = K_d\,g\left[P\,S_i + \sum_{j \ge i}\left(m_j\left(S_i-S_j+\tfrac{L_j}{2}\right) + P_j\left(S_i-S_j+L_j\right)\right)\right]$$</p>
+        <p>$$M_{cap,i} = \min\!\left(Z_i\,\frac{\sigma_{y,i}\,k}{\text{FoS}},\ T_{motor,i}\cdot i_{gear}\cdot \eta\right) \qquad P_{max,i} = \frac{M_{cap,i}/(K_d\,g) - \Sigma_i}{S_i}$$</p>
+      </div>
 
-  <!-- ================= FLOW ================= -->
-  <h2 id="flow">2 · Constraint logic</h2>
-  <div class="mermaid">
+      <h2 id="flow">2. Constraint logic</h2>
+      <div class="mermaid">
 flowchart TD
   A[Geometry, material, motors] --> B[Section properties A, I, c, Z]
-  B --> C[Link masses and reach to tip]
-  C --> D[Self-weight moment at each joint]
-  D --> E{Capacity check}
-  E --> F[Bending: Z x allowable stress]
-  E --> G[Torque: T x ratio x efficiency]
-  F --> H[Governing capacity = MIN of the two]
-  G --> H
-  H --> I[Payload limit per joint]
-  I --> J[Load limit = MIN across all joints]
-  J --> K{Tip deflection within budget?}
-  K -- Yes --> L[Usable payload confirmed]
-  K -- No --> M[Stiffen section, shorten link, or reduce payload]
-  M --> B
-  </div>
+  B --> C[Link masses & reach to tip]
+  C --> D[Self-weight moment per joint]
+  D --> E[Governing capacity = min of bending & torque]
+  E --> F[Payload limit = min across joints]
+  F --> G{Tip deflection within budget?}
+  G -- Yes --> H[Usable payload confirmed]
+  G -- No --> I[Stiffen section, shorten link, or cut payload]
+  I --> B
+      </div>
 
-  <!-- ================= MATERIALS ================= -->
-  <h2 id="materials">3 · Material reference table</h2>
-  <p>Place this block on Tab 1 in <strong>rows 40–45</strong>. Both tabs look up against it. Figures are <strong>XY-plane (in-layer)</strong> for printed parts - layer adhesion is far weaker, which is what the knockdown factor <code>k</code> handles.</p>
-  <div class="scroll">
-  <table>
-    <thead><tr><th>Row</th><th>A - Material</th><th>B - Density (kg/m³)</th><th>C - Tensile yield (MPa)</th><th>D - E (MPa)</th><th>E - Tg / service max (°C)</th></tr></thead>
-    <tbody>
-      <tr><td class="cell">40</td><td><em>header row</em></td><td colspan="4"><em>type the headings shown above</em></td></tr>
-      <tr><td class="cell">41</td><td>PLA</td><td>1240</td><td>50</td><td>3500</td><td>55</td></tr>
-      <tr><td class="cell">42</td><td>ABS</td><td>1040</td><td>40</td><td>2100</td><td>100</td></tr>
-      <tr><td class="cell">43</td><td>PETG</td><td>1270</td><td>50</td><td>2000</td><td>75</td></tr>
-      <tr><td class="cell">44</td><td>ASA</td><td>1070</td><td>42</td><td>2000</td><td>100</td></tr>
-      <tr><td class="cell">45</td><td>Steel (mild 1018)</td><td>7850</td><td>370</td><td>200000</td><td>400</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <div class="panel caution">
-    <h4>Treat these as starting values, not certified data</h4>
-    <p>Printed strength varies hugely with nozzle temperature, layer height, perimeter count and print orientation. Substitute your own filament datasheet or tensile-test results before trusting any output.</p>
-  </div>
+      <h2 id="materials">3. Material reference table (Tab 1, rows 40–45)</h2>
+      <p>In-plane (XY) reference figures for FDM parts. Replace with measured coupon values before trusting load-critical numbers.</p>
+      <div class="scroll">
+        <table class="spec-tbl">
+          <thead><tr><th>Row</th><th>A - Material</th><th>B - Density (kg/m³)</th><th>C - Yield (MPa)</th><th>D - E (MPa)</th><th>E - T<sub>g</sub> (°C)</th></tr></thead>
+          <tbody>
+            <tr><td class="cell">41</td><td>PLA</td><td>1240</td><td>50</td><td>3500</td><td>55</td></tr>
+            <tr><td class="cell">42</td><td>ABS</td><td>1040</td><td>40</td><td>2100</td><td>100</td></tr>
+            <tr><td class="cell">43</td><td>PETG</td><td>1270</td><td>50</td><td>2000</td><td>75</td></tr>
+            <tr><td class="cell">44</td><td>ASA</td><td>1070</td><td>42</td><td>2000</td><td>100</td></tr>
+            <tr><td class="cell">45</td><td>Steel (mild 1018)</td><td>7850</td><td>370</td><td>200000</td><td>400</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-  <!-- ================= SECTIONS ================= -->
-  <h2 id="sections">4 · Cross-section geometry</h2>
-  <p>Six section types are supported. <strong>b</strong> is the width, <strong>h</strong> is the height <em>in the bending plane</em> (vertical, in the worst-case pose), <strong>D</strong> is outside diameter and <strong>t</strong> is wall thickness.</p>
+      <h2 id="sections">4. Cross-sections</h2>
+      <p>Stiffness scales with <strong>h³</strong> in bending, so taller hollow tubes deliver far more stiffness per gram than solid bars.</p>
+      <figure class="fig">
+        <svg viewBox="0 0 880 185" role="img" aria-label="Six supported cross-section types">
+          <circle class="sect" cx="75" cy="78" r="40"/><text x="75" y="146" text-anchor="middle">Solid Rod</text>
+          <circle class="sect" cx="225" cy="78" r="40"/><circle class="hole" cx="225" cy="78" r="25"/><text x="225" y="146" text-anchor="middle">Hollow Rod</text>
+          <rect class="sect" x="340" y="42" width="70" height="70" rx="3"/><text x="375" y="146" text-anchor="middle">Solid Square</text>
+          <rect class="sect" x="490" y="42" width="70" height="70" rx="3"/><rect class="hole" x="504" y="56" width="42" height="42" rx="2"/><text x="525" y="146" text-anchor="middle">Square Tube</text>
+          <rect class="sect" x="648" y="34" width="50" height="88" rx="3"/><text x="673" y="146" text-anchor="middle">Rectangle (b × h)</text>
+          <rect class="sect" x="788" y="34" width="50" height="88" rx="3"/><rect class="hole" x="800" y="46" width="26" height="64" rx="2"/><text x="813" y="146" text-anchor="middle">Rect Tube</text>
+        </svg>
+        <figcaption>$$I_{rect}=\frac{bh^3}{12} \qquad I_{tube}=\frac{\pi(D^4-d^4)}{64} \qquad Z=\frac{I}{c} \qquad \sigma=\frac{M}{Z}$$</figcaption>
+      </figure>
 
-  <figure>
-    <svg viewBox="0 0 880 200" role="img" aria-label="Six supported cross-section types">
-      <!-- solid rod -->
-      <circle class="sect" cx="75" cy="85" r="42"/>
-      <line class="dim" x1="33" y1="85" x2="117" y2="85" marker-start="url(#ag2)" marker-end="url(#ag)"/>
-      <text x="75" y="78" text-anchor="middle" class="lbl">D</text>
-      <text x="75" y="155" text-anchor="middle">Solid Rod</text>
-      <!-- hollow rod -->
-      <circle class="sect" cx="225" cy="85" r="42"/>
-      <circle class="hole" cx="225" cy="85" r="27"/>
-      <line class="dim" x1="198" y1="85" x2="183" y2="85"/>
-      <text x="190" y="76" text-anchor="middle" class="lbl">t</text>
-      <text x="225" y="155" text-anchor="middle">Hollow Rod</text>
-      <!-- solid square -->
-      <rect class="sect" x="338" y="48" width="74" height="74" rx="3"/>
-      <text x="375" y="92" text-anchor="middle" class="lbl">b = h</text>
-      <text x="375" y="155" text-anchor="middle">Solid Square</text>
-      <!-- square tube -->
-      <rect class="sect" x="488" y="48" width="74" height="74" rx="3"/>
-      <rect class="hole" x="502" y="62" width="46" height="46" rx="2"/>
-      <text x="525" y="155" text-anchor="middle">Square Tube</text>
-      <!-- rectangle -->
-      <rect class="sect" x="648" y="38" width="50" height="94" rx="3"/>
-      <line class="dim" x1="648" y1="146" x2="698" y2="146" marker-start="url(#ag2)" marker-end="url(#ag)"/>
-      <text x="673" y="163" text-anchor="middle" class="lbl">b</text>
-      <line class="dim" x1="712" y1="38" x2="712" y2="132" marker-start="url(#ag2)" marker-end="url(#ag)"/>
-      <text x="726" y="88" class="lbl">h</text>
-      <text x="673" y="22" text-anchor="middle">Rectangle</text>
-      <!-- rect tube -->
-      <rect class="sect" x="788" y="38" width="50" height="94" rx="3"/>
-      <rect class="hole" x="800" y="50" width="26" height="70" rx="2"/>
-      <text x="813" y="22" text-anchor="middle">Rect Tube</text>
-      <text x="813" y="155" text-anchor="middle" class="lbl">hollow</text>
-    </svg>
-    <figcaption>Set <code>t = 0</code> on any section to force the solid variant. Bending occurs about the horizontal axis, so <strong>h</strong> is the dimension that earns you stiffness.</figcaption>
-  </figure>
+      <h2 id="t1-globals">5. Tab 1 "Load Limit" (Excel formulas)</h2>
+      <div class="scroll">
+        <table class="spec-tbl">
+          <thead><tr><th>Cell</th><th>Global input</th><th>Suggested</th></tr></thead>
+          <tbody>
+            <tr><td class="cell">B3</td><td>Number of joints N (1–6)</td><td>3</td></tr>
+            <tr><td class="cell">B4 / B5</td><td>FoS / Print knockdown k</td><td>3–4 FDM (2.5 metal) / 0.55–0.7 (1.0 metal)</td></tr>
+            <tr><td class="cell">B6 / B7</td><td>Gravity g / Dynamic factor K<sub>d</sub></td><td>9.81 / 1.3–2.0</td></tr>
+            <tr><td class="cell">B8 / B9</td><td>Efficiency η / Max tip deflection (mm)</td><td>0.8–0.9 / 1.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Link inputs go in <strong>rows 12–17</strong>: A (link #), B (length L), C (material), D (section), E (D or b), F (h), G (wall t), P (distal lump kg), Q (motor torque N·m), R (gear ratio). Section dropdown list:</p>
+      <div class="f"><code>Solid Rod,Hollow Rod,Solid Square,Square Tube,Rectangle,Rect Tube</code><button class="btn sm" onclick="cp(this)">Copy</button></div>
 
-  <div class="panel note">
-    <p>Stiffness scales with <strong>h³</strong> in bending - doubling the height of a link multiplies its bending stiffness by eight, while doubling the width only doubles it. A hollow section removes material from near the neutral axis where it contributes almost nothing, which is why tubes dominate on strength-to-weight.</p>
-    <p>$$I_{rect}=\frac{bh^3}{12} \qquad I_{tube}=\frac{\pi\left(D^4-d^4\right)}{64} \qquad Z=\frac{I}{c} \qquad \sigma=\frac{M}{Z}$$</p>
-  </div>
+      <h3>Calculated columns (enter in row 12, fill down to 17)</h3>
+      <p class="small muted"><strong>H - Area (mm²)</strong></p>
+      <div class="f"><code>=IF($D12="Solid Rod",PI()/4*$E12^2,IF($D12="Hollow Rod",PI()/4*($E12^2-MAX(0,$E12-2*$G12)^2),IF($D12="Solid Square",$E12^2,IF($D12="Square Tube",$E12^2-MAX(0,$E12-2*$G12)^2,IF($D12="Rectangle",$E12*$F12,IF($D12="Rect Tube",$E12*$F12-MAX(0,$E12-2*$G12)*MAX(0,$F12-2*$G12),0))))))</code><button class="btn sm" onclick="cp(this)">Copy</button></div>
 
-  <!-- ================= TAB 1 ================= -->
-  <h2 id="t1-globals">5 · Tab 1 “Load Limit” - global inputs</h2>
-  <p>Name the first worksheet <strong>Load Limit</strong>. Enter values in column B.</p>
-  <div class="scroll">
-  <table>
-    <thead><tr><th>Cell</th><th>Input</th><th>Suggested value</th><th>Why it matters</th></tr></thead>
-    <tbody>
-      <tr><td class="cell">B3</td><td>Number of joints N (1–6)</td><td>3</td><td>Rows beyond N are ignored throughout</td></tr>
-      <tr><td class="cell">B4</td><td>Factor of safety, FoS</td><td>2.5 metal / 3–4 FDM</td><td>Covers material scatter and load uncertainty</td></tr>
-      <tr><td class="cell">B5</td><td>Print knockdown factor, k</td><td>1.0 steel / 0.55–0.7 FDM</td><td>Real printed strength vs datasheet</td></tr>
-      <tr><td class="cell">B6</td><td>Gravity g (m/s²)</td><td>9.81</td><td></td></tr>
-      <tr><td class="cell">B7</td><td>Dynamic amplification, K<sub>d</sub></td><td>1.3–2.0</td><td>1.3 for slow/smooth motion, 2.0 for fast start-stop</td></tr>
-      <tr><td class="cell">B8</td><td>Drivetrain efficiency, η</td><td>0.9 spur / 0.8 belt / 0.7 worm</td><td>Torque actually reaching the joint</td></tr>
-      <tr><td class="cell">B9</td><td>Max allowable tip deflection (mm)</td><td>1.0</td><td>Your accuracy requirement</td></tr>
-    </tbody>
-  </table>
-  </div>
+      <p class="small muted"><strong>I - Second moment of area I (mm⁴)</strong></p>
+      <div class="f"><code>=IF($D12="Solid Rod",PI()/64*$E12^4,IF($D12="Hollow Rod",PI()/64*($E12^4-MAX(0,$E12-2*$G12)^4),IF($D12="Solid Square",$E12^4/12,IF($D12="Square Tube",($E12^4-MAX(0,$E12-2*$G12)^4)/12,IF($D12="Rectangle",$E12*$F12^3/12,IF($D12="Rect Tube",($E12*$F12^3-MAX(0,$E12-2*$G12)*MAX(0,$F12-2*$G12)^3)/12,0))))))</code><button class="btn sm" onclick="cp(this)">Copy</button></div>
 
-  <h3 id="t1-links">Link table - inputs (rows 12–17 = links 1–6)</h3>
-  <p>Link 1 is nearest the base. Set unused rows to <code>0</code> length and <code>0</code> mass.</p>
-  <div class="scroll">
-  <table>
-    <thead><tr><th>Col</th><th>Header</th><th>Type</th></tr></thead>
-    <tbody>
-      <tr><td class="cell">A</td><td>Link # (type 1–6 down the rows)</td><td>fixed</td></tr>
-      <tr><td class="cell">B</td><td>Length L (mm)</td><td>input</td></tr>
-      <tr><td class="cell">C</td><td>Material</td><td>dropdown → source <code>=$A$41:$A$45</code></td></tr>
-      <tr><td class="cell">D</td><td>Section</td><td>dropdown → list below</td></tr>
-      <tr><td class="cell">E</td><td>D1 - OD, or width b (mm)</td><td>input</td></tr>
-      <tr><td class="cell">F</td><td>D2 - height h in bending plane (mm)</td><td>input (rectangles only)</td></tr>
-      <tr><td class="cell">G</td><td>Wall t (mm) - 0 = solid</td><td>input</td></tr>
-      <tr><td class="cell">P</td><td>Lumped mass at distal end (kg) - next motor, gearbox, bracket</td><td>input</td></tr>
-      <tr><td class="cell">Q</td><td>Motor peak torque (N·m)</td><td>input</td></tr>
-      <tr><td class="cell">R</td><td>Gear ratio (:1)</td><td>input</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p><strong>Section dropdown list</strong> - paste into Data Validation → List → Source:</p>
-  <div class="f"><code>Solid Rod,Hollow Rod,Solid Square,Square Tube,Rectangle,Rect Tube</code><button onclick="cp(this)">Copy</button></div>
+      <p class="small muted"><strong>J (c), K (Z), L–N (density/yield/E), O (mass kg)</strong></p>
+      <div class="f"><code>J12: =IF(OR($D12="Rectangle",$D12="Rect Tube"),$F12/2,$E12/2)
+K12: =IFERROR($I12/$J12,0)
+L12: =IFERROR(XLOOKUP($C12,$A$41:$A$45,$B$41:$B$45),0)
+M12: =IFERROR(XLOOKUP($C12,$A$41:$A$45,$C$41:$C$45),0)
+N12: =IFERROR(XLOOKUP($C12,$A$41:$A$45,$D$41:$D$45),0)
+O12: =$H12*$B12/1000000000*$L12</code><button class="btn sm" onclick="cp(this)">Copy</button></div>
 
-  <h3 id="t1-calc">Calculated columns</h3>
-  <p>Enter each formula in <strong>row 12</strong>, then fill down to row 17.</p>
+      <p class="small muted"><strong>S (reach), T (self-weight moment), U–Z (capacity &amp; payload limit)</strong></p>
+      <div class="f"><code>S12: =SUMPRODUCT(($A$12:$A$17&gt;=$A12)*($A$12:$A$17&lt;=$B$3)*$B$12:$B$17)
+T12: =SUMPRODUCT(($A$12:$A$17&gt;=$A12)*($A$12:$A$17&lt;=$B$3)*($O$12:$O$17*($S12-$S$12:$S$17+$B$12:$B$17/2)+$P$12:$P$17*($S12-$S$12:$S$17+$B$12:$B$17)))
+U12: =$M12*$B$5/$B$4
+V12: =$K12*$U12
+W12: =$Q12*$R12*$B$8*1000
+X12: =MIN($V12,$W12)
+Y12: =IF(OR($A12&gt;$B$3,$S12=0),"",MAX(0,($X12/($B$7*$B$6)-$T12)/$S12))
+Z12: =IF($A12&gt;$B$3,"",IF($V12&lt;$W12,"Material (bending)","Motor torque"))</code><button class="btn sm" onclick="cp(this)">Copy</button></div>
 
-  <h4>H - Area (mm²)</h4>
-  <div class="f"><code>=IF($D12="Solid Rod",PI()/4*$E12^2,
- IF($D12="Hollow Rod",PI()/4*($E12^2-MAX(0,$E12-2*$G12)^2),
- IF($D12="Solid Square",$E12^2,
- IF($D12="Square Tube",$E12^2-MAX(0,$E12-2*$G12)^2,
- IF($D12="Rectangle",$E12*$F12,
- IF($D12="Rect Tube",$E12*$F12-MAX(0,$E12-2*$G12)*MAX(0,$F12-2*$G12),0))))))</code><button onclick="cp(this)">Copy</button></div>
+      <h3 id="t1-defl">Deflection block (AB–AF) &amp; results (B22–B30)</h3>
+      <div class="panel note">
+        <p>$$\delta=\frac{FL^3}{3EI}+\frac{M_eL^2}{2EI}+\frac{wL^4}{8EI} \qquad \theta=\frac{FL^2}{2EI}+\frac{M_eL}{EI}+\frac{wL^3}{6EI} \qquad \delta_{tip}=\sum_i \delta_i + \sum_i \theta_i\,S_{i+1}$$</p>
+      </div>
+      <div class="f"><code>AB12: =$B$7*$B$6*($B$25+$P12+SUMPRODUCT(($A$12:$A$17&gt;$A12)*($A$12:$A$17&lt;=$B$3)*($O$12:$O$17+$P$12:$P$17)))
+AC12: =$B$7*$B$6*($B$25*IFERROR($S13,0)+IFERROR($T13,0))
+AD12: =IFERROR($B$7*$B$6*$O12/$B12,0)
+AE12: =IFERROR(($AB12*$B12^2/2+$AC12*$B12+$AD12*$B12^3/6)/($N12*$I12),0)
+AF12: =IFERROR(($AB12*$B12^3/3+$AC12*$B12^2/2+$AD12*$B12^4/8)/($N12*$I12),0)
+B22 (load limit): =MIN($Y$12:$Y$17)
+B29 (tip droop):  =SUMPRODUCT($AF$12:$AF$17)+SUMPRODUCT($AE$12:$AE$17,IFERROR($S$13:$S$18,0))
+B30 (verdict):    =IF($B$29&lt;=$B$9,"OK","FAILS - stiffen or shorten")</code><button class="btn sm" onclick="cp(this)">Copy</button></div>
 
-  <h4>I - Second moment of area (mm⁴)</h4>
-  <div class="f"><code>=IF($D12="Solid Rod",PI()/64*$E12^4,
- IF($D12="Hollow Rod",PI()/64*($E12^4-MAX(0,$E12-2*$G12)^4),
- IF($D12="Solid Square",$E12^4/12,
- IF($D12="Square Tube",($E12^4-MAX(0,$E12-2*$G12)^4)/12,
- IF($D12="Rectangle",$E12*$F12^3/12,
- IF($D12="Rect Tube",($E12*$F12^3-MAX(0,$E12-2*$G12)*MAX(0,$F12-2*$G12)^3)/12,0))))))</code><button onclick="cp(this)">Copy</button></div>
+      <h2 id="t2-globals">6. Tab 2 "Link Lengths for Load" (Goal Seek)</h2>
+      <p>Drive all link lengths from one solver variable (total reach in <code>B10</code>) via proportional length shares in column <code>AH</code>, then run <strong>Data → What-If Analysis → Goal Seek</strong> to set worst utilisation <code>B15</code> to <code>1</code> by changing <code>B10</code>.</p>
+      <div class="f"><code>B12 (length):     =IF($A12&gt;$B$3,0,$B$10*$AH12/SUMPRODUCT(($A$12:$A$17&lt;=$B$3)*$AH$12:$AH$17))
+AI12 (demand):    =$B$8*$B$7*($B$4*$S12+$T12)
+AJ12 (bend util): =IF($A12&gt;$B$3,"",IFERROR($AI12/$V12,9))
+AK12 (tq util):   =IF($A12&gt;$B$3,"",IFERROR($AI12/$W12,9))
+AL12 (worst):     =IF($A12&gt;$B$3,"",MAX($AJ12,$AK12))
+B14 (defl util):  =$B$29/$B$11
+B15 (worst util): =MAX(MAX($AL$12:$AL$17),$B$14)</code><button class="btn sm" onclick="cp(this)">Copy</button></div>
 
-  <h4>J - Extreme fibre distance c (mm)</h4>
-  <div class="f"><code>=IF(OR($D12="Rectangle",$D12="Rect Tube"),$F12/2,$E12/2)</code><button onclick="cp(this)">Copy</button></div>
-
-  <h4>K - Section modulus Z (mm³)</h4>
-  <div class="f"><code>=IFERROR($I12/$J12,0)</code><button onclick="cp(this)">Copy</button></div>
-
-  <h4>L, M, N - Material lookups (density, yield, E)</h4>
-  <div class="f"><code>=IFERROR(XLOOKUP($C12,$A$41:$A$45,$B$41:$B$45),0)</code><button onclick="cp(this)">Copy</button></div>
-  <div class="f"><code>=IFERROR(XLOOKUP($C12,$A$41:$A$45,$C$41:$C$45),0)</code><button onclick="cp(this)">Copy</button></div>
-  <div class="f"><code>=IFERROR(XLOOKUP($C12,$A$41:$A$45,$D$41:$D$45),0)</code><button onclick="cp(this)">Copy</button></div>
-  <p style="font-size:.86rem;color:var(--tx2)">On older Excel without XLOOKUP, swap to <code>VLOOKUP($C12,$A$41:$E$45,2,FALSE)</code> and change the column index to 3 and 4 respectively.</p>
-
-  <h4>O - Link mass (kg)</h4>
-  <div class="f"><code>=$H12*$B12/1000000000*$L12</code><button onclick="cp(this)">Copy</button></div>
-
-  <h4>S - Reach from this joint to the tip (mm)</h4>
-  <div class="f"><code>=SUMPRODUCT(($A$12:$A$17&gt;=$A12)*($A$12:$A$17&lt;=$B$3)*$B$12:$B$17)</code><button onclick="cp(this)">Copy</button></div>
-
-  <h4>T - Self-weight moment about this joint (kg·mm)</h4>
-  <div class="f"><code>=SUMPRODUCT(($A$12:$A$17&gt;=$A12)*($A$12:$A$17&lt;=$B$3)*
- ($O$12:$O$17*($S12-$S$12:$S$17+$B$12:$B$17/2)
- +$P$12:$P$17*($S12-$S$12:$S$17+$B$12:$B$17)))</code><button onclick="cp(this)">Copy</button></div>
-
-  <h4>U - Allowable stress (MPa) · V - Allowable moment (N·mm) · W - Available joint torque (N·mm)</h4>
-  <div class="f"><code>=$M12*$B$5/$B$4</code><button onclick="cp(this)">Copy</button></div>
-  <div class="f"><code>=$K12*$U12</code><button onclick="cp(this)">Copy</button></div>
-  <div class="f"><code>=$Q12*$R12*$B$8*1000</code><button onclick="cp(this)">Copy</button></div>
-
-  <h4>X - Governing capacity (N·mm)</h4>
-  <div class="f"><code>=MIN($V12,$W12)</code><button onclick="cp(this)">Copy</button></div>
-
-  <h4>Y - Payload limit set by this joint (kg)</h4>
-  <div class="f"><code>=IF(OR($A12&gt;$B$3,$S12=0),"",MAX(0,($X12/($B$7*$B$6)-$T12)/$S12))</code><button onclick="cp(this)">Copy</button></div>
-
-  <h4>Z - Binding constraint</h4>
-  <div class="f"><code>=IF($A12&gt;$B$3,"",IF($V12&lt;$W12,"Material (bending)","Motor torque"))</code><button onclick="cp(this)">Copy</button></div>
-
-  <!-- deflection -->
-  <h3 id="t1-defl">Deflection block (columns AB–AF, same rows)</h3>
-  <p>Each link is a cantilever carrying a tip force, an applied end moment from everything outboard, and its own distributed weight. The <em>slope</em> at the end of each link is then carried out to the tip and added - this is what makes a long arm droop far more than any single link calculation suggests.</p>
-
-  <figure>
-    <svg viewBox="0 0 880 250" role="img" aria-label="Cantilever link loading and deflection model">
-      <!-- wall -->
-      <rect x="40" y="40" width="22" height="130" fill="#1c2330" stroke="#30363d"/>
-      <g stroke="#9aa7b4" stroke-width="1">
-        <line x1="40" y1="46" x2="30" y2="56"/><line x1="40" y1="68" x2="30" y2="78"/>
-        <line x1="40" y1="90" x2="30" y2="100"/><line x1="40" y1="112" x2="30" y2="122"/>
-        <line x1="40" y1="134" x2="30" y2="144"/><line x1="40" y1="156" x2="30" y2="166"/>
-      </g>
-      <!-- undeflected -->
-      <line x1="62" y1="105" x2="520" y2="105" stroke="#30363d" stroke-width="2" stroke-dasharray="6 4"/>
-      <!-- deflected -->
-      <path class="acc" d="M62,105 Q330,110 520,168"/>
-      <!-- distributed load -->
-      <g class="frc" marker-end="url(#ar)" opacity=".75">
-        <line x1="110" y1="68" x2="110" y2="98"/><line x1="180" y1="68" x2="180" y2="98"/>
-        <line x1="250" y1="68" x2="250" y2="99"/><line x1="320" y1="68" x2="320" y2="101"/>
-        <line x1="390" y1="68" x2="390" y2="103"/><line x1="460" y1="68" x2="460" y2="105"/>
-      </g>
-      <line x1="105" y1="68" x2="465" y2="68" stroke="#f85149" stroke-width="2"/>
-      <text x="285" y="58" text-anchor="middle" class="frctx">w - self weight per mm (col AD)</text>
-      <!-- tip force -->
-      <line class="frc" x1="520" y1="168" x2="520" y2="222" marker-end="url(#ar)" stroke-width="3"/>
-      <text x="534" y="212" class="frctx">F (col AB)</text>
-      <!-- end moment -->
-      <path class="frc" d="M556,150 A34,34 0 1,1 556,186" fill="none" marker-end="url(#ar)"/>
-      <text x="600" y="172" class="frctx">Mₑ (col AC)</text>
-      <!-- deflection dim -->
-      <g class="dim" marker-start="url(#ag2)" marker-end="url(#ag)">
-        <line x1="498" y1="105" x2="498" y2="168"/>
-      </g>
-      <text x="446" y="142" class="lbl">δ</text>
-      <!-- slope -->
-      <line x1="470" y1="152" x2="580" y2="112" stroke="#d29922" stroke-width="1.5" stroke-dasharray="4 3"/>
-      <path d="M505,138 A40,40 0 0,1 520,160" fill="none" stroke="#d29922" stroke-width="1.5"/>
-      <text x="528" y="132" fill="#d29922" font-size="12">θ</text>
-      <!-- length dim -->
-      <g class="dim" marker-start="url(#ag2)" marker-end="url(#ag)">
-        <line x1="62" y1="238" x2="520" y2="238"/>
-      </g>
-      <text x="291" y="232" text-anchor="middle" class="lbl">L - this link</text>
-      <text x="700" y="60" class="lbl">F  = weight of payload + all</text>
-      <text x="700" y="78" class="lbl">     distal links and masses</text>
-      <text x="700" y="100" class="lbl">Mₑ = moment fed back by the</text>
-      <text x="700" y="118" class="lbl">     outboard chain</text>
-      <text x="700" y="222" class="lbl">θ is multiplied by the</text>
-      <text x="700" y="240" class="lbl">remaining reach and added</text>
-    </svg>
-    <figcaption>Superposition per link: tip load + end moment + distributed self weight. Total droop = Σδ + Σ(θ × remaining reach).</figcaption>
-  </figure>
-
-  <div class="panel note">
-    <p>$$\delta=\frac{FL^3}{3EI}+\frac{M_eL^2}{2EI}+\frac{wL^4}{8EI} \qquad \theta=\frac{FL^2}{2EI}+\frac{M_eL}{EI}+\frac{wL^3}{6EI}$$</p>
-    <p>$$\delta_{tip}=\sum_i \delta_i + \sum_i \theta_i\,S_{i+1}$$</p>
-  </div>
-
-  <div class="scroll">
-  <table>
-    <thead><tr><th>Col</th><th>Quantity</th><th>Formula (row 12, fill down)</th></tr></thead>
-    <tbody>
-      <tr><td class="cell">AB</td><td>Point load at link tip, F (N)</td><td><code>=$B$7*$B$6*($B$25+$P12+SUMPRODUCT(($A$12:$A$17&gt;$A12)*($A$12:$A$17&lt;=$B$3)*($O$12:$O$17+$P$12:$P$17)))</code></td></tr>
-      <tr><td class="cell">AC</td><td>Moment into link tip, Mₑ (N·mm)</td><td><code>=$B$7*$B$6*($B$25*IFERROR($S13,0)+IFERROR($T13,0))</code></td></tr>
-      <tr><td class="cell">AD</td><td>Self weight per mm, w (N/mm)</td><td><code>=IFERROR($B$7*$B$6*$O12/$B12,0)</code></td></tr>
-      <tr><td class="cell">AE</td><td>Tip slope θ (rad)</td><td><code>=IFERROR(($AB12*$B12^2/2+$AC12*$B12+$AD12*$B12^3/6)/($N12*$I12),0)</code></td></tr>
-      <tr><td class="cell">AF</td><td>Local deflection δ (mm)</td><td><code>=IFERROR(($AB12*$B12^3/3+$AC12*$B12^2/2+$AD12*$B12^4/8)/($N12*$I12),0)</code></td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h4>B29 - total tip deflection (mm)</h4>
-  <div class="f"><code>=SUMPRODUCT($AF$12:$AF$17)+SUMPRODUCT($AE$12:$AE$17,IFERROR($S$13:$S$18,0))</code><button onclick="cp(this)">Copy</button></div>
-
-  <h3 id="t1-results">Results block</h3>
-  <div class="scroll">
-  <table>
-    <thead><tr><th>Cell</th><th>Label</th><th>Formula</th></tr></thead>
-    <tbody>
-      <tr><td class="cell">B22</td><td><strong>Load limit (kg)</strong></td><td><code>=MIN($Y$12:$Y$17)</code></td></tr>
-      <tr><td class="cell">B23</td><td>Binding joint</td><td><code>=INDEX($A$12:$A$17,MATCH($B$22,$Y$12:$Y$17,0))</code></td></tr>
-      <tr><td class="cell">B24</td><td>Binding constraint</td><td><code>=INDEX($Z$12:$Z$17,MATCH($B$22,$Y$12:$Y$17,0))</code></td></tr>
-      <tr><td class="cell">B25</td><td>Trial payload for deflection (kg)</td><td><code>=$B$22</code></td></tr>
-      <tr><td class="cell">B26</td><td>Total reach (mm)</td><td><code>=$S$12</code></td></tr>
-      <tr><td class="cell">B27</td><td>Arm mass (kg)</td><td><code>=SUMPRODUCT(($A$12:$A$17&lt;=$B$3)*($O$12:$O$17+$P$12:$P$17))</code></td></tr>
-      <tr><td class="cell">B28</td><td>Payload-to-arm ratio</td><td><code>=IFERROR($B$22/$B$27,0)</code></td></tr>
-      <tr><td class="cell">B29</td><td>Total tip deflection (mm)</td><td><em>formula above</em></td></tr>
-      <tr><td class="cell">B30</td><td>Deflection verdict</td><td><code>=IF($B$29&lt;=$B$9,"OK","FAILS - stiffen or shorten")</code></td></tr>
-    </tbody>
-  </table>
-  </div>
-  <div class="panel caution">
-    <p><strong>Stiffness usually governs printed arms.</strong> Expect B30 to fail long before B22 is reached. Reduce B25 until deflection passes - that figure is your <em>practical</em> payload, and it is often a fraction of the strength-based answer.</p>
-  </div>
-
-  <!-- ================= TAB 2 ================= -->
-  <h2 id="t2-globals">6 · Tab 2 “Link Lengths for Load” - global inputs</h2>
-  <p>Same column structure as Tab 1, but lengths become <strong>outputs</strong>. All six lengths are driven from one variable - total reach - through a proportional split, so a single Goal Seek can solve the whole chain.</p>
-  <div class="scroll">
-  <table>
-    <thead><tr><th>Cell</th><th>Input</th></tr></thead>
-    <tbody>
-      <tr><td class="cell">B3</td><td>Number of joints N</td></tr>
-      <tr><td class="cell">B4</td><td><strong>Payload at end of arm (kg)</strong></td></tr>
-      <tr><td class="cell">B5</td><td>Factor of safety</td></tr>
-      <tr><td class="cell">B6</td><td>Print knockdown k</td></tr>
-      <tr><td class="cell">B7</td><td>Gravity g = 9.81</td></tr>
-      <tr><td class="cell">B8</td><td>Dynamic amplification K<sub>d</sub></td></tr>
-      <tr><td class="cell">B9</td><td>Drivetrain efficiency η</td></tr>
-      <tr><td class="cell">B10</td><td><strong>Total reach R (mm) - the solver variable</strong></td></tr>
-      <tr><td class="cell">B11</td><td>Max allowable tip deflection (mm)</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3 id="t2-calc">Link table changes</h3>
-  <p>Add <strong>column AH - Length share</strong> as an input (e.g. <code>1</code>, <code>1</code>, <code>0.6</code> - any scale, it is normalised). Column B then becomes a formula:</p>
-  <div class="f"><code>=IF($A12&gt;$B$3,0,$B$10*$AH12/SUMPRODUCT(($A$12:$A$17&lt;=$B$3)*$AH$12:$AH$17))</code><button onclick="cp(this)">Copy</button></div>
-  <p>Copy columns C–T, U–W and the deflection block across from Tab 1 unchanged, remapping the global references (B5→FoS, B6→k, B7→g, B8→K<sub>d</sub>, B9→η) and pointing material lookups back at Tab 1:</p>
-  <div class="f"><code>=IFERROR(XLOOKUP($C12,'Load Limit'!$A$41:$A$45,'Load Limit'!$B$41:$B$45),0)</code><button onclick="cp(this)">Copy</button></div>
-
-  <h4>Demand and utilisation columns</h4>
-  <div class="scroll">
-  <table>
-    <thead><tr><th>Col</th><th>Quantity</th><th>Formula (row 12, fill down)</th></tr></thead>
-    <tbody>
-      <tr><td class="cell">AI</td><td>Demand moment at joint (N·mm)</td><td><code>=$B$8*$B$7*($B$4*$S12+$T12)</code></td></tr>
-      <tr><td class="cell">AJ</td><td>Stress utilisation</td><td><code>=IF($A12&gt;$B$3,"",IFERROR($AI12/$V12,9))</code></td></tr>
-      <tr><td class="cell">AK</td><td>Torque utilisation</td><td><code>=IF($A12&gt;$B$3,"",IFERROR($AI12/$W12,9))</code></td></tr>
-      <tr><td class="cell">AL</td><td>Worst at this joint</td><td><code>=IF($A12&gt;$B$3,"",MAX($AJ12,$AK12))</code></td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3 id="t2-solve">Solve block and Goal Seek</h3>
-  <div class="scroll">
-  <table>
-    <thead><tr><th>Cell</th><th>Label</th><th>Formula</th></tr></thead>
-    <tbody>
-      <tr><td class="cell">B14</td><td>Deflection utilisation</td><td><code>=$B$29/$B$11</code></td></tr>
-      <tr><td class="cell">B15</td><td><strong>Worst utilisation</strong></td><td><code>=MAX(MAX($AL$12:$AL$17),$B$14)</code></td></tr>
-      <tr><td class="cell">B16</td><td>Binding joint</td><td><code>=INDEX($A$12:$A$17,MATCH(MAX($AL$12:$AL$17),$AL$12:$AL$17,0))</code></td></tr>
-      <tr><td class="cell">B17</td><td>Binding mode</td><td><code>=IF($B$14&gt;=MAX($AL$12:$AL$17),"Deflection",IF(INDEX($AJ$12:$AJ$17,$B$16)&gt;INDEX($AK$12:$AK$17,$B$16),"Material","Motor torque"))</code></td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <div class="mermaid">
+      <div class="mermaid">
 flowchart LR
-  A[Enter payload, materials, sections, motors] --> B[Set length shares in column AH]
-  B --> C[Guess total reach in B10]
-  C --> D[Goal Seek: set B15 to value 1 by changing B10]
-  D --> E[Column B now shows max permissible length per link]
-  E --> F{Read binding mode in B17}
-  F -- Motor torque --> G[Add gearing or a larger motor]
-  F -- Material --> H[Increase section height or change material]
-  F -- Deflection --> I[Use a tube, raise h, or accept less reach]
-  G --> D
-  H --> D
-  I --> D
+  A[Enter payload, sections, motors & shares] --> B[Guess total reach B10]
+  B --> C[Goal Seek: B15 = 1 by changing B10]
+  C --> D[Read max link lengths & binding mode]
+      </div>
+
+      <h2 id="extra">7. Additional engineering checks</h2>
+      <ul>
+        <li><strong>Dynamics:</strong> \(J = \tfrac{1}{3}mL^2 + \sum m_{distal}d^2\), \(T_{req} = T_{gravity} + J\alpha + T_{friction}\). Check RMS torque against continuous ratings.</li>
+        <li><strong>Natural frequency:</strong> \(f_n \approx \frac{1}{2\pi}\sqrt{\frac{3EI}{mL^3}}\). Keep commanded motion below ~0.2 f<sub>n</sub>.</li>
+        <li><strong>Buckling &amp; torsion:</strong> \(P_{cr} = \pi^2 EI / (KL)^2\) for compression linkages, \(\tau = Tr / J_p\) during base slewing.</li>
+        <li><strong>FDM practice:</strong> print links flat along their length with 4+ perimeters, derate PLA to ~40% for held poses (or use PETG/ASA), and use heat-set inserts at joints.</li>
+        <li><strong>Accuracy &amp; safety:</strong> include gearbox backlash, payload CoG overhang, E-stop, and power-off holding behaviour.</li>
+      </ul>
+
+      <h2 id="checklist">8. Validation checklist</h2>
+      <div class="grid" style="margin-top:.75rem">
+        <div class="panel" style="margin:0"><h3>Dead-weight test</h3><p class="small muted">Hang known masses in the horizontal pose and back-calculate real <code>k</code> from dial-indicator droop.</p></div>
+        <div class="panel" style="margin:0"><h3>Joint FEA</h3><p class="small muted">Check bolt holes, fillets, and bearing seats where beam theory ignores stress concentrations.</p></div>
+        <div class="panel" style="margin:0"><h3>Thermal &amp; creep check</h3><p class="small muted">Hold a loaded pose for one hour and check temperature beside motors against T<sub>g</sub>.</p></div>
+      </div>
+
+      <hr>
+      <div class="btn-row">
+        <a class="btn sm" href="../tools.html">← All tools</a>
+        <a class="btn prim sm" href="armActuatorCalculation.html">Open live calculator →</a>
+      </div>
+    </div>
   </div>
-
-  <ol class="steps">
-    <li>Enter the payload in <code>B4</code> and a sensible starting guess for total reach in <code>B10</code>.</li>
-    <li>Go to <strong>Data → What-If Analysis → Goal Seek</strong>.</li>
-    <li><em>Set cell</em> <code>B15</code>, <em>To value</em> <code>1</code>, <em>By changing cell</em> <code>B10</code>.</li>
-    <li>Column B now shows the <strong>maximum permissible length of every link</strong>, whilst <code>B16</code> and <code>B17</code> name the constraint that stopped you.</li>
-    <li>Re-run after <em>any</em> change to shares, sections, materials or motors.</li>
-  </ol>
-
-  <div class="panel note">
-    <h4>First-pass sanity check</h4>
-    <p>For a single link, ignoring self-weight:</p>
-    <p>$$L_{max}\approx\frac{1}{K_d\,g\,P}\min\!\left(Z\sigma_{allow},\ T_{motor}\,i\,\eta\right)$$</p>
-    <p>To optimise the <em>shares</em> too - say, minimise arm mass at fixed reach and payload - load Solver, set shares and wall thicknesses as variables, constrain <code>B15 ≤ 1</code>, and minimise arm mass.</p>
-  </div>
-
-  <!-- ================= EXTRA ================= -->
-  <h2 id="extra">7 · Additional calculations worth adding</h2>
-
-  <h3>Dynamics - usually the real limit</h3>
-  <p>Static torque rarely sizes a motor. Add a trapezoidal motion profile (target joint speed ω, acceleration time t<sub>a</sub>) and compute the inertia term, where J for each link about the joint is:</p>
-  <p>$$J=\tfrac{1}{3}mL^2+\sum m_{distal}d^2 \qquad T_{req}=T_{gravity}+J\alpha+T_{friction}$$</p>
-  <p>Then check <strong>RMS torque</strong> across the duty cycle against the motor's continuous rating - peak torque is a few-second figure, and steppers lose torque steeply with speed, so overlay your torque–speed curve.</p>
-
-  <h3>Natural frequency</h3>
-  <p>The arm will wobble long before it breaks. Keep f<sub>n</sub> above roughly 5× your fastest commanded motion frequency, or you will chase oscillation forever in tuning.</p>
-  <p>$$f_n\approx\frac{1}{2\pi}\sqrt{\frac{3EI}{mL^3}}$$</p>
-
-  <h3>Buckling</h3>
-  <p>Any link in compression - common in parallelogram or linkage-driven designs - needs an Euler check. K = 1 pinned, 0.5 fixed–fixed.</p>
-  <p>$$P_{cr}=\frac{\pi^2EI}{(KL)^2}$$</p>
-
-  <h3>Torsion</h3>
-  <p>When the base rotates with the arm extended sideways, links twist. Open or thin-wall printed sections are very poor in torsion.</p>
-  <p>$$\tau=\frac{Tr}{J_p} \qquad \phi=\frac{TL}{GJ_p}$$</p>
-
-  <h3>FDM-specific derates</h3>
-  <ul>
-    <li>Print links <strong>along</strong> their length so loads run in-plane, never across layers.</li>
-    <li>Four or more perimeters with sparse infill beats dense infill for bending stiffness per gram.</li>
-    <li><strong>PLA creeps badly under sustained load</strong> and softens near 55 °C beside a warm stepper. If a pose is held for minutes, derate PLA to about 40% of yield or move to PETG/ASA.</li>
-    <li>Use heat-set inserts at every fastener, and check bolt pull-out and bearing stress at the joints - that is where printed arms actually fail first.</li>
-  </ul>
-
-  <h3>Joint compliance</h3>
-  <p>Gearbox backlash, belt stretch and bearing play often exceed link deflection. Add a per-joint torsional stiffness (N·m/rad) and sum θ × reach into your error budget alongside the structural droop.</p>
-
-  <h3>Accuracy budget</h3>
-  <p>Combine encoder or step resolution × reach, backlash, deflection and thermal drift into one repeatability figure, then compare it against your task tolerance.</p>
-
-  <h3>Payload modelling</h3>
-  <p>Enter the payload's <strong>centre-of-gravity offset</strong> from the flange, not just its mass. A 500 g gripper holding a part 80 mm out adds real moment and real inertia.</p>
-
-  <h3>Safe states</h3>
-  <p>Check holding torque at power loss - or specify a brake or worm drive - and verify the arm cannot back-drive into a collapse. Add an E-stop and current limiting.</p>
-
-  <!-- ================= CHECKLIST ================= -->
-  <h2 id="checklist">8 · Validation checklist</h2>
-  <div class="cards">
-    <div class="card"><h5>Hang known weights</h5><p>In the worst-case pose, measure droop with a dial indicator and calibrate <code>k</code> against reality.</p></div>
-    <div class="card"><h5>Confirm in FEA</h5><p>Fusion 360 or FreeCAD. The spreadsheet models ideal beams and ignores stress concentrations at the joints - exactly where real failures start.</p></div>
-    <div class="card"><h5>Check the thermal case</h5><p>Measure link temperature next to the motors after a long duty cycle and compare with the Tg column.</p></div>
-    <div class="card"><h5>Test the held pose</h5><p>Leave the arm loaded and extended for an hour, then re-measure. Creep is invisible in any static calculation.</p></div>
-  </div>
-
-  <footer>
-    <p><strong>Disclaimer.</strong> This is an engineering aid built on idealised beam theory and indicative material properties. It ignores stress concentrations, joint and fastener detail, fatigue, creep and thermal effects. Verify any safety-critical or load-bearing design with FEA and physical testing before use.</p>
-    <p>Published with GitHub Pages · last updated <span id="d"></span></p>
-  </footer>
 </main>
-</div>
 
+<footer class="site"><div>
+  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span><a href="../index.html">Home</a> · <a href="../projects.html">Projects</a> · <a href="../tools.html">Tools</a> · <a href="../about.html">About</a></span>
+</div></footer>
+
+<script src="../assets/site.js"></script>
 <script>
-  function cp(btn){
-    const t = btn.parentElement.querySelector('code').innerText;
-    const done = () => { btn.textContent='Copied'; btn.classList.add('done');
-      setTimeout(()=>{btn.textContent='Copy'; btn.classList.remove('done');},1400); };
-    if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(done); }
-    else { const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta);
-           ta.select(); document.execCommand('copy'); ta.remove(); done(); }
-  }
-  document.getElementById('d').textContent =
-    new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+function cp(btn) {
+  copyText(btn.parentElement.querySelector('code').innerText, () => {
+    btn.textContent = 'Copied';
+    setTimeout(() => btn.textContent = 'Copy', 1400);
+  });
+}
 </script>
-
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  onload="renderMathInElement(document.body,{delimiters:[
-    {left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({startOnLoad:true, theme:'dark',
-    themeVariables:{background:'#161b22', primaryColor:'#1c2330', primaryTextColor:'#e6edf3',
-      primaryBorderColor:'#30363d', lineColor:'#58a6ff', fontSize:'14px'}});
+  mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
 </script>
 </body>
 </html>
