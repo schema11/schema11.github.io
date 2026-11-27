@@ -25,7 +25,7 @@
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="../index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <a class="brand" href="../index.html"><span class="mark">◆</span> <span data-text="site.brand"></span></a>
     <ul>
       <li><a href="../index.html">Home</a></li>
       <li><a href="../projects.html">Projects</a></li>
@@ -37,8 +37,8 @@
 
 <main>
   <p class="eyebrow hide-embed"><a href="../tools.html">Tools</a> → Gripper Mechanism</p>
-  <h1 class="hide-embed">Lead-screw bell-crank gripper</h1>
-  <p class="lede hide-embed">Datum y = 0 sits at the lead-screw base connector (positive upwards). Adjust stroke, drive, and linkage geometry to inspect bell-crank kinematics and virtual-work jaw force.</p>
+  <h1 class="hide-embed" data-text="gripperSimTool.title"></h1>
+  <p class="lede hide-embed" data-text="gripperSimTool.lede"></p>
 
   <div class="tool-grid sidebar">
     <div class="tool-col">
@@ -131,14 +131,9 @@
         </section>
 
         <section class="tool-card">
-          <h2>How force is calculated</h2>
-          <ol class="gm-how">
-            <li><b>Torque → nut force:</b> <span>axial thrust from screw torque, lead, and efficiency η.</span></li>
-            <li><b>Virtual work:</b> <span>for symmetric jaws, <code>F_tip / F_nut = 1 / |q|</code>.</span></li>
-            <li><b>Grip length:</b> <span>offset contact creates carriage bending moment <code>F_tip · e</code> without reducing ideal horizontal force.</span></li>
-            <li><b>Contact only:</b> <span>displayed force is available capacity at that opening, applied only once touching an object.</span></li>
-          </ol>
-          <p class="small muted" style="margin-top:.75rem">Rigid-body estimate excluding motor torque-speed curves, deflection, and measured friction.</p>
+          <h2 data-text="gripperSimTool.forceHeading"></h2>
+          <ol class="gm-how" data-list="gripperSimTool.forceSteps" data-wrap="span"></ol>
+          <p class="small muted" style="margin-top:.75rem" data-text="gripperSimTool.forceNote"></p>
         </section>
       </div>
 
@@ -156,10 +151,11 @@
 </main>
 
 <footer class="site"><div>
-  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span>© <span id="yr"></span> <span data-text="site.brand"></span></span>
   <span><a href="../index.html">Home</a> · <a href="../projects.html">Projects</a> · <a href="../tools.html">Tools</a> · <a href="../about.html">About</a></span>
 </div></footer>
 
+<script src="../content.js"></script>
 <script src="../assets/site.js"></script>
 <script>
 const DEG = 180 / Math.PI;

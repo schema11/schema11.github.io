@@ -15,7 +15,7 @@
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="../index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <a class="brand" href="../index.html"><span class="mark">◆</span> <span data-text="site.brand"></span></a>
     <ul>
       <li><a href="../index.html">Home</a></li>
       <li><a href="../projects.html" aria-current="page">Projects</a></li>
@@ -27,13 +27,13 @@
 
 <main class="narrow">
   <p class="eyebrow"><a href="../projects.html">Projects</a> → Robotic Gripper</p>
-  <h1>Robotic Gripper - design, build &amp; test</h1>
-  <p class="lede">Designed around supplied RMIT hardware (34:1 DC motor with encoder, Sabertooth 2x5 driver, Sharp IR sensor, TAS606 load cell, and NI myRIO) to deliver at least 50&nbsp;N of mechanical grip capability whilst limiting applied force to 15&nbsp;N on an artificial egg.</p>
+  <h1 data-text="gripper.title"></h1>
+  <p class="lede" data-text="gripper.lede"></p>
 
   <dl class="meta">
-    <dt>Context</dt><dd>Mechatronic Design (MIET2585), RMIT University · Oct 2026</dd>
-    <dt>Role</dt><dd>Mechanical CAD, LabVIEW programming, electronics, and assembly</dd>
-    <dt>Stack</dt><dd>SolidWorks · Bambu X1C (PLA, TPU, PA-6 Nylon) · NI myRIO + LabVIEW</dd>
+    <dt>Context</dt><dd data-text="gripper.meta.context"></dd>
+    <dt>Role</dt><dd data-text="gripper.meta.role"></dd>
+    <dt>Stack</dt><dd data-text="gripper.meta.stack"></dd>
     <dt>Status</dt><dd><span class="chip ok">Built &amp; tested</span></dd>
   </dl>
 
@@ -62,60 +62,55 @@
 
   <!-- ============ 1. BRIEF & DECISIONS ============ -->
   <section class="tabpanel" role="tabpanel" id="panel-brief" aria-labelledby="tab-brief" tabindex="0">
-    <h2>The brief</h2>
-    <p>The brief had two opposing force requirements: mechanical capability of at least <strong>50&nbsp;N</strong>, with operating force capped strictly below <strong>50&nbsp;N</strong>. We split those roles cleanly: an 8&nbsp;mm lead-screw bell-crank linkage provided high mechanical advantage, whilst LabVIEW load-cell feedback enforced the ceiling. We lowered the egg setpoint from 20&nbsp;N to <strong>15&nbsp;N</strong> to protect the PLA arms and added a moving-average filter to reject load-cell noise.</p>
+    <h2 data-text="gripper.brief.heading"></h2>
+    <p data-html="gripper.brief.introHtml"></p>
 
-    <h3>1. Jaw motion: linear bell-crank over rotational jaws</h3>
+    <h3 data-text="gripper.brief.motionHeading"></h3>
     <table class="spec-tbl">
       <thead><tr><th>Option</th><th>Jaw motion</th><th>Assessment</th></tr></thead>
       <tbody>
-        <tr><td>Rotational scissor</td><td>Pivots along an arc</td><td>Simplest to print, however the jaw face rolls across the egg shell and pushes it outward.</td></tr>
-        <tr><td>4-bar linkage</td><td>Parallel along a shallow arc</td><td>Keeps faces flat, however six+ printed pin joints accumulate backlash and compliance.</td></tr>
-        <tr><td><strong>Lead screw + bell-crank (chosen)</strong></td><td>Linear translation on guide rods</td><td>Guarantees parallel jaw contact and multiplies 0.8 N·m into 369.5 N thrust without a printed gearbox, trading off closing speed.</td></tr>
+        <tr><td>Rotational scissor</td><td>Pivots along an arc</td><td data-text="gripper.brief.motionAssess1"></td></tr>
+        <tr><td>4-bar linkage</td><td>Parallel along a shallow arc</td><td data-text="gripper.brief.motionAssess2"></td></tr>
+        <tr><td><strong>Lead screw + bell-crank (chosen)</strong></td><td>Linear translation on guide rods</td><td data-text="gripper.brief.motionAssess3"></td></tr>
       </tbody>
     </table>
 
-    <h3>2. Transmission</h3>
+    <h3 data-text="gripper.brief.transmissionHeading"></h3>
     <table class="spec-tbl">
       <thead><tr><th>Option</th><th>Why chosen / rejected</th></tr></thead>
       <tbody>
-        <tr><td><strong>T8 lead screw + brass nut (chosen)</strong></td><td>High force multiplication (2.44× margin above 50 N at worst case) with zero printed gear backlash.</td></tr>
-        <tr><td>Rack &amp; pinion / spur gears</td><td>Printed gear teeth introduce backlash and wear, and a rack needs an extra gearbox for force.</td></tr>
-        <tr><td>Cam / belt drive</td><td>Cams are highly tolerance-sensitive, whilst belts stretch and only pull in one direction.</td></tr>
+        <tr><td><strong>T8 lead screw + brass nut (chosen)</strong></td><td data-text="gripper.brief.trans1"></td></tr>
+        <tr><td>Rack &amp; pinion / spur gears</td><td data-text="gripper.brief.trans2"></td></tr>
+        <tr><td>Cam / belt drive</td><td data-text="gripper.brief.trans3"></td></tr>
       </tbody>
     </table>
 
-    <h3>3. Materials (PLA, TPU &amp; PA-6 Nylon)</h3>
+    <h3 data-text="gripper.brief.materialsHeading"></h3>
     <table class="spec-tbl">
       <thead><tr><th>Material</th><th>Role &amp; reasoning</th></tr></thead>
       <tbody>
-        <tr><td><strong>PLA (structure)</strong></td><td>Stiffest and most dimensionally accurate filament for bearing press-fits and snap clips, printed flat with 4 perimeters so loads run along XY layers.</td></tr>
-        <tr><td><strong>TPU (Finger 2 pad)</strong></td><td>Flexible gripping face that conforms gently to the egg shell instead of creating a point load.</td></tr>
-        <tr><td><strong>PA-6 Nylon (coupler)</strong></td><td>Replaced the initial PLA shaft coupler after 0.8 N·m sheared it along a layer line.</td></tr>
+        <tr><td><strong>PLA (structure)</strong></td><td data-text="gripper.brief.mat1"></td></tr>
+        <tr><td><strong>TPU (Finger 2 pad)</strong></td><td data-text="gripper.brief.mat2"></td></tr>
+        <tr><td><strong>PA-6 Nylon (coupler)</strong></td><td data-text="gripper.brief.mat3"></td></tr>
       </tbody>
     </table>
-    <p class="small muted">PETG and ABS/ASA were ruled out for the main body due to stringing on small clips and unnecessary chamber requirements. During testing, the motor cage also lost its friction grip and was secured with superglue for lab demos (a bolted flange is planned next).</p>
+    <p class="small muted" data-text="gripper.brief.materialsNote"></p>
 
-    <h3>4. Control, calibration &amp; safety</h3>
-    <ul>
-      <li><strong>LabVIEW loop (50 ms / 20 Hz):</strong> evaluates priority Select blocks (E-Stop → Manual → 15 N force stop → Open → IR auto-close) with discrete position PID (K<sub>p</sub> = 0.08, K<sub>i</sub> = 0.0002, K<sub>d</sub> = 1.8) clamped to 2.5 ± 1.0 V (40% speed) for gentle contact.</li>
-      <li><strong>Load cell calibration:</strong> TAS606 zeroed at 0.069 V, calibrated in Excel (85.354 kg/V), filtered via moving-average Express VI: <code>F ≈ 836.5 × (V<sub>LC</sub> − 0.069)</code>.</li>
-      <li><strong>IR detection:</strong> Sharp GP2Y0A21YK0F fitted as <code>d = 24 / V<sub>IR</sub></code>, triggering strictly between 10–15 cm (avoiding close-range fold-back and failing safe on disconnected wires).</li>
-      <li><strong>Safety:</strong> software E-Stop sets 2.5 V stop and resets the myRIO, manual Force Stop override is always available, and because the T8 screw/34:1 gearbox self-locks, jaws are opened via Manual Mode rather than forced by hand.</li>
-    </ul>
+    <h3 data-text="gripper.brief.controlHeading"></h3>
+    <ul data-list="gripper.brief.controlList"></ul>
   </section>
 
   <!-- ============ 2. CALCULATIONS ============ -->
   <section class="tabpanel" role="tabpanel" id="panel-calculations" aria-labelledby="tab-calculations" tabindex="0" hidden>
-    <h2>Design calculations</h2>
+    <h2 data-text="gripper.calculations.heading"></h2>
 
-    <h3>1. Axial screw thrust</h3>
-    <p>From standard power-screw mechanics (Budynas &amp; Nisbett 2020) with T = 0.8 N·m, N = 56 rpm, quad-start T8 lead L = 8 mm (2 mm pitch × 4 starts), and assumed steel-on-bronze friction μ = 0.19 (lead angle α = 14.32°, friction angle φ = 10.76°, efficiency η = 0.588):</p>
+    <h3 data-text="gripper.calculations.thrustHeading"></h3>
+    <p data-text="gripper.calculations.thrustIntro"></p>
     <div class="eq-box">F<sub>screw</sub> = 2π · η · T / L = 2π × 0.588 × 0.8 / 0.008 = <strong>369.45 N</strong> total (<strong>184.7 N</strong> per arm)</div>
-    <p class="small muted">Note: correcting our preliminary 2 mm pitch vs 8 mm lead error updated both thrust and closing speed by a factor of four. Friction μ carries the largest model uncertainty.</p>
+    <p class="small muted" data-text="gripper.calculations.thrustNote"></p>
 
-    <h3>2. Bell-crank force transfer</h3>
-    <p>Starting from a 30.27 mm closed datum, 36.5 mm of nut travel opens the jaws to 95 mm in CAD. Both 5 mm Excel increments from SolidWorks and the analytical virtual-work ratio <code>q = 2(y<sub>J</sub> − y<sub>P</sub>)a / (r<sub>1</sub>² sin²φ)</code> show a 35% drop in mechanical advantage from open to closed. Because the egg sits near the closed end, the minimum closed force (<strong>121.9 N/finger</strong>) governs capability:</p>
+    <h3 data-text="gripper.calculations.linkageHeading"></h3>
+    <p data-html="gripper.calculations.linkageIntroHtml"></p>
     <div class="eq-box">x = d<sub>screw</sub> − 30.27 mm &nbsp;&nbsp;|&nbsp;&nbsp; F<sub>tip</sub> = F<sub>arm</sub> × (Δx<sub>nut</sub> / Δy<sub>finger</sub>)</div>
     <table class="spec-tbl">
       <thead><tr><th>Opening (mm)</th><th>Per finger (mm)</th><th>Nut travel x (mm)</th><th>F per finger (N)</th><th>F combined (N)</th></tr></thead>
@@ -160,13 +155,13 @@
       </div>
     </details>
 
-    <h3>3. Speed, brief check &amp; finger stress</h3>
+    <h3 data-text="gripper.calculations.speedHeading"></h3>
     <div class="eq-box">v<sub>nut</sub> = 56 rpm × 8 mm / 60 = <strong>7.47 mm/s</strong> &nbsp;→&nbsp; t<sub>close</sub> = 36.5 / 7.47 = <strong>4.89 s</strong><br>
     Worst-case capability = 121.9 N/finger (<strong>2.44×</strong> over 50 N brief) &nbsp;|&nbsp; Egg limit = 15 N (<strong>13.4 N</strong> measured)<br>
     Finger root bending (164.8 N × 55 mm, Z ≈ 1000 mm³): σ = <strong>9.1 MPa</strong> vs 30 MPa knocked-down PLA → <strong>FoS = 3.3</strong></div>
-    <p>Private load-cell tests reached 60–80 N without cracking the PLA arms before manual shutoff. Full-stroke closing took 7–8 s physically because automatic PID output was clamped to 40% speed to curb filter-lag overshoot.</p>
+    <p data-text="gripper.calculations.speedBody"></p>
 
-    <h3>4. Calculated vs measured</h3>
+    <h3 data-text="gripper.calculations.measuredHeading"></h3>
     <table class="spec-tbl">
       <thead><tr><th>Parameter</th><th>Calculated</th><th>Measured</th></tr></thead>
       <tbody>
@@ -177,73 +172,73 @@
     </table>
 
     <div class="panel note">
-      <h3>Related calculator</h3>
-      <p>Test how thread pitch, starts, and friction affect screw efficiency and self-locking directly.</p>
+      <h3 data-text="gripper.calculations.relatedHeading"></h3>
+      <p data-text="gripper.calculations.relatedBody"></p>
       <div class="btn-row"><a class="btn prim sm" href="../tools/lead-screw-calculator.html">Lead screw &amp; nut calculator →</a></div>
     </div>
   </section>
 
   <!-- ============ 3. DESIGN & BUILD ============ -->
   <section class="tabpanel" role="tabpanel" id="panel-design" aria-labelledby="tab-design" tabindex="0" hidden>
-    <h2>CAD &amp; mechanical layout</h2>
-    <p>After ruling out rotational geared jaws and dual racks, we built the T8 lead-screw bell-crank layout across 15 printed parts on a Bambu Lab X1C (0.20 mm layers, 4 perimeters, 20% gyroid infill). Both finger carriages slide on twin 6 mm aluminium guide rods rather than plastic tracks, whilst six 608ZZ bearings roll inside the bell-crank slots (upper and lower arms mirrored around the frame) to minimise sliding friction. The brass flange nut mounts into a square recessed block with four evenly tightened M3 bolts.</p>
-    <p>All structural parts were printed flat with 3 mm root fillets and ~0.20 mm bearing pin clearance. During assembly, the 6 mm guide-rod bores were hand-reamed for smooth glide, the Finger 2 pad was printed in TPU behind the TAS606 load cell, and the sheared PLA coupler was reprinted in PA-6 nylon.</p>
+    <h2 data-text="gripper.design.heading"></h2>
+    <p data-text="gripper.design.p1"></p>
+    <p data-text="gripper.design.p2"></p>
 
-    <h3>Interactive mechanism demonstration</h3>
-    <p>Drag the stroke and geometry sliders below to inspect how nut position drives jaw opening and virtual-work force transfer in real time.</p>
+    <h3 data-text="gripper.design.simHeading"></h3>
+    <p data-text="gripper.design.simIntro"></p>
     <figure class="evidence gm-embed">
       <header>
         <span class="tag">Live mechanism (interactive SVG)</span>
         <a class="btn sm" href="../tools/gripper-mechanism.html" target="_blank" rel="noopener">Open full tool ↗</a>
       </header>
       <iframe src="../tools/gripper-mechanism.html?embed=1" title="Interactive lead-screw gripper mechanism" loading="lazy"></iframe>
-      <figcaption>Adjust stroke and geometry sliders to inspect bell-crank kinematics and instantaneous force transfer.</figcaption>
+      <figcaption data-text="gripper.design.simCaption"></figcaption>
     </figure>
 
-    <h3>Manufacture &amp; assembly</h3>
+    <h3 data-text="gripper.design.buildHeading"></h3>
     <div class="media-grid">
       <figure>
         <img src="../assets/media/gripper/build-01.jpg" alt="Printed gripper parts laid out before assembly" loading="lazy"
-             data-cap="All 15 printed components laid out before assembly.">
-        <figcaption>Printed parts laid out before assembly</figcaption>
+             data-cap-key="gripper.design.build1Lightbox">
+        <figcaption data-text="gripper.design.build1Cap"></figcaption>
       </figure>
       <figure>
         <img src="../assets/media/gripper/build-02.jpg" alt="Gripper sub-assembly with bearings and lead screw" loading="lazy"
-             data-cap="Sub-assembly showing split bearing pins, 608ZZ bearings, and brass flange nut on four M3 screws.">
-        <figcaption>Sub-assembly of jaws, bearings, and lead screw</figcaption>
+             data-cap-key="gripper.design.build2Lightbox">
+        <figcaption data-text="gripper.design.build2Cap"></figcaption>
       </figure>
     </div>
 
-    <h3>Electronics &amp; LabVIEW debugging</h3>
-    <p>All I/O runs through myRIO Connector B: TAS606 load cell on B/AI0, Sharp IR sensor on B/AI1 via soldered JST lead, encoder A/B on digital inputs, and 0–5 V motor command on B/AO0 to the Sabertooth 2x5 (2.5 V stop). Two hardware faults initially masqueraded as LabVIEW bugs: a dead Sharp IR unit (resolved by swapping sensors) and the motor slipping inside its friction-fit housing (fixed with superglue for testing).</p>
+    <h3 data-text="gripper.design.elecHeading"></h3>
+    <p data-text="gripper.design.elecBody"></p>
   </section>
 
   <!-- ============ 4. RESULTS & REFLECTION ============ -->
   <section class="tabpanel" role="tabpanel" id="panel-final" aria-labelledby="tab-final" tabindex="0" hidden>
-    <h2>Working demonstration</h2>
+    <h2 data-text="gripper.final.heading"></h2>
     <figure class="videowrap">
       <iframe src="https://www.youtube-nocookie.com/embed/a9BQYK6pkYU"
               title="Gripper demonstration video" loading="lazy"
               referrerpolicy="strict-origin-when-cross-origin"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen></iframe>
-      <figcaption><strong>Demo:</strong> egg enters the 10–15 cm IR window, PID closes the jaws, and the 15 N override halts at 13.4 N without slipping under pull testing. Reopening required manual LabVIEW input.</figcaption>
+      <figcaption data-html="gripper.final.videoCaptionHtml"></figcaption>
     </figure>
 
     <div class="media-grid">
       <figure>
         <img src="../assets/media/gripper/final-01.jpg" alt="Completed gripper with jaws open to 105 mm" loading="lazy"
-             data-cap="Completed gripper at its measured 105 mm opening, wired to the myRIO and Sabertooth driver.">
-        <figcaption>Jaws open (105 mm)</figcaption>
+             data-cap-key="gripper.final.final1Lightbox">
+        <figcaption data-text="gripper.final.final1Cap"></figcaption>
       </figure>
       <figure>
         <img src="../assets/media/gripper/final-02.jpg" alt="Completed gripper holding an artificial egg" loading="lazy"
-             data-cap="Holding the artificial egg at 13.4 N against a 15 N threshold.">
-        <figcaption>Holding the egg (13.4 N)</figcaption>
+             data-cap-key="gripper.final.final2Lightbox">
+        <figcaption data-text="gripper.final.final2Cap"></figcaption>
       </figure>
     </div>
 
-    <h3>Test results</h3>
+    <h3 data-text="gripper.final.resultsHeading"></h3>
     <table class="spec-tbl">
       <thead><tr><th>Test</th><th>Target</th><th>Result</th><th>Outcome</th></tr></thead>
       <tbody>
@@ -261,21 +256,16 @@
       </tbody>
     </table>
 
-    <h3>Unresolved issue &amp; modelled vs measured gap</h3>
+    <h3 data-text="gripper.final.issuesHeading"></h3>
     <div class="panel note">
-      <p><strong>Auto-reopen failure:</strong> Lecturers confirmed the LabVIEW logic worked properly, pointing to an optical cause. Once closed, the Sharp IR beam clipped the inner edges of the jaws inside the 10–15 cm window, so the boolean never cleared. Moving or angling the sensor forward of the jaws fixes this.</p>
-      <p><strong>95 mm CAD vs 105 mm actual opening:</strong> Winding the screw manually to thread end before power-up plus bearing/reamed clearances gave ~40 mm nut travel instead of 36.5 mm, helping us pass the ≥ 100 mm spec.</p>
+      <p data-html="gripper.final.autoReopenHtml"></p>
+      <p data-html="gripper.final.openingGapHtml"></p>
     </div>
 
-    <h3>Key takeaways &amp; next improvements</h3>
-    <ul>
-      <li><strong>Check the right end of the stroke:</strong> closed-end force (121.9 N) governs capability, whilst open-end force (164.8 N) governs PLA stall stress.</li>
-      <li><strong>Verify thread parameters early:</strong> fixing pitch (2 mm) vs lead (8 mm) shifted force and speed by 4×.</li>
-      <li><strong>Filter lag trades off speed:</strong> moving-average smoothing stopped false triggers, however required capping speed to 40% to avoid overshoot.</li>
-      <li><strong>Next revision:</strong> relocate the IR sensor forward, replace the glued motor cage and nylon coupler with M3 face mounts and an aluminium jaw coupler, and add a LabVIEW latch plus PID anti-windup on force stop.</li>
-    </ul>
+    <h3 data-text="gripper.final.takeawaysHeading"></h3>
+    <ul data-list="gripper.final.takeawaysList"></ul>
 
-    <h3>Downloads</h3>
+    <h3 data-text="gripper.final.downloadsHeading"></h3>
     <div class="btn-row">
       <a class="btn sm" href="https://github.com/schema11/schema11.github.io/releases/download/gripper-v1.0/GripperSTL.zip" download>↓ STLs (ZIP)</a>
       <a class="btn sm" href="https://github.com/schema11/schema11.github.io/releases/download/gripper-v1.0/NewAssemblyWithNewNut.zip" download>↓ SolidWorks CAD (ZIP)</a>
@@ -295,10 +285,11 @@
 </div>
 
 <footer class="site"><div>
-  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span>© <span id="yr"></span> <span data-text="site.brand"></span></span>
   <span><a href="../index.html">Home</a> · <a href="../projects.html">Projects</a> · <a href="../tools.html">Tools</a> · <a href="../about.html">About</a></span>
 </div></footer>
 
+<script src="../content.js"></script>
 <script src="../assets/site.js"></script>
 </body>
 </html>

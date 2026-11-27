@@ -11,7 +11,7 @@
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <a class="brand" href="index.html"><span class="mark">◆</span> <span data-text="site.brand"></span></a>
     <ul>
       <li><a href="index.html">Home</a></li>
       <li><a href="projects.html" aria-current="page">Projects</a></li>
@@ -22,9 +22,9 @@
 </nav>
 
 <main>
-  <p class="eyebrow">Projects</p>
-  <h1>Engineering projects</h1>
-  <p class="lede">Design, build, and test case studies showing how mechanical modelling, actuator sizing, and control logic fit together.</p>
+  <p class="eyebrow" data-text="projectsPage.eyebrow"></p>
+  <h1 data-text="projectsPage.title"></h1>
+  <p class="lede" data-text="projectsPage.lede"></p>
 
   <div class="grid">
     <article class="card">
@@ -39,8 +39,8 @@
         </svg>
       </div>
       <div class="body">
-        <h3>Robotic Gripper - university project</h3>
-        <p>Full design/build cycle for a 3D-printed lead-screw gripper: mechanism selection, virtual-work force calculations, SolidWorks CAD, PLA/TPU/Nylon manufacture, and LabVIEW force-threshold testing on an egg.</p>
+        <h3 data-text="cards.gripper.pageTitle"></h3>
+        <p data-text="cards.gripper.pageSummary"></p>
         <ul class="chips">
           <li class="chip ok">Built &amp; tested</li>
           <li class="chip">SolidWorks</li>
@@ -72,8 +72,8 @@
         </svg>
       </div>
       <div class="body">
-        <h3>Robot Arm Load &amp; Link-Length Calculator</h3>
-        <p>Offline browser tool sizing a serial robot arm against bending stress, derated actuator torque, and tip deflection, complete with a 20-actuator database and scaled SVG diagrams.</p>
+        <h3 data-text="cards.robotArm.title"></h3>
+        <p data-text="cards.robotArm.pageSummary"></p>
         <ul class="chips">
           <li class="chip live">Live tool</li>
           <li class="chip">Beam theory</li>
@@ -90,10 +90,11 @@
 </main>
 
 <footer class="site"><div>
-  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span>© <span id="yr"></span> <span data-text="site.brand"></span></span>
   <span><a href="index.html">Home</a> · <a href="tools.html">Tools</a> · <a href="about.html">About</a> · <a href="https://github.com/schema11" target="_blank" rel="noopener">GitHub</a></span>
 </div></footer>
 
+<script src="content.js"></script>
 <script src="assets/site.js"></script>
 </body>
 </html>
