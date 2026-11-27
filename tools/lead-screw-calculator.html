@@ -18,7 +18,7 @@
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="../index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <a class="brand" href="../index.html"><span class="mark">◆</span> <span data-text="site.brand"></span></a>
     <ul>
       <li><a href="../index.html">Home</a></li>
       <li><a href="../projects.html">Projects</a></li>
@@ -30,8 +30,8 @@
 
 <main>
   <p class="eyebrow"><a href="../tools.html">Tools</a> → Lead Screw Calculator</p>
-  <h1>Lead screw &amp; lead nut calculator</h1>
-  <p class="lede">Estimate power-screw efficiency, self-locking margin, and back-driving torque from thread geometry, materials, and lubrication. Friction coefficients are indicative only, so confirm against supplier datasheets for safety-critical designs.</p>
+  <h1 data-text="leadScrewTool.title"></h1>
+  <p class="lede" data-text="leadScrewTool.lede"></p>
 
   <div class="tool-grid">
     <div class="tool-col">
@@ -82,13 +82,13 @@
         <h2>Visualisation</h2>
         <div class="ls-diag-lbl">1. Unwrapped thread turn (λ vs ρ)</div>
         <div id="triSvg"></div>
-        <p class="ls-cap">One revolution unwrapped at d<sub>m</sub>. The load back-drives only when lead angle λ exceeds friction angle ρ.</p>
+        <p class="ls-cap" data-html="leadScrewTool.fig1CaptionHtml"></p>
         <div class="ls-diag-lbl">2. Thread geometry</div>
         <div id="screwSvg"></div>
-        <p class="ls-cap">Axial section relating lead, pitch, and mean diameter.</p>
+        <p class="ls-cap" data-text="leadScrewTool.fig2Caption"></p>
         <div class="ls-diag-lbl">3. Efficiency vs lead angle (at μ′)</div>
         <div id="curveSvg"></div>
-        <p class="ls-cap">Shaded zone = self-locking (λ &lt; ρ, forward efficiency &lt; 50%).</p>
+        <p class="ls-cap" data-text="leadScrewTool.fig3Caption"></p>
       </section>
     </div>
 
@@ -122,8 +122,8 @@
       </section>
 
       <div class="panel caution">
-        <h3>Safety note</h3>
-        <p>Friction shifts with wear, speed, temperature, and lubrication. Never rely on thread self-locking alone for suspended loads, always include an independent brake or fail-safe.</p>
+        <h3 data-text="leadScrewTool.safetyHeading"></h3>
+        <p data-text="leadScrewTool.safetyBody"></p>
       </div>
     </div>
   </div>
@@ -135,10 +135,11 @@
 </main>
 
 <footer class="site"><div>
-  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span>© <span id="yr"></span> <span data-text="site.brand"></span></span>
   <span><a href="../index.html">Home</a> · <a href="../projects.html">Projects</a> · <a href="../tools.html">Tools</a> · <a href="../about.html">About</a></span>
 </div></footer>
 
+<script src="../content.js"></script>
 <script src="../assets/site.js"></script>
 <script>
 const NUT = {
