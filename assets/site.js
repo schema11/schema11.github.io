@@ -1,5 +1,78 @@
-/* Shared UI helpers: footer year, embed mode, tabs, lightbox, copy */
+/* Shared UI helpers: content binding, footer year, embed mode, tabs, lightbox, copy */
 (() => {
+  // Hydrate written text from root content.js (window.SITE_CONTENT)
+  const content = window.SITE_CONTENT;
+  if (content) {
+    const get = path => path.split('.').reduce((acc, k) => (acc != null ? acc[k] : undefined), content);
+
+    document.querySelectorAll('[data-text]').forEach(el => {
+      const v = get(el.dataset.text);
+      if (v !== undefined) el.textContent = v;
+    });
+
+    document.querySelectorAll('[data-html]').forEach(el => {
+      const v = get(el.dataset.html);
+      if (v !== undefined) el.innerHTML = v;
+    });
+
+    document.querySelectorAll('[data-cap-key]').forEach(el => {
+      const v = get(el.dataset.capKey);
+      if (v !== undefined) el.dataset.cap = v;
+    });
+
+    document.querySelectorAll('[data-list]').forEach(el => {
+      const items = get(el.dataset.list);
+      if (!Array.isArray(items)) return;
+      const cls = el.dataset.itemClass || '';
+      const sep = el.dataset.sep || ': ';
+      const wrap = el.dataset.wrap === 'span';
+      el.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        if (cls) li.className = cls;
+        if (typeof item === 'string') {
+          li.textContent = item;
+        } else if (item && typeof item === 'object') {
+          const b = document.createElement('strong');
+          b.textContent = item.label + sep;
+          li.appendChild(b);
+          if (wrap) {
+            const sp = document.createElement('span');
+            if (item.html !== undefined) sp.innerHTML = item.html;
+            else sp.textContent = item.text || '';
+            li.appendChild(sp);
+          } else if (item.html !== undefined) {
+            const sp = document.createElement('span');
+            sp.innerHTML = item.html;
+            li.appendChild(sp);
+          } else {
+            li.appendChild(document.createTextNode(item.text || ''));
+          }
+        }
+        el.appendChild(li);
+      });
+    });
+
+    document.querySelectorAll('[data-cards]').forEach(el => {
+      const items = get(el.dataset.cards);
+      if (!Array.isArray(items)) return;
+      el.innerHTML = '';
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'panel';
+        div.style.margin = '0';
+        const h3 = document.createElement('h3');
+        h3.textContent = item.title || '';
+        const p = document.createElement('p');
+        p.className = 'small muted';
+        if (item.html !== undefined) p.innerHTML = item.html;
+        else p.textContent = item.text || '';
+        div.append(h3, p);
+        el.appendChild(div);
+      });
+    });
+  }
+
   // Embed mode (?embed=1)
   if (new URLSearchParams(location.search).has('embed')) {
     document.body.classList.add('embedded');

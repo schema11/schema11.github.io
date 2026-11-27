@@ -492,10 +492,7 @@ details.panel summary { cursor: pointer; font-weight: 600; color: var(--accent);
 }
 .kpi.hero { border-color: var(--accent-line); background: var(--accent-bg); }
 .kpi small, .kpi > span {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: .3rem;
+  display: block;
   color: var(--muted);
   font-size: .73rem;
   font-weight: 600;

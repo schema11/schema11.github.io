@@ -11,7 +11,7 @@
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <a class="brand" href="index.html"><span class="mark">◆</span> <span data-text="site.brand"></span></a>
     <ul>
       <li><a href="index.html" aria-current="page">Home</a></li>
       <li><a href="projects.html">Projects</a></li>
@@ -23,9 +23,9 @@
 
 <main>
   <section class="hero">
-    <p class="eyebrow">Mechatronics Engineering Portfolio</p>
-    <h1>Practical builds and interactive design tools</h1>
-    <p class="lede">Third-year mechatronics engineering student at RMIT. This site brings together my hardware builds, CAD modelling, and browser-based calculation tools so the theory and physical testing sit side by side.</p>
+    <p class="eyebrow" data-text="home.eyebrow"></p>
+    <h1 data-text="home.title"></h1>
+    <p class="lede" data-text="home.lede"></p>
     <div class="btn-row">
       <a class="btn prim" href="projects.html">Projects →</a>
       <a class="btn" href="tools.html">Interactive tools →</a>
@@ -34,14 +34,14 @@
   </section>
 
   <div class="section-hd">
-    <h2>Projects</h2>
+    <h2 data-text="home.projectsHeading"></h2>
     <a href="projects.html">All projects →</a>
   </div>
   <div class="grid">
     <article class="card">
       <div class="body">
-        <h3>Robotic Gripper</h3>
-        <p>3D-printed lead-screw bell-crank gripper designed around supplied RMIT hardware, delivering 122–165 N capability whilst holding an egg at a 13.4 N LabVIEW force limit.</p>
+        <h3 data-text="cards.gripper.homeTitle"></h3>
+        <p data-text="cards.gripper.homeSummary"></p>
         <ul class="chips">
           <li class="chip ok">Built &amp; tested</li>
           <li class="chip">SolidWorks</li>
@@ -56,8 +56,8 @@
 
     <article class="card">
       <div class="body">
-        <h3>Robot Arm Load &amp; Link-Length Calculator</h3>
-        <p>Browser sizing tool checking bending stress, derated actuator torque, and tip deflection simultaneously across up to six serial links.</p>
+        <h3 data-text="cards.robotArm.title"></h3>
+        <p data-text="cards.robotArm.homeSummary"></p>
         <ul class="chips">
           <li class="chip live">Live tool</li>
           <li class="chip">Beam theory</li>
@@ -72,30 +72,30 @@
   </div>
 
   <div class="section-hd">
-    <h2>Interactive tools</h2>
+    <h2 data-text="home.toolsHeading"></h2>
     <a href="tools.html">All tools →</a>
   </div>
   <div class="grid">
     <article class="card">
       <div class="body">
-        <h3>Gripper Mechanism Simulator</h3>
-        <p>Animated bell-crank linkage model showing live jaw opening, virtual-work force transfer, and SVG export.</p>
+        <h3 data-text="cards.gripperSim.homeTitle"></h3>
+        <p data-text="cards.gripperSim.homeSummary"></p>
         <div class="btn-row"><a class="btn sm" href="tools/gripper-mechanism.html">Open tool →</a></div>
       </div>
     </article>
 
     <article class="card">
       <div class="body">
-        <h3>Lead Screw &amp; Nut Calculator</h3>
-        <p>Power-screw efficiency, self-locking margin, back-drive torque, live diagrams, and step-by-step hand working.</p>
+        <h3 data-text="cards.leadScrew.homeTitle"></h3>
+        <p data-text="cards.leadScrew.homeSummary"></p>
         <div class="btn-row"><a class="btn sm" href="tools/lead-screw-calculator.html">Open tool →</a></div>
       </div>
     </article>
 
     <article class="card">
       <div class="body">
-        <h3>Arm Payload &amp; Actuator Calculator</h3>
-        <p>Size link sections and motors for a serial robot arm with a 20-entry actuator database and live deflection plots.</p>
+        <h3 data-text="cards.robotArm.homeToolTitle"></h3>
+        <p data-text="cards.robotArm.homeToolSummary"></p>
         <div class="btn-row">
           <a class="btn sm" href="tools/armActuatorCalculation.html">Open tool →</a>
           <a class="btn sm" href="tools/armToolExplanation.html">Method</a>
@@ -106,10 +106,11 @@
 </main>
 
 <footer class="site"><div>
-  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span>© <span id="yr"></span> <span data-text="site.brand"></span></span>
   <span><a href="projects.html">Projects</a> · <a href="tools.html">Tools</a> · <a href="about.html">About</a> · <a href="https://github.com/schema11" target="_blank" rel="noopener">GitHub</a></span>
 </div></footer>
 
+<script src="content.js"></script>
 <script src="assets/site.js"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <a class="brand" href="index.html"><span class="mark">◆</span> <span data-text="site.brand"></span></a>
     <ul>
       <li><a href="index.html">Home</a></li>
       <li><a href="projects.html">Projects</a></li>
@@ -22,45 +22,36 @@
 </nav>
 
 <main class="narrow">
-  <p class="eyebrow">About</p>
-  <h1>Matthew Schembri</h1>
-  <p class="lede">Third-year mechatronics engineering student at RMIT focused on practical robotics builds, CAD modelling, and validating first-principles calculations against physical hardware.</p>
+  <p class="eyebrow" data-text="about.eyebrow"></p>
+  <h1 data-text="about.title"></h1>
+  <p class="lede" data-text="about.lede"></p>
 
   <dl class="meta">
-    <dt>Degree</dt><dd>Bachelor of Engineering Technology (Mechatronics), Minor in AI in Practice - RMIT University</dd>
-    <dt>Location</dt><dd>Melbourne &amp; Mornington Peninsula, VIC, Australia</dd>
-    <dt>Current focus</dt><dd>RMIT Rover Team (Arm subsystem), personal 3-DOF robot arm build, and lead-screw/linkage actuation</dd>
-    <dt>Outside uni</dt><dd>AFL football, reading, fitness, and catching up with friends and family</dd>
+    <dt>Degree</dt><dd data-text="about.meta.degree"></dd>
+    <dt>Location</dt><dd data-text="about.meta.location"></dd>
+    <dt>Current focus</dt><dd data-text="about.meta.focus"></dd>
+    <dt>Outside uni</dt><dd data-text="about.meta.outsideUni"></dd>
   </dl>
 
-  <h2>Education &amp; experience</h2>
+  <h2 data-text="about.experienceHeading"></h2>
   <div class="panel">
-    <h3>Bachelor of Engineering Technology (Mechatronics)</h3>
-    <p class="small muted"><strong>RMIT University</strong> · 2024–2027 (expected)</p>
-    <p>Graduated from the Associate Degree in Engineering Technology (Advanced Manufacturing &amp; Mechatronics) with Distinction and received the 2025 RMIT Dean's List for Academic Excellence (top 2%), before articulating into the Bachelor program.</p>
+    <h3 data-text="about.education.title"></h3>
+    <p class="small muted" data-html="about.education.meta"></p>
+    <p data-text="about.education.body"></p>
   </div>
 
   <div class="panel">
-    <h3>Duty Manager &amp; Pool Lifeguard</h3>
-    <p class="small muted"><strong>Yawa Aquatic Centre (Belgravia Leisure)</strong> · Dec 2022–Present (Duty Manager since June 2023)</p>
-    <p>Daily operational leadership across lifeguards, customer service, and gym staff, acting as chief emergency controller and managing commercial plant-room filtration, chemical dosing, water testing, and SCADA monitoring.</p>
+    <h3 data-text="about.work.title"></h3>
+    <p class="small muted" data-html="about.work.meta"></p>
+    <p data-text="about.work.body"></p>
   </div>
 
-  <h2>Skills &amp; tools</h2>
-  <ul class="chips" aria-label="Technical skills and tools">
-    <li class="chip">SolidWorks · Onshape · CATIA · Fusion 360 · AutoCAD</li>
-    <li class="chip">FDM 3D Printing (Bambu Lab X1C, PLA/PETG/TPU/PA-6)</li>
-    <li class="chip">MATLAB &amp; Simulink (PID Control &amp; Dynamics)</li>
-    <li class="chip">NI LabVIEW &amp; myRIO</li>
-    <li class="chip">Python · C/C++ (Arduino) · JavaScript · SVG</li>
-    <li class="chip">Siemens TIA Portal · PLC &amp; SCADA</li>
-    <li class="chip">Sensor/Actuator Integration &amp; Calibration</li>
-    <li class="chip">Plant-Room Operations &amp; Team Leadership</li>
-  </ul>
+  <h2 data-text="about.skillsHeading"></h2>
+  <ul class="chips" aria-label="Technical skills and tools" data-list="about.skills" data-item-class="chip"></ul>
 
-  <h2 id="contact">Contact</h2>
+  <h2 id="contact" data-text="about.contactHeading"></h2>
   <div class="panel note">
-    <p>Open to engineering internships, graduate roles, and project collaborations:</p>
+    <p data-text="about.contactIntro"></p>
     <ul>
       <li>Email: <a href="mailto:matthewschema@gmail.com">matthewschema@gmail.com</a></li>
       <li>LinkedIn: <a href="https://www.linkedin.com/in/matthew-schembri-19838a347" target="_blank" rel="noopener">linkedin.com/in/matthew-schembri-19838a347</a></li>
@@ -70,10 +61,11 @@
 </main>
 
 <footer class="site"><div>
-  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span>© <span id="yr"></span> <span data-text="site.brand"></span></span>
   <span><a href="index.html">Home</a> · <a href="projects.html">Projects</a> · <a href="tools.html">Tools</a> · <a href="https://github.com/schema11" target="_blank" rel="noopener">GitHub</a></span>
 </div></footer>
 
+<script src="content.js"></script>
 <script src="assets/site.js"></script>
 </body>
 </html>

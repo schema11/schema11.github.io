@@ -11,7 +11,7 @@
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <a class="brand" href="index.html"><span class="mark">◆</span> <span data-text="site.brand"></span></a>
     <ul>
       <li><a href="index.html">Home</a></li>
       <li><a href="projects.html">Projects</a></li>
@@ -22,9 +22,9 @@
 </nav>
 
 <main>
-  <p class="eyebrow">Tools</p>
-  <h1>Interactive engineering tools</h1>
-  <p class="lede">Browser-based calculators converted from hand calculations and Excel spreadsheets so geometry, materials, and motors can be tested directly.</p>
+  <p class="eyebrow" data-text="toolsPage.eyebrow"></p>
+  <h1 data-text="toolsPage.title"></h1>
+  <p class="lede" data-text="toolsPage.lede"></p>
 
   <div class="grid">
     <article class="card">
@@ -39,8 +39,8 @@
         </svg>
       </div>
       <div class="body">
-        <h3>Lead-Screw Gripper Mechanism</h3>
-        <p>Animated bell-crank kinematics with adjustable geometry, live jaw opening, virtual-work tip force, and SVG export.</p>
+        <h3 data-text="cards.gripperSim.toolTitle"></h3>
+        <p data-text="cards.gripperSim.toolSummary"></p>
         <ul class="chips">
           <li class="chip live">Interactive</li>
           <li class="chip">Kinematics</li>
@@ -63,8 +63,8 @@
         </svg>
       </div>
       <div class="body">
-        <h3>Lead Screw &amp; Lead Nut Calculator</h3>
-        <p>Calculates power-screw efficiency, self-locking margin, and back-driving torque from thread geometry, materials, and lubrication, with live diagrams and copyable hand working.</p>
+        <h3 data-text="cards.leadScrew.toolTitle"></h3>
+        <p data-text="cards.leadScrew.toolSummary"></p>
         <ul class="chips">
           <li class="chip live">Interactive</li>
           <li class="chip">Power screws</li>
@@ -95,8 +95,8 @@
         </svg>
       </div>
       <div class="body">
-        <h3>Robot Arm Load &amp; Link-Length Calculator</h3>
-        <p>Sizes a serial robot arm against bending stress, actuator torque, and tip deflection with a 20-entry motor database, mass budget, and live scaled SVG diagrams.</p>
+        <h3 data-text="cards.robotArm.title"></h3>
+        <p data-text="cards.robotArm.toolSummary"></p>
         <ul class="chips">
           <li class="chip live">Interactive</li>
           <li class="chip">Beam theory</li>
@@ -113,10 +113,11 @@
 </main>
 
 <footer class="site"><div>
-  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span>© <span id="yr"></span> <span data-text="site.brand"></span></span>
   <span><a href="index.html">Home</a> · <a href="projects.html">Projects</a> · <a href="about.html">About</a> · <a href="https://github.com/schema11" target="_blank" rel="noopener">GitHub</a></span>
 </div></footer>
 
+<script src="content.js"></script>
 <script src="assets/site.js"></script>
 </body>
 </html>
