@@ -19,19 +19,19 @@ window.SITE_CONTENT = {
     gripper: {
       homeTitle: "Robotic Gripper",
       pageTitle: "Robotic Gripper - university project",
-      homeSummary: "3D-printed lead-screw bell-crank gripper designed around supplied RMIT hardware, delivering 122–165 N capability whilst holding an egg at a 13.4 N LabVIEW force limit.",
-      pageSummary: "Full design/build cycle for a 3D-printed lead-screw gripper: mechanism selection, virtual-work force calculations, SolidWorks CAD, PLA/TPU/Nylon manufacture, and LabVIEW force-threshold testing on an egg."
+      homeSummary: "3D-printed lead-screw bell-crank inspired gripper designed around RMIT supplied hardware, using LabVIEW control to apply a controlled gripping force.",
+      pageSummary: "Full design and build of 3D-printed lead-screw gripper: mechanism selection, virtual-work force calculations, SolidWorks CAD, PLA/TPU/Nylon manufacture, and LabVIEW force-threshold testing on an egg."
     },
     robotArm: {
-      title: "Robot Arm Load & Link-Length Calculator",
-      homeSummary: "Browser sizing tool checking bending stress, derated actuator torque, and tip deflection simultaneously across up to six serial links.",
-      pageSummary: "Offline browser tool sizing a serial robot arm against bending stress, derated actuator torque, and tip deflection, complete with a 20-actuator database and scaled SVG diagrams.",
-      toolSummary: "Sizes a serial robot arm against bending stress, actuator torque, and tip deflection with a 20-entry motor database, mass budget, and live scaled SVG diagrams.",
+      title: "Robot Arm Load and Link-Length Calculator",
+      homeSummary: "A tool used to determine, mathematically, the feasibility of a personal robot arm project. determining criticallity of deflection, bending stress and actuator torque",
+      pageSummary: "Offline browser tool sizing a serial robot arm against bending stress, actuator torque, and tip deflection, complete with SVG diagrams.",
+      toolSummary: "A tool used to determine bending stress, actuator torque, and tip deflection of a robot arm, with payload mass budget, and live scaled SVG diagrams.",
       homeToolTitle: "Arm Payload & Actuator Calculator",
-      homeToolSummary: "Size link sections and motors for a serial robot arm with a 20-entry actuator database and live deflection plots."
+      homeToolSummary: "A tool for determining feasible arm/link lengths and motors for a robot arm, with an SVG diagram that updates as values change."
     },
     gripperSim: {
-      homeTitle: "Gripper Mechanism Simulator",
+      homeTitle: "Bell-Crank inspired lead screw Mechanism",
       toolTitle: "Lead-Screw Gripper Mechanism",
       homeSummary: "Animated bell-crank linkage model showing live jaw opening, virtual-work force transfer, and SVG export.",
       toolSummary: "Animated bell-crank kinematics with adjustable geometry, live jaw opening, virtual-work tip force, and SVG export."
