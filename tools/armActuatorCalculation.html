@@ -84,7 +84,7 @@
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="../index.html"><span class="mark">◆</span> Matthew Schembri</a>
+    <a class="brand" href="../index.html"><span class="mark">◆</span> <span data-text="site.brand"></span></a>
     <ul>
       <li><a href="../index.html">Home</a></li>
       <li><a href="../projects.html">Projects</a></li>
@@ -97,7 +97,7 @@
 <main class="wide">
   <div class="arm-bar">
     <div>
-      <h1>Arm Payload &amp; Actuator Calculator<small>Bending · derated torque · deflection with 20-actuator database</small></h1>
+      <h1><span data-text="armCalcTool.title"></span><small data-text="armCalcTool.subtitle"></small></h1>
     </div>
     <div class="arm-actions">
       <button class="btn sm prim" id="bHelp" type="button">Info</button>
@@ -134,7 +134,7 @@
         <h2><span>Links &amp; joints</span><span style="display:flex;gap:.4rem;align-items:center"><span class="chip" id="chipN"></span><button type="button" class="ib" data-help="links" data-dock="#dockLinks" aria-label="Links info">i</button></span></h2>
         <div class="helpdock" id="dockLinks"></div>
         <div id="links"></div>
-        <p class="hint">Actuator mass for joint J<sub>i+1</sub> sits at the distal end of link i automatically. Base actuator J1 is carried by the base.</p>
+        <p class="hint" data-html="armCalcTool.linksHintHtml"></p>
       </section>
 
       <section class="tool-card">
@@ -149,7 +149,7 @@
         <div class="helpdock" id="dockDyn"></div>
         <label class="check"><input type="checkbox" id="dynOn"> Include inertia torque (J·α)</label>
         <div class="g" id="dyn" style="margin-top:.4rem"></div>
-        <p class="hint">Computed with K<sub>d</sub> = 1 to avoid double-counting against the static factor.</p>
+        <p class="hint" data-html="armCalcTool.dynHintHtml"></p>
       </section>
     </div>
 
@@ -181,7 +181,7 @@
         <h2><span>Actuator schedule</span><button type="button" class="ib" data-help="act" data-dock="#dockAct" aria-label="Actuator schedule info">i</button></h2>
         <div class="helpdock" id="dockAct"></div>
         <div class="scroll" id="actTbl"></div>
-        <p class="hint">Available torque = rated × qty × derate × gear ratio × η. Hobby servo kg·cm values are stall ratings.</p>
+        <p class="hint" data-text="armCalcTool.actHint"></p>
       </section>
 
       <section class="tool-card">
@@ -219,16 +219,17 @@ DYNAMICS     T_req = g*(Payload*a_i + Sig_i)/1000 + J_i*alpha    [N.m]
 FREQUENCY    f_n ~ (1/2pi) * sqrt(3 E I / (m L^3))               [Hz]</pre>
       </details>
 
-      <p class="small muted">Idealised Euler-Bernoulli beam model in the horizontal worst-case pose. Ignores joint stress concentrations, fastener pull-out, horn strength, torsion, creep, and backlash. Verify load-bearing parts with FEA and physical tests.</p>
+      <p class="small muted" data-text="armCalcTool.disclaimer"></p>
     </div>
   </div>
 </main>
 
 <footer class="site"><div>
-  <span>© <span id="yr"></span> Matthew Schembri</span>
+  <span>© <span id="yr"></span> <span data-text="site.brand"></span></span>
   <span><a href="../index.html">Home</a> · <a href="../projects.html">Projects</a> · <a href="../tools.html">Tools</a> · <a href="../about.html">About</a></span>
 </div></footer>
 
+<script src="../content.js"></script>
 <script src="../assets/site.js"></script>
 <script>
 const MATS = {
@@ -277,19 +278,7 @@ const SGROUPS = [
 ];
 const SK = k => SERV[k] || SERV.None;
 
-const HELP = {
-  mode:  ['Solve mode', 'Mode 1 fixes link lengths and computes max payload. Mode 2 fixes payload and bisects total reach until worst utilisation hits 1.00.'],
-  glob:  ['Global factors', 'Derate (0.4–0.5 servos, 0.6–0.8 steppers), FoS (3–4 FDM, 2.5 metal), print knockdown k (0.55–0.7 FDM), dynamic factor Kd, efficiency η, and tip deflection budget.'],
-  links: ['Links & joints', 'Expand any link card to edit actuator, material, cross-section, length/share, and distal mass. Joint 1 carries everything outboard of it.'],
-  ee:    ['End effector', 'Gripper/tooling mass acts at the far tip. Payload CoG offset adds extra lever arm to every joint.'],
-  dyn:   ['Dynamics check', 'Adds rotational inertia torque T = J·α for target slew speed ω and ramp time ta, using Kd = 1 for an independent cross-check.'],
-  diag:  ['Scaled diagram', 'Worst-case horizontal pose. Section heights and lengths are to scale, droop is magnified visually, purple blocks show lumped masses, dashed purple marks your deflection budget.'],
-  res:   ['Results', 'Practical payload is the lesser of strength/torque limit and deflection limit. Worst utilisation = 1.00 means sitting right on the allowable limit.'],
-  act:   ['Actuator schedule', 'Lists rated torque, usable derated torque, gravity demand, utilisation bar, mass, travel range, and no-load speed for each joint plus the gripper.'],
-  mb:    ['Mass budget', 'Splits structure, carried actuators/brackets, and end effector from the base actuator J1 (which sits on the base and does not load the arm).'],
-  joint: ['Per-joint breakdown', 'Shows bending and torque utilisation, demand vs capacity (N·m), per-joint payload limit, local droop, natural frequency fn, and binding constraint.'],
-  adv:   ['Design advice', 'Highlights the governing joint and practical engineering checks (PLA creep, stall current, gearing, CoG offset, natural frequency).']
-};
+const HELP = window.SITE_CONTENT?.armCalcTool?.help || {};
 
 const L_ = o => ({ L: 150, share: 1, mat: 'PETG', sec: 'Rect Tube', d1: 20, d2: 30, t: 2.5, act: 'DS3225', qty: 1, hw: 15, auto: true, lump: .08, tq: 1, gr: 1, ...o });
 const defaults = () => ({
