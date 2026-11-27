@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interactive engineering tools and calculators, each with a written case study and working evidence.">
-  <title>Tools | Portfolio</title>
+  <meta name="description" content="Interactive engineering tools and calculators built in vanilla JavaScript and SVG.">
+  <title>Tools | Matthew Schembri</title>
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
@@ -14,131 +14,109 @@
     <a class="brand" href="index.html"><span class="mark">◆</span> Matthew Schembri</a>
     <ul>
       <li><a href="index.html">Home</a></li>
-      <li><a href="tools.html" aria-current="page">Tools</a></li>
       <li><a href="projects.html">Projects</a></li>
-      <li><a href="about.html">About Me</a></li>
+      <li><a href="tools.html" aria-current="page">Tools</a></li>
+      <li><a href="about.html">About</a></li>
     </ul>
   </div>
 </nav>
 
-<main id="tools">
+<main>
   <p class="eyebrow">Tools</p>
   <h1>Interactive engineering tools</h1>
-  <p class="lede">Each tool below started as a spreadsheet or hand calculation for a university/personal build. They are interactive so that you can test different geometry/motor inputs directly, whilst the accompanying notes explain how the equations fit together and what assumptions were made.</p>
+  <p class="lede">Browser-based calculators converted from hand calculations and Excel spreadsheets so geometry, materials, and motors can be tested directly.</p>
 
   <div class="grid">
-
     <article class="card">
       <div class="thumb">
-        <svg viewBox="0 0 320 120" role="img" aria-label="Bell-crank gripper mechanism schematic">
-          <path d="M55 94h210M160 95V26" fill="none" stroke="#6e7b8a" stroke-width="5"/>
-          <path d="M160 66L113 39M160 66L207 39M113 39L94 80M207 39L226 80"
-                fill="none" stroke="#58a6ff" stroke-width="7" stroke-linecap="round"/>
-          <rect x="145" y="72" width="30" height="11" rx="3" fill="#3a2d1b" stroke="#d29922"/>
-          <circle cx="160" cy="66" r="5" fill="#161b22" stroke="#f85149" stroke-width="2"/>
-          <rect x="87" y="78" width="16" height="12" rx="2" fill="#1c3a2a" stroke="#3fb950"/>
-          <rect x="217" y="78" width="16" height="12" rx="2" fill="#1c3a2a" stroke="#3fb950"/>
-          <circle cx="160" cy="49" r="9" fill="none" stroke="#9aa7b4" stroke-width="2"/>
-          <path d="M160 49l6-5" stroke="#f85149" stroke-width="2"/>
+        <svg viewBox="0 0 320 110" role="img" aria-label="Bell-crank gripper mechanism schematic">
+          <path d="M55 86h210M160 88V22" fill="none" stroke="#6e7b8a" stroke-width="4.5"/>
+          <path d="M160 60 114 34M160 60l46-26M114 34 95 74M206 34l19 40" fill="none" stroke="#58a6ff" stroke-width="6" stroke-linecap="round"/>
+          <rect x="145" y="66" width="30" height="10" rx="3" fill="#3a2d1b" stroke="#d29922"/>
+          <circle cx="160" cy="60" r="4.5" fill="#161b22" stroke="#f85149" stroke-width="2"/>
+          <rect x="88" y="72" width="16" height="11" rx="2" fill="#1c3a2a" stroke="#3fb950"/>
+          <rect x="216" y="72" width="16" height="11" rx="2" fill="#1c3a2a" stroke="#3fb950"/>
         </svg>
       </div>
       <div class="body">
-        <h3>Lead-Screw Gripper Mechanism Demonstration</h3>
-        <p>Explore the gripper’s lead-screw bell-crank kinematics with animated stroke, adjustable linkage geometry, live jaw opening and an SVG export.</p>
+        <h3>Lead-Screw Gripper Mechanism</h3>
+        <p>Animated bell-crank kinematics with adjustable geometry, live jaw opening, virtual-work tip force, and SVG export.</p>
         <ul class="chips">
-          <li class="chip live">Interactive tool</li>
+          <li class="chip live">Interactive</li>
           <li class="chip">Kinematics</li>
-          <li class="chip">SVG · JavaScript</li>
+          <li class="chip">SVG · JS</li>
         </ul>
         <div class="btn-row">
-          <a class="btn prim" href="tools/gripper-mechanism.html">Open mechanism tool →</a>
-          <a class="btn sm" href="projects/gripper.html#design">Embedded in gripper project</a>
+          <a class="btn prim sm" href="tools/gripper-mechanism.html">Open tool →</a>
+          <a class="btn sm" href="projects/gripper.html#design">Gripper project</a>
         </div>
       </div>
     </article>
 
     <article class="card">
       <div class="thumb">
-        <svg viewBox="0 0 320 120" role="img" aria-label="Lead screw and nut schematic">
-          <path d="M45 34h195v52H45z" fill="#1c2330" stroke="#30363d"/>
-          <path d="M55 39l18 18-18 18m36-36 18 18-18 18m36-36 18 18-18 18m36-36 18 18-18 18"
-                fill="none" stroke="#58a6ff" stroke-width="3"/>
-          <rect x="145" y="25" width="52" height="70" rx="5" fill="#3fb95026" stroke="#3fb950" stroke-width="2"/>
-          <path d="M197 60h65m-10-9 10 9-10 9" fill="none" stroke="#d29922" stroke-width="2"/>
-          <text x="150" y="111" fill="#6e7b8a" font-size="9" font-family="system-ui">lead nut</text>
-          <text x="264" y="50" fill="#6e7b8a" font-size="9" font-family="system-ui">load</text>
+        <svg viewBox="0 0 320 110" role="img" aria-label="Lead screw and nut schematic">
+          <path d="M45 30h195v48H45z" fill="#161b22" stroke="#30363d"/>
+          <path d="M55 36l17 18-17 18m36-36 17 18-17 18m36-36 17 18-17 18m36-36 17 18-17 18" fill="none" stroke="#58a6ff" stroke-width="2.8"/>
+          <rect x="145" y="22" width="52" height="64" rx="5" fill="#3fb95026" stroke="#3fb950" stroke-width="2"/>
+          <path d="M197 54h64m-9-8 9 8-9 8" fill="none" stroke="#d29922" stroke-width="2"/>
         </svg>
       </div>
       <div class="body">
         <h3>Lead Screw &amp; Lead Nut Calculator</h3>
-        <p>Assess power-screw efficiency, self-locking and back-driving from thread geometry, material pairing and lubrication, with live diagrams and a reproducible hand calculation.</p>
+        <p>Calculates power-screw efficiency, self-locking margin, and back-driving torque from thread geometry, materials, and lubrication, with live diagrams and copyable hand working.</p>
         <ul class="chips">
-          <li class="chip live">Live tool</li>
+          <li class="chip live">Interactive</li>
           <li class="chip">Power screws</li>
-          <li class="chip">Friction &amp; efficiency</li>
-          <li class="chip">JavaScript · SVG</li>
+          <li class="chip">Friction</li>
         </ul>
         <div class="btn-row">
-          <a class="btn prim" href="tools/lead-screw-calculator.html">Open calculator →</a>
-          <a class="btn sm" href="projects/gripper.html#calculations">Related gripper project</a>
+          <a class="btn prim sm" href="tools/lead-screw-calculator.html">Open calculator →</a>
+          <a class="btn sm" href="projects/gripper.html#calculations">Gripper calcs</a>
         </div>
       </div>
     </article>
 
-    <!-- ============ PROJECT 1 ============ -->
     <article class="card">
       <div class="thumb">
-        <svg viewBox="0 0 320 120" role="img" aria-label="Robot arm schematic">
-          <rect x="10" y="38" width="12" height="44" fill="#1c2330" stroke="#30363d"/>
-          <line x1="22" y1="60" x2="128" y2="60" stroke="#3fb950" stroke-width="9" stroke-linecap="round" opacity=".3"/>
-          <line x1="22" y1="60" x2="128" y2="60" stroke="#3fb950" stroke-width="2"/>
-          <path d="M128,60 Q186,62 226,74" fill="none" stroke="#d29922" stroke-width="7" stroke-linecap="round" opacity=".3"/>
-          <path d="M128,60 Q186,62 226,74" fill="none" stroke="#d29922" stroke-width="2"/>
-          <path d="M226,74 Q256,78 276,88" fill="none" stroke="#f85149" stroke-width="5" stroke-linecap="round" opacity=".3"/>
-          <path d="M226,74 Q256,78 276,88" fill="none" stroke="#f85149" stroke-width="2"/>
-          <line x1="22" y1="60" x2="296" y2="60" stroke="#30363d" stroke-dasharray="5 4"/>
+        <svg viewBox="0 0 320 110" role="img" aria-label="Robot arm schematic">
+          <rect x="14" y="34" width="12" height="42" fill="#161b22" stroke="#30363d"/>
+          <line x1="26" y1="55" x2="294" y2="55" stroke="#30363d" stroke-dasharray="5 4"/>
+          <line x1="26" y1="55" x2="128" y2="55" stroke="#3fb950" stroke-width="8" stroke-linecap="round" opacity=".3"/>
+          <line x1="26" y1="55" x2="128" y2="55" stroke="#3fb950" stroke-width="2"/>
+          <path d="M128 55 Q186 57 224 68" fill="none" stroke="#d29922" stroke-width="7" stroke-linecap="round" opacity=".3"/>
+          <path d="M128 55 Q186 57 224 68" fill="none" stroke="#d29922" stroke-width="2"/>
+          <path d="M224 68 Q254 72 274 82" fill="none" stroke="#f85149" stroke-width="5" stroke-linecap="round" opacity=".3"/>
+          <path d="M224 68 Q254 72 274 82" fill="none" stroke="#f85149" stroke-width="2"/>
           <g fill="#0d1117" stroke="#58a6ff" stroke-width="2">
-            <circle cx="22" cy="60" r="6"/><circle cx="128" cy="60" r="6"/><circle cx="226" cy="74" r="5"/>
+            <circle cx="26" cy="55" r="5.5"/><circle cx="128" cy="55" r="5.5"/><circle cx="224" cy="68" r="4.5"/>
           </g>
-          <rect x="276" y="80" width="16" height="16" rx="3" fill="#1f6feb33" stroke="#58a6ff" stroke-width="1.6"/>
-          <text x="300" y="60" fill="#6e7b8a" font-size="9" font-family="system-ui">0 mm</text>
-          <text x="294" y="104" fill="#f85149" font-size="9" font-family="system-ui">δ</text>
+          <rect x="274" y="74" width="16" height="16" rx="3" fill="#1f6feb33" stroke="#58a6ff" stroke-width="1.6"/>
         </svg>
       </div>
       <div class="body">
         <h3>Robot Arm Load &amp; Link-Length Calculator</h3>
-        <p>A browser tool that sizes a serial robot arm against three independent limits - bending stress, actuator torque and tip deflection - with a 20-entry servo and stepper database, automatic component mass accounting, and diagrams that redraw to scale as you change inputs.</p>
+        <p>Sizes a serial robot arm against bending stress, actuator torque, and tip deflection with a 20-entry motor database, mass budget, and live scaled SVG diagrams.</p>
         <ul class="chips">
-          <li class="chip live">Live tool</li>
+          <li class="chip live">Interactive</li>
           <li class="chip">Beam theory</li>
-          <li class="chip">JavaScript · SVG</li>
-          <li class="chip">Offline capable</li>
+          <li class="chip">Offline</li>
         </ul>
         <div class="btn-row">
-          <a class="btn prim" href="projects/robot-arm.html">Case study →</a>
-          <a class="btn sm" href="tools/armActuatorCalculation.html">Open tool</a>
+          <a class="btn prim sm" href="tools/armActuatorCalculation.html">Open tool →</a>
+          <a class="btn sm" href="projects/robot-arm.html">Case study</a>
           <a class="btn sm" href="tools/armToolExplanation.html">Method</a>
         </div>
       </div>
     </article>
-
-  </div>
-
-  <div class="panel note">
-    <h3>How these are documented</h3>
-    <p>Every project follows the same two-part structure, because a tool without context is just a widget and an explanation without evidence is just a claim.</p>
-    <ol class="steps">
-      <li><strong>Evidence</strong> - the artefact itself, embedded and usable: a live tool, a dataset, a drawing set or a test result.</li>
-      <li><strong>Explanation</strong> - the brief, the approach, the engineering reasoning, the validation plan and an honest account of what the work does <em>not</em> cover.</li>
-    </ol>
   </div>
 </main>
 
 <footer class="site"><div>
   <span>© <span id="yr"></span> Matthew Schembri</span>
-  <span><a href="index.html">Home</a> · <a href="projects.html">Projects</a> · <a href="https://github.com/schema11">GitHub</a></span>
+  <span><a href="index.html">Home</a> · <a href="projects.html">Projects</a> · <a href="about.html">About</a> · <a href="https://github.com/schema11" target="_blank" rel="noopener">GitHub</a></span>
 </div></footer>
 
-<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+<script src="assets/site.js"></script>
 </body>
 </html>
