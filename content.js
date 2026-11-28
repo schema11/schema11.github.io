@@ -11,7 +11,7 @@
 
 window.SITE_CONTENT = {
   site: {
-    brand: "Matthew Schembri"
+    brand: "Matthew Schembri's Portfolio"
   },
 
   /* ==========================================================================
@@ -19,22 +19,22 @@ window.SITE_CONTENT = {
      ========================================================================== */
   home: {
     eyebrow: "Mechatronics Engineering Portfolio",
-    title: "Practical builds and interactive design tools",
-    lede: "Third-year RMIT mechatronics student sharing hardware builds, CAD modelling, and browser-based engineering calculators.",
+    title: "Welcome to my Portfolio, here you'll find a a collection of my projects and related interactive tools/calculators",
+    lede: "RMIT BEng student (Advanced manufacturing & Mechatronics), going into final year. Find below some of my work.",
     projectsHeading: "Projects",
-    toolsHeading: "Interactive tools"
+    toolsHeading: "Tools/Calculators"
   },
 
   projectsPage: {
     eyebrow: "Projects",
     title: "Engineering projects",
-    lede: "Design, build, and test case studies."
+    lede: "Design, build, and test projects."
   },
 
   toolsPage: {
     eyebrow: "Tools",
     title: "Interactive engineering tools",
-    lede: "Offline browser calculators converted from hand calculations and spreadsheets."
+    lede: "calculators converted from hand calculations and spreadsheets into usable browser tools."
   },
 
   /* ==========================================================================
@@ -43,23 +43,23 @@ window.SITE_CONTENT = {
   about: {
     eyebrow: "About",
     title: "Matthew Schembri",
-    lede: "Third-year mechatronics engineering student at RMIT focused on practical robotics builds, CAD modelling, and testing first-principles calculations on real hardware.",
+    lede: "Hi! I've completed my third year as a mechatronics engineering student at RMIT focusing on undertaking robotics builds, CAD modelling, and testing first-principles calculations in practical settings in an effort to expand my knowledge beyond the classroom.",
     meta: {
       degree: "Bachelor of Engineering Technology (Mechatronics), Minor in AI in Practice - RMIT University",
       location: "Melbourne & Mornington Peninsula, VIC, Australia",
-      focus: "RMIT Rover Team (Arm subsystem), personal 3-DOF robot arm build, and lead-screw/linkage actuation",
-      outsideUni: "AFL football, reading, fitness, and catching up with friends and family"
+      focus: "RMIT Rover Team (Arm subsystem), personal 3-DOF robot arm build, and gripper projects",
+      outsideUni: "AFL football, reading, fitness/gym, and spending time with friends and family"
     },
     experienceHeading: "Education & experience",
     education: {
-      title: "Bachelor of Engineering Technology (Mechatronics)",
+      title: "Bachelor of Engineering Technology (Advanced Manufacturing & Mechatronics)",
       meta: "<strong>RMIT University</strong> · 2024–2027 (expected)",
-      body: "Completed the Associate Degree in Engineering Technology (Advanced Manufacturing & Mechatronics) with Distinction and received the 2025 RMIT Dean's List for Academic Excellence (top 2%) before articulating into the Bachelor program."
+      body: "Completed the Associate Degree in Engineering Technology (Advanced Manufacturing & Mechatronics) with Distinction and received the 2025 RMIT Dean's List for Academic Excellence (top 2%) before entering into third year of the Bachelor program."
     },
     work: {
       title: "Duty Manager & Pool Lifeguard",
       meta: "<strong>Yawa Aquatic Centre (Belgravia Leisure)</strong> · Dec 2022–Present (Duty Manager since June 2023)",
-      body: "Leads lifeguards, customer service, and gym staff on shift, acting as chief emergency controller and managing commercial plant-room filtration, chemical dosing, water testing, and SCADA monitoring."
+      body: "Leading a team of lifeguards, customer service, and gym staff on shift, acting as manager and coordinator in emergency control, adverse condition management and in charge of plant-room operations, chemical dosing, water testing, and contractor management."
     },
     skillsHeading: "Skills & tools",
     skills: [
@@ -89,20 +89,20 @@ window.SITE_CONTENT = {
     },
     brief: {
       heading: "The brief",
-      introHtml: "Built around supplied RMIT hardware (34:1 DC motor with encoder, Sabertooth 2x5, Sharp IR sensor, TAS606 load cell, and NI myRIO) to be mechanically capable of <strong>≥ 50 N</strong> whilst never applying over <strong>50 N</strong>. The T8 lead-screw bell-crank provides the mechanical margin, whilst LabVIEW load-cell feedback caps egg grip force at <strong>15 N</strong>.",
+      introHtml: "Built around supplied RMIT hardware (34:1 DC motor with encoder, Sabertooth 2x5, Sharp IR sensor, TAS606 load cell, and NI myRIO) to be mechanically capable of <strong>≥ 50 N</strong> whilst controlling to supply less than <strong>50 N</strong>. The T8 lead-screw bell-crank provides a natural gear reduction, whilst LabVIEW in unison with the load-cell provides a control feedback allowing for a stopping force for egg grip gripping set digitally within MyRio at <strong>15 N</strong>.",
       motionHeading: "1. Jaw motion: linear bell-crank over rotational jaws",
-      motionAssess1: "Simple to print, however the jaw rolls across the egg shell and pushes it outward.",
+      motionAssess1: "Simple to print, however the angular jaw approach would lead to a tangential force along the egg shell pushing it outward.",
       motionAssess2: "Keeps faces flat, however six+ printed pin joints add backlash and flex.",
       motionAssess3: "Keeps jaws parallel on guide rods and multiplies 0.8 N·m into 369.5 N thrust without printed gears, trading off closing speed.",
       transmissionHeading: "2. Transmission",
-      trans1: "High force multiplication (2.44× margin over 50 N at worst case) with no printed gear backlash.",
-      trans2: "Printed teeth wear and add backlash, and a rack needs an extra gearbox for force.",
-      trans3: "Cams are tolerance-sensitive, whilst belts stretch and only pull one way.",
+      trans1: "High force multiplication (2.44× over 50 N at worst case) without printed gear backlash.",
+      trans2: "Printed teeth wear and add backlash, whilst a rack needs an extra gearbox for force.",
+      trans3: "Cams are tolerance-sensitive (difficult for 3d printing), whilst belts stretch, require tensioning and typically only pull one way.",
       materialsHeading: "3. Materials (PLA, TPU & PA-6 Nylon)",
-      mat1: "Stiffest and most accurate filament for bearing press-fits and clips, printed flat with 4 perimeters.",
-      mat2: "Flexible gripping pad behind the load cell that conforms gently to the egg shell.",
-      mat3: "Replaced the initial PLA shaft coupler after 0.8 N·m sheared it along a layer line.",
-      materialsNote: "PETG and ABS/ASA were ruled out for the frame due to stringing on small clips and unnecessary chamber requirements.",
+      mat1: "Stiffest and most accurate filament for bearing press fits, easiest to print with little shrinkage, whilst being one of the cheapest options",
+      mat2: "Flexible gripping pad providing flex for the load cell allowing accurate reads for the load cell and conformity to the egg.",
+      mat3: "Replaced the initial PLA shaft coupler after 0.8 N·m was determined to be too high for the stress critical component.",
+      materialsNote: "PETG and ABS/ASA were ruled out for the frame due to stringing and printing concerns, no real benefit in given use case and increased cost.",
       controlHeading: "4. Control, calibration & safety",
       controlList: [
         { label: "LabVIEW loop (50 ms / 20 Hz)", html: "priority Select chain (E-Stop → Manual → 15 N force stop → Open → IR auto-close) with position PID (K<sub>p</sub> = 0.08, K<sub>i</sub> = 0.0002, K<sub>d</sub> = 1.8) clamped to 2.5 ± 1.0 V (40% speed) for gentle contact." },
@@ -114,25 +114,24 @@ window.SITE_CONTENT = {
     calculations: {
       heading: "Design calculations",
       thrustHeading: "1. Axial screw thrust",
-      thrustIntro: "Using standard power-screw mechanics (Budynas & Nisbett 2020) with T = 0.8 N·m, N = 56 rpm, quad-start T8 lead L = 8 mm (2 mm pitch × 4 starts), and steel-on-bronze μ = 0.19 (lead angle α = 14.32°, friction angle φ = 10.76°, η = 0.588):",
-      thrustNote: "Note: correcting an early 2 mm pitch vs 8 mm lead error shifted both thrust and speed by 4×. Friction μ remains the largest uncertainty.",
+      thrustIntro: "Using standard screw mechanics with T = 0.8 N·m, N = 56 rpm, quad-start T8 lead L = 8 mm (2 mm pitch × 4 starts), and steel-on-bronze μ = 0.19 (lead angle α = 14.32°, friction angle φ = 10.76°, η = 0.588):",
       linkageHeading: "2. Bell-crank force transfer",
-      linkageIntroHtml: "From a 30.27 mm closed datum, 36.5 mm of nut travel opens the jaws to 95 mm in CAD. Both 5 mm SolidWorks increments and the virtual-work ratio <code>q = 2(y<sub>J</sub> − y<sub>P</sub>)a / (r<sub>1</sub>² sin²φ)</code> show mechanical advantage dropping 35% from open to closed, so closed-end force (<strong>121.9 N/finger</strong>) governs capability:",
+      linkageIntroHtml: "From a 30.27 mm closed datum, 36.5 mm of nut travel opens the jaws to 95 mm in CAD. Both 5 mm SolidWorks increments and the virtual-work ratio <code>q = 2(y<sub>J</sub> − y<sub>P</sub>)a / (r<sub>1</sub>² sin²φ)</code> show mechanical advantage dropping 35% from open to closed, so closed-end force (<strong>121.9 N/finger</strong>) limits capability:",
       speedHeading: "3. Speed, brief check & finger stress",
-      speedBody: "Private load-cell tests reached 60–80 N before manual shutoff with no visible cracking in the PLA arms.",
+      speedBody: "Private load-cell tests reached 60–80 N of applied force before manual digital control shutoff with no demage to the PLA components.",
       measuredHeading: "4. Calculated vs measured"
     },
     design: {
       heading: "CAD & mechanical layout",
-      p1: "The mechanism comprises 15 printed parts on a Bambu Lab X1C (0.20 mm layers, 4 perimeters, 20% gyroid infill). Both finger carriages run on twin 6 mm aluminium guide rods, six 608ZZ bearings roll in the mirrored bell-crank slots to cut sliding friction, and the brass flange nut bolts into a recessed block with four M3 screws.",
-      p2: "Structural parts were printed flat with 3 mm root fillets and ~0.20 mm bearing pin clearance, with the 6 mm guide-rod bores hand-reamed during assembly.",
-      simHeading: "Interactive mechanism demonstration",
+      p1: "The mechanism comprises 15 printed parts on a Bambu Lab X1C (0.20 mm layers, 4 perimeters, 20% gyroid infill). Both of the finger carriages run on twin 6 mm aluminium guide rods, providing the linear atuation, six 608ZZ bearings roll in the mirrored bell-crank slots to reduce friction, and the brass flange nut bolts into a recessed block with four M3 screws provding the transverse linear actuation.",
+      p2: "Structural parts were printed flat with 3 mm root fillets and ~0.20 mm bearing pin clearance, with the 6 mm guide-rod bores reamed out during assembly ofr better fit.",
+      simHeading: "Interactive mechanism demonstration and calculator",
       simCaption: "Drag the stroke and geometry sliders to inspect bell-crank kinematics and live virtual-work force transfer.",
       buildHeading: "Manufacture & assembly",
       build1Cap: "All 15 printed parts laid out before assembly.",
       build2Cap: "Sub-assembly showing split bearing pins, 608ZZ bearings, and the brass flange nut on four M3 bolts.",
       elecHeading: "Electronics & LabVIEW debugging",
-      elecBody: "All I/O uses myRIO Connector B: load cell on B/AI0, Sharp IR on B/AI1 via JST lead, encoder A/B on digital inputs, and 0–5 V motor command on B/AO0 to the Sabertooth 2x5 (2.5 V stop). Two hardware faults initially looked like LabVIEW bugs: a dead IR unit (swapped out) and the motor slipping in its friction-fit housing (secured with superglue for lab demos)."
+      elecBody: "All I/O uses myRIO Connector B: load cell on B/AI0, Sharp IR on B/AI1, encoder A/B on digital inputs, and 0–5 V motor command on B/AO0 to the Sabertooth 2x5 (2.5 V stopping voltage). Two hardware faults initially looked like LabVIEW bugs: a dead IR unit (swapped out) and the motor slipping in its D shaped friction-fit housing (secured with superglue as a quick-fix)."
     },
     final: {
       heading: "Working demonstration",
@@ -141,16 +140,15 @@ window.SITE_CONTENT = {
       final2Cap: "Holding the artificial egg at 13.4 N against the 15 N software limit.",
       resultsHeading: "Test results",
       issuesHeading: "Unresolved issue & modelled vs measured gap",
-      autoReopenHtml: "<strong>Auto-reopen failure:</strong> LabVIEW logic was verified correct, pointing to an optical cause. Once closed, the IR beam clipped the inner jaw edges inside the 10–15 cm window so the trigger never cleared. Mounting or angling the sensor ahead of the jaws fixes this.",
+      autoReopenHtml: "<strong>Auto-reopen failure:</strong> LabVIEW logic was verified correct, pointing to an optical cause. Once closed, the IR beam clipped the inner jaw edges inside the 10–15 cm window so the trigger never cleared. Mounting or angling the sensor ahead of the jaws in future iterations would fix this. Alternatively, altering the jaw and guide-rod geometry would offer similar efficacy.",
       openingGapHtml: "<strong>95 mm CAD vs 105 mm actual opening:</strong> Winding the screw manually to thread end before power-up plus assembly clearances gave ~40 mm nut travel instead of 36.5 mm, passing the ≥ 100 mm spec.",
       takeawaysHeading: "Key takeaways & next improvements",
       takeawaysList: [
         { label: "Check both ends of the stroke", text: "closed-end force (121.9 N) governs capability, whilst open-end force (164.8 N) governs PLA stall stress." },
-        { label: "Verify thread lead early", text: "correcting pitch (2 mm) vs lead (8 mm) changed thrust and speed by 4×." },
         { label: "Filter lag vs speed", text: "moving-average smoothing stopped false triggers, however required a 40% speed cap to prevent overshoot." },
-        { label: "Next revision", text: "move the IR sensor forward, replace the glued motor housing and nylon coupler with M3 face mounts and an aluminium jaw coupler, and add a LabVIEW latch with PID anti-windup." }
+        { label: "Next revision", text: "move the IR sensor forward, replace the glued motor housing and nylon coupler with M3 bolts and an aluminium D to lead jaw coupler, and add a LabVIEW latch with PID anti-windup." }
       ],
-      downloadsHeading: "Downloads"
+      downloadsHeading: "Project downloads"
     }
   },
 
@@ -159,58 +157,50 @@ window.SITE_CONTENT = {
      (Home, Projects, Tools, projects/robot-arm.html, tools/armActuatorCalculation.html)
      ========================================================================== */
   robotArm: {
-    title: "Robot Arm Load and Link-Length Calculator",
-    description: "A browser tool to determine feasible link lengths, motors, and payload for a robot arm against bending stress, actuator torque, and tip deflection, with live scaled SVG diagrams.",
+    title: "Prospective Robot Arm: Load and Link-Length Calculator",
+    description: "A tool developed to determine feasible link lengths, motors, and payload for a prospective robot arm accounting for bending stress, actuator torque, and tip deflection, with live scaled SVG diagrams.",
     meta: {
       role: "Engineering model, UI, and vanilla JS/SVG implementation",
       context: "Personal 3-DOF 3D-printed robotic arm build and RMIT Rover arm analysis"
     },
     liveHeading: "Live tool",
-    liveCaptionHtml: "Try switching to <strong>2. Find link lengths</strong>, setting a target payload, and swapping J1 from a DS3225 to an MG996R to watch the feasible reach drop.",
+    liveCaptionHtml: "Try switching to <strong>2. Find link lengths</strong>, setting a target payload, and swapping J1 from a DS3225 to an MG996R to watch the feasible reach of the robot drop.",
     whyHeading: "Why I built it",
-    whyIntro: "Hobby arms often fail after printing because three coupled effects get skipped during rough sizing:",
-    whyList: [
-      { label: "Coupled chain loads", text: "every joint carries everything outboard of it, so wrist mass penalises every joint underneath." },
-      { label: "Stall vs working torque", text: "servo kg·cm specs are stall figures, not continuous working limits." },
-      { label: "Stiffness governs printed links", text: "plastic links droop out of tolerance long before yielding, and each link's end slope compounds down the chain." }
-    ],
+    whyIntro: "Personal robot arm projects often require research to avoid wasting money on excess printing or excessively powered actuators. I was interested in bringing a robot arm to life under tight cost constraints, this tool is the first product of my research into my robot arm project.",
     modelHeading: "Engineering model",
     modelIntro: "Evaluated in the worst-case horizontal pose against three independent limits, with the tightest limit governing:",
     modelList: [
       { label: "1. Bending stress", html: "six solid and hollow sections checked against <code>Z × yield × k / FoS</code>, where <code>k</code> is the FDM print knockdown." },
       { label: "2. Actuator torque", html: "usable torque equals <code>rated × qty × derate × gear ratio × η</code> (default 0.50 derate)." },
-      { label: "3. Tip deflection", text: "each link is solved as a cantilever under tip load, outboard moment, and self-weight, summing local droop and carried slope." }
+      { label: "3. Tip deflection", text: "each link is solved as a cantilever under payload at tip conditions, outboard moment, and self-weight, summing droop and carried slope." }
     ],
     decisionsHeading: "Key design decisions",
     decisionsList: [
       { label: "Automatic motor mass", html: "picking a motor for joint J<sub>i+1</sub> adds its mass to the end of link <em>i</em> automatically (base joint J1 does not load the arm)." },
       { label: "Two solve modes", text: "Mode 1 solves max payload for fixed links, whilst Mode 2 bisects total reach until worst utilisation hits 1.00." },
-      { label: "Payload CoG offset", text: "adds grip overhang to every joint's lever arm." },
-      { label: "Offline & self-contained", text: "inline SVG diagrams, CSV export, and URL-hash state sharing need zero dependencies." }
+      { label: "Payload CoG offset", text: "adds grip overhang to every joint's lever arm." }
     ],
     limitationsHeading: "Limitations",
     limitationsIntro: "Static Euler-Bernoulli beam theory in one horizontal pose excludes:",
     limitationsList: [
-      "Joint stress concentrations, fastener pull-out, and servo horn/shaft strength.",
-      "Base slewing torsion and compression-link buckling.",
+      "Joint stress concentrations, and servo horn/shaft strength.",
+      "Base torsion",
       "Gearbox backlash, bearing play, PLA creep, and thermal softening near motors.",
-      "End-effector grip force (covered by the gripper tools)."
+      "End-effector grip force."
     ],
-    limitationsNote: "Built-in actuator ratings are indicative class values, not datasheet guarantees.",
+    limitationsNote: "Built-in actuator ratings are indicative values sourced from datasheets, however may differ from real performance.",
     validationHeading: "Validation plan",
     validationList: [
       "Hang known masses in the horizontal pose and measure tip droop with a dial indicator.",
-      "Back-calculate real print knockdown k from measured stiffness.",
-      "Hold a loaded pose for one hour to measure PLA/PETG creep.",
+      "Back-calculate real k from measured stiffness.",
+      "Hold a loaded pose for a given time and measure PLA/PETG creep.",
       "Check final joint geometry and fastener stress concentrations in FEA."
     ],
     skillsHeading: "Skills demonstrated",
     skills: [
       "Mechanics of materials",
       "Beam deflection & superposition",
-      "Actuator sizing",
-      "Numerical bisection",
-      "Vanilla JS & SVG"
+      "Actuator sizing"
     ],
     calc: {
       linksHintHtml: "Actuator mass for joint J<sub>i+1</sub> sits at the distal end of link i automatically. Base actuator J1 is carried by the base.",
@@ -238,7 +228,7 @@ window.SITE_CONTENT = {
      ========================================================================== */
   gripperSim: {
     title: "Bell-Crank Inspired Lead-Screw Mechanism",
-    description: "Animated bell-crank linkage model with adjustable geometry showing live jaw opening, virtual-work force transfer, and SVG export.",
+    description: "Animated bell-crank linkage model with adjustable geometry showing mechanics, virtual-work force transfer, and SVG export.",
     forceHeading: "How force is calculated",
     forceSteps: [
       { label: "Torque → nut force", text: "axial thrust from screw torque, lead, and efficiency η." },
@@ -259,7 +249,7 @@ window.SITE_CONTENT = {
     fig2Caption: "Axial section relating lead, pitch, and mean diameter.",
     fig3Caption: "Shaded zone = self-locking (λ < ρ, forward efficiency < 50%).",
     safetyHeading: "Safety note",
-    safetyBody: "Friction varies with wear, speed, temperature, and lubrication. Confirm against supplier datasheets and never rely on self-locking alone for suspended loads."
+    safetyBody: "Friction varies with wear, speed, temperature, and lubrication."
   },
 
   /* ==========================================================================
