@@ -19,7 +19,7 @@ window.SITE_CONTENT = {
      ========================================================================== */
   home: {
     eyebrow: "Mechatronics Engineering Portfolio",
-    title: "Welcome to my Portfolio, here you'll find a a collection of my projects and related interactive tools/calculators",
+    title: "The Portfolio of a young engineering student",
     lede: "RMIT BEng student (Advanced manufacturing & Mechatronics), going into final year. Find below some of my work.",
     projectsHeading: "Projects",
     toolsHeading: "Tools/Calculators"
