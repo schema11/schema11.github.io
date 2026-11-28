@@ -11,7 +11,7 @@
 
 <nav class="nav" aria-label="Main">
   <div class="nav-in">
-    <a class="brand" href="index.html"><span class="mark">◆</span> <span data-text="site.brand"></span></a>
+    <a class="brand" href="index.html"><img class="brand-avatar" src="assets/media/profile.svg" alt="" width="30" height="30"> <span data-text="site.brand"></span></a>
     <ul>
       <li><a href="index.html" aria-current="page">Home</a></li>
       <li><a href="projects.html">Projects</a></li>
@@ -22,14 +22,19 @@
 </nav>
 
 <main>
-  <section class="hero">
-    <p class="eyebrow" data-text="home.eyebrow"></p>
-    <h1 data-text="home.title"></h1>
-    <p class="lede" data-text="home.lede"></p>
-    <div class="btn-row">
-      <a class="btn prim" href="projects.html">Projects →</a>
-      <a class="btn" href="tools.html">Interactive tools →</a>
-      <a class="btn" href="about.html">About me</a>
+  <section class="hero hero-profile">
+    <div class="avatar-ring">
+      <img src="assets/media/profile.svg" alt="Matthew Schembri" width="120" height="120">
+    </div>
+    <div class="hero-copy">
+      <p class="eyebrow" data-text="home.eyebrow"></p>
+      <h1 data-text="home.title"></h1>
+      <p class="lede" data-text="home.lede"></p>
+      <div class="btn-row">
+        <a class="btn prim" href="projects.html">Projects →</a>
+        <a class="btn" href="tools.html">Tools/Calculators →</a>
+        <a class="btn" href="about.html">About me</a>
+      </div>
     </div>
   </section>
 
@@ -48,7 +53,7 @@
           <li class="chip">LabVIEW</li>
         </ul>
         <div class="btn-row">
-          <a class="btn prim sm" href="projects/gripper.html">Case study →</a>
+          <a class="btn prim sm" href="projects/gripper.html">Explore project →</a>
           <a class="btn sm" href="projects/gripper.html#final">Demo video</a>
         </div>
       </div>
@@ -64,7 +69,7 @@
           <li class="chip">JavaScript · SVG</li>
         </ul>
         <div class="btn-row">
-          <a class="btn prim sm" href="projects/robot-arm.html">Case study →</a>
+          <a class="btn prim sm" href="projects/robot-arm.html">Explore project →</a>
           <a class="btn sm" href="tools/armActuatorCalculation.html">Open tool</a>
         </div>
       </div>
@@ -80,7 +85,7 @@
       <div class="body">
         <h3 data-text="gripperSim.title"></h3>
         <p data-text="gripperSim.description"></p>
-        <div class="btn-row"><a class="btn sm" href="tools/gripper-mechanism.html">Open tool →</a></div>
+        <div class="btn-row"><a class="btn prim sm" href="tools/gripper-mechanism.html">Open tool →</a></div>
       </div>
     </article>
 
@@ -88,7 +93,7 @@
       <div class="body">
         <h3 data-text="leadScrew.title"></h3>
         <p data-text="leadScrew.description"></p>
-        <div class="btn-row"><a class="btn sm" href="tools/lead-screw-calculator.html">Open tool →</a></div>
+        <div class="btn-row"><a class="btn prim sm" href="tools/lead-screw-calculator.html">Open tool →</a></div>
       </div>
     </article>
 
@@ -97,8 +102,8 @@
         <h3 data-text="robotArm.title"></h3>
         <p data-text="robotArm.description"></p>
         <div class="btn-row">
-          <a class="btn sm" href="tools/armActuatorCalculation.html">Open tool →</a>
-          <a class="btn sm" href="tools/armToolExplanation.html">Method</a>
+          <a class="btn prim sm" href="tools/armActuatorCalculation.html">Open tool →</a>
+          <a class="btn sm" href="tools/armToolExplanation.html">How it works</a>
         </div>
       </div>
     </article>
