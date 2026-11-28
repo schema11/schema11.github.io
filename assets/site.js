@@ -1,4 +1,4 @@
-/* Shared UI helpers: content binding, footer year, embed mode, tabs, lightbox, copy */
+/* Shared UI helpers: content binding, scroll reveal, navbar shadow, footer year, embed mode, tabs, lightbox, copy */
 (() => {
   // Hydrate written text from root content.js (window.SITE_CONTENT)
   const content = window.SITE_CONTENT;
@@ -8,11 +8,13 @@
     document.querySelectorAll('[data-text]').forEach(el => {
       const v = get(el.dataset.text);
       if (v !== undefined) el.textContent = v;
+      else el.hidden = true;
     });
 
     document.querySelectorAll('[data-html]').forEach(el => {
       const v = get(el.dataset.html);
       if (v !== undefined) el.innerHTML = v;
+      else el.hidden = true;
     });
 
     document.querySelectorAll('[data-cap-key]').forEach(el => {
@@ -22,7 +24,7 @@
 
     document.querySelectorAll('[data-list]').forEach(el => {
       const items = get(el.dataset.list);
-      if (!Array.isArray(items)) return;
+      if (!Array.isArray(items)) { el.hidden = true; return; }
       const cls = el.dataset.itemClass || '';
       const sep = el.dataset.sep || ': ';
       const wrap = el.dataset.wrap === 'span';
@@ -55,7 +57,7 @@
 
     document.querySelectorAll('[data-cards]').forEach(el => {
       const items = get(el.dataset.cards);
-      if (!Array.isArray(items)) return;
+      if (!Array.isArray(items)) { el.hidden = true; return; }
       el.innerHTML = '';
       items.forEach(item => {
         const div = document.createElement('div');
@@ -74,13 +76,50 @@
   }
 
   // Embed mode (?embed=1)
-  if (new URLSearchParams(location.search).has('embed')) {
+  const embedded = new URLSearchParams(location.search).has('embed');
+  if (embedded) {
     document.body.classList.add('embedded');
   }
 
   // Footer year
   const yr = document.getElementById('yr');
   if (yr) yr.textContent = new Date().getFullYear();
+
+  // Frosted navbar elevation on scroll
+  const nav = document.querySelector('.nav');
+  if (nav && !embedded) {
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // Subtle staggered scroll-reveal animations (respects prefers-reduced-motion)
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!embedded && !reduceMotion && 'IntersectionObserver' in window) {
+    const targets = document.querySelectorAll(
+      'main > .hero, main > .about-hero, main > .section-hd, main > .grid > .card, main > .meta, main > .panel, main > .tool-grid .tool-card, main > .btn-row'
+    );
+    if (targets.length) {
+      document.documentElement.classList.add('has-anim');
+      targets.forEach(el => {
+        el.classList.add('reveal');
+        const parent = el.parentElement;
+        if (parent && parent.classList.contains('grid')) {
+          const idx = [...parent.children].indexOf(el);
+          el.style.setProperty('--d', `${Math.min(idx, 5) * 75}ms`);
+        }
+      });
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.06, rootMargin: '0px 0px -24px 0px' });
+      targets.forEach(el => io.observe(el));
+    }
+  }
 
   // Accessible tabs with shareable hash URLs
   const tabs = [...document.querySelectorAll('[role="tab"]')];
@@ -91,7 +130,10 @@
         const on = t.id === 'tab-' + name;
         t.setAttribute('aria-selected', on ? 'true' : 'false');
         const panel = document.getElementById(t.getAttribute('aria-controls'));
-        if (panel) panel.hidden = !on;
+        if (panel) {
+          panel.hidden = !on;
+          panel.classList.toggle('anim-in', on && !reduceMotion);
+        }
       });
       if (push && location.hash.slice(1) !== name) {
         history.replaceState(null, '', '#' + name);
